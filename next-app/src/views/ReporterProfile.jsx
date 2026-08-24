@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { FaFacebookF, FaYoutube, FaInstagram } from 'react-icons/fa6';
 
 export default function ReporterProfile() {
-    const { name } = useParams();
+    const params = useParams();
+    const name = params?.name || '';
     const [newsData, setNewsData] = useState([]);
     const [latestNewsData, setLatestNewsData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function ReporterProfile() {
 
     const displayName = newsData.length > 0 && newsData[0].author 
         ? newsData[0].author 
-        : name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        : (name ? name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Reporter');
     const authorBio = `${displayName} is a dedicated journalist and reporter for HBN News 24, committed to bringing you the most accurate and fastest news updates from ground zero.`;
     
     const getInitials = (fullName) => {

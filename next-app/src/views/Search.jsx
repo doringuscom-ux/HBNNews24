@@ -1,11 +1,11 @@
  'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search as SearchIcon } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function Search() {
-    const [searchParams] = useSearchParams();
-    const query = searchParams.get('q');
+    const searchParams = useSearchParams();
+    const query = searchParams ? searchParams.get('q') : '';
     
     const [newsData, setNewsData] = useState([]);
     const [latestNewsData, setLatestNewsData] = useState([]);

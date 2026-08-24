@@ -1,4 +1,4 @@
-import AdminLogin from '../../../pages/AdminLogin';
+import AdminLogin from '@/views/AdminLogin';
 
 export const metadata = {
   title: 'Admin Login - HBN24',
