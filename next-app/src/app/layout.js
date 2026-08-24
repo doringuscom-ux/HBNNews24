@@ -32,6 +32,11 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        icons: {
+          icon: '/icon.webp',
+          shortcut: '/icon.webp',
+          apple: '/icon.webp',
+        },
         openGraph: {
           title: seo.siteTitle || 'HBN24 News',
           description: seo.metaDescription || '',
@@ -50,6 +55,11 @@ export async function generateMetadata() {
     metadataBase: new URL(siteUrl),
     alternates: {
       canonical: './',
+    },
+    icons: {
+      icon: '/icon.webp',
+      shortcut: '/icon.webp',
+      apple: '/icon.webp',
     },
     title: {
       template: `%s | HBN24 News`,
