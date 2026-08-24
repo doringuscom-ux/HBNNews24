@@ -1,3 +1,7 @@
+# Ignore old frontend and backend folders
+backend/
+frontend/
+
 # Dependencies
 node_modules/
 **/node_modules/
