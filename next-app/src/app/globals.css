@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 body {
-    font-family: 'Noto Sans Devanagari', sans-serif;
+    font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', sans-serif;
 }
+
 
 @keyframes marquee {
   0% { transform: translateX(0%); }

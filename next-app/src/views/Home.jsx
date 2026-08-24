@@ -12,49 +12,53 @@ const TechnologySection = lazy(() => import("../components/TechnologySection"));
 const BusinessSection = lazy(() => import("../components/BusinessSection"));
 const ShortVideos = lazy(() => import("../components/ShortVideos"));
 
-export default function Home() {
-    const [news, setNews] = useState({
+export default function Home({ initialNews, initialVideos }) {
+    const hasInitialData = Boolean(initialNews && (initialNews.featured?.length > 0 || initialNews.mixNews?.length > 0 || initialNews.latestNews?.length > 0));
+    
+    const [news, setNews] = useState(initialNews || {
         latestNews: [], mixNews: [], sports: [], religion: [], lifestyle: [], technology: [], business: [], entertainment: [], superfast: [], featured: []
     });
-    const [videos, setVideos] = useState([]);
-    const [shorts, setShorts] = useState([]);
-    const [news24Shorts, setNews24Shorts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [videos, setVideos] = useState(initialVideos?.videos || []);
+    const [shorts, setShorts] = useState(initialVideos?.shorts || []);
+    const [news24Shorts, setNews24Shorts] = useState(initialVideos?.news24Shorts || []);
+    const [loading, setLoading] = useState(!hasInitialData);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 1. Instantly load from cache if available (SWR pattern)
-                const cachedNews = typeof window !== 'undefined' ? localStorage.getItem('hbn24_home_cache') : null;
-                const cachedVideos = typeof window !== 'undefined' ? localStorage.getItem('hbn24_home_cache') : null;
-                if (cachedNews && cachedVideos) {
-                    setNews(JSON.parse(cachedNews));
-                    const v = JSON.parse(cachedVideos);
-                    setVideos(v.videos || []);
-                    setShorts(v.shorts || []);
-                    setNews24Shorts(v.news24Shorts || []);
-                    setLoading(false); // Instantly stop loading screen!
+                // 1. Instantly load from cache if available and no initial server props
+                if (!hasInitialData) {
+                    const cachedNews = typeof window !== 'undefined' ? localStorage.getItem('hbn24_home_cache') : null;
+                    const cachedVideos = typeof window !== 'undefined' ? localStorage.getItem('hbn24_video_cache') : null;
+                    if (cachedNews && cachedVideos) {
+                        setNews(JSON.parse(cachedNews));
+                        const v = JSON.parse(cachedVideos);
+                        setVideos(v.videos || []);
+                        setShorts(v.shorts || []);
+                        setNews24Shorts(v.news24Shorts || []);
+                        setLoading(false);
+                    }
                 }
 
-                // 2. Fetch fresh data in the background
+                // 2. Refresh fresh data in the background
                 const [newsRes, videoRes] = await Promise.all([
-                    fetch('/api/news/home', { priority: 'high' }),
+                    fetch('/api/news/home', { priority: 'low' }),
                     fetch('/api/youtube', { priority: 'low' })
                 ]);
                 let newsData = await newsRes.json();
                 const videoData = await videoRes.json();
 
-
-
+                if (newsData && (newsData.mixNews?.length || newsData.latestNews?.length)) {
                     setNews(newsData);
-                setVideos(videoData.videos || []);
-                setShorts(videoData.shorts || []);
-                setNews24Shorts(videoData.news24Shorts || []);
+                    if (typeof window !== 'undefined') localStorage.setItem('hbn24_home_cache', JSON.stringify(newsData));
+                }
+                if (videoData && videoData.videos?.length) {
+                    setVideos(videoData.videos || []);
+                    setShorts(videoData.shorts || []);
+                    setNews24Shorts(videoData.news24Shorts || []);
+                    if (typeof window !== 'undefined') localStorage.setItem('hbn24_video_cache', JSON.stringify(videoData));
+                }
                 setLoading(false);
-
-                // 3. Update the cache with fresh data for next time
-                if (typeof window !== 'undefined') localStorage.setItem('hbn24_home_cache', JSON.stringify(newsData));
-                if (typeof window !== 'undefined') localStorage.setItem('hbn24_video_cache', JSON.stringify(videoData));
             } catch (err) {
                 console.error("Error fetching home data:", err);
                 setLoading(false);
@@ -62,6 +66,7 @@ export default function Home() {
         };
         fetchData();
     }, []);
+
 
     const [loadBelowFold, setLoadBelowFold] = useState(false);
     

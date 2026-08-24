@@ -48,6 +48,17 @@ export async function generateMetadata() {
   };
 }
 
-export default function Page() {
-  return <Home />;
+import { getHomeNewsData } from '@/lib/getHomeNews';
+import { getHomeVideosData } from '@/lib/getHomeVideos';
+
+export const revalidate = 60;
+
+export default async function Page() {
+  const [initialNews, initialVideos] = await Promise.all([
+    getHomeNewsData(),
+    getHomeVideosData()
+  ]);
+
+  return <Home initialNews={initialNews} initialVideos={initialVideos} />;
 }
+

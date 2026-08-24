@@ -2,39 +2,31 @@
 import { usePathname } from 'next/navigation';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Suspense, useEffect } from 'react';
-import SeoManager from './SeoManager';
+import { Suspense } from 'react';
+import Script from 'next/script';
 
 export default function ClientLayout({ children, globalSeo, googleAnalyticsId }) {
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
 
-    useEffect(() => {
-        if (googleAnalyticsId && !isAdmin) {
-            if (!document.getElementById('ga-script')) {
-                const script1 = document.createElement('script');
-                script1.id = 'ga-script';
-                script1.async = true;
-                script1.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
-                document.head.appendChild(script1);
-
-                const script2 = document.createElement('script');
-                script2.id = 'ga-inline';
-                script2.innerHTML = `
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', '${googleAnalyticsId}', { page_path: '${pathname}' });
-                `;
-                document.head.appendChild(script2);
-            } else if (window.gtag) {
-                window.gtag('config', googleAnalyticsId, { page_path: pathname });
-            }
-        }
-    }, [pathname, googleAnalyticsId, isAdmin]);
-
     return (
         <>
+            {googleAnalyticsId && !isAdmin && (
+                <>
+                    <Script
+                        src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+                        strategy="lazyOnload"
+                    />
+                    <Script id="ga-inline" strategy="lazyOnload">
+                        {`
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+                            gtag('config', '${googleAnalyticsId}', { page_path: '${pathname}' });
+                        `}
+                    </Script>
+                </>
+            )}
             {!isAdmin && <Navbar />}
             <main id="main-content" className="flex-grow">
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600"></div></div>}>
@@ -45,4 +37,5 @@ export default function ClientLayout({ children, globalSeo, googleAnalyticsId })
         </>
     );
 }
+
 
