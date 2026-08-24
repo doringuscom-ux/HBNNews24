@@ -32,11 +32,11 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
-        icons: {
-          icon: '/icon.webp',
-          shortcut: '/icon.webp',
-          apple: '/icon.webp',
-        },
+    icons: {
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
+      apple: '/favicon.png',
+    },
         openGraph: {
           title: seo.siteTitle || 'HBN24 News',
           description: seo.metaDescription || '',
@@ -57,9 +57,9 @@ export async function generateMetadata() {
       canonical: './',
     },
     icons: {
-      icon: '/icon.webp',
-      shortcut: '/icon.webp',
-      apple: '/icon.webp',
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
+      apple: '/favicon.png',
     },
     title: {
       template: `%s | HBN24 News`,
