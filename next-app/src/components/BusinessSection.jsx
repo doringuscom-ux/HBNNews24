@@ -36,7 +36,7 @@ export default function BusinessSection({ news = [] }) {
                             {/* Main News */}
                             <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} className="group cursor-pointer flex flex-col gap-3 h-full block">
                                 <div className="w-full overflow-hidden">
-                                    <img loading="lazy" width="400" height="250" src={mainNews.image} alt={mainNews.title} className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <h3 className="text-[#000] text-[24px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pr-2">
                                     {mainNews.title}
@@ -49,7 +49,7 @@ export default function BusinessSection({ news = [] }) {
                             {middleNewsList.map((news, index) => (
                                 <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} key={index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer ${index !== middleNewsList.length - 1 ? 'border-b border-[#e0e0e0] pb-4 mb-4' : ''}`}>
                                     <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                        <img loading="lazy" width="400" height="250" src={news.image} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-0.5">
                                         <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors">
@@ -65,7 +65,7 @@ export default function BusinessSection({ news = [] }) {
                             {rightNewsList.map((news, index) => (
                                 <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} key={index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer ${index !== rightNewsList.length - 1 ? 'border-b border-[#e0e0e0] pb-4 mb-4' : ''}`}>
                                     <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                        <img loading="lazy" width="400" height="250" src={news.image} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-0.5">
                                         <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors">

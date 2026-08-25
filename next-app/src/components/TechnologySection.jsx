@@ -37,7 +37,7 @@ export default function TechnologySection({ news = [] }) {
                         {/* Top Main News */}
                         <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} className="flex flex-col sm:flex-row gap-4 group cursor-pointer mb-5">
                             <div className="w-full sm:w-[230px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                <img loading="lazy" width="400" height="250" src={mainNews.image} alt={mainNews.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-[#000] text-[20px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pt-1">
@@ -49,7 +49,7 @@ export default function TechnologySection({ news = [] }) {
                         {/* Bottom News Left */}
                         <Link href={bottomNewsLeft._id !== 'loading' ? `/news/${bottomNewsLeft._id}` : '#'} className="border-t border-[#e5e5e5] pt-4 group cursor-pointer flex flex-col sm:flex-row gap-4">
                             <div className="w-full sm:w-[130px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                <img loading="lazy" width="400" height="250" src={bottomNewsLeft.image} alt={bottomNewsLeft.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(bottomNewsLeft.image, 300)} alt={bottomNewsLeft.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <div className="flex-1 flex items-center">
                                 <h3 className="text-[#000] text-[17px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">
@@ -65,7 +65,7 @@ export default function TechnologySection({ news = [] }) {
                         {middleNewsList.map((news, index) => (
                             <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} key={index} className={`flex flex-col sm:flex-row gap-3 group cursor-pointer ${index !== middleNewsList.length - 1 ? 'border-b border-[#e5e5e5] pb-4 mb-4' : ''}`}>
                                 <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={news.image} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1 flex pt-1">
                                     <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">
@@ -81,7 +81,7 @@ export default function TechnologySection({ news = [] }) {
                         {rightNewsList.map((news, index) => (
                             <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} key={index} className={`flex flex-col sm:flex-row gap-3 group cursor-pointer ${index !== rightNewsList.length - 1 ? 'border-b border-[#e5e5e5] pb-4 mb-4' : ''}`}>
                                 <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={news.image} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1 flex pt-1">
                                     <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">
