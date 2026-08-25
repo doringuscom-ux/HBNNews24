@@ -137,16 +137,16 @@ export default function SingleArticle({ initialArticle }) {
 
                 // Fetch latest news for sidebar (also with retry)
                 let newsRes;
-                retries = 2;
-                while (retries >= 0) {
+                let newsRetries = 2;
+                while (newsRetries >= 0) {
                     try {
                         newsRes = await fetch(`/api/news`);
                         if (newsRes.ok) break;
                     } catch (e) {
-                        if (retries === 0) throw e;
+                        if (newsRetries === 0) throw e;
                     }
-                    if (retries > 0) await new Promise(r => setTimeout(r, 1000));
-                    retries--;
+                    if (newsRetries > 0) await new Promise(r => setTimeout(r, 1000));
+                    newsRetries--;
                 }
                 
                 const newsData = newsRes && newsRes.ok ? await newsRes.json() : [];
@@ -680,7 +680,7 @@ export default function SingleArticle({ initialArticle }) {
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        {latestNews.map((news) => (
+                        {latestNews.filter(n => n._id !== (article?._id || initialArticle?._id)).slice(0, 8).map((news) => (
                             <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 last:border-0">
                                 <div className="relative w-[110px] h-[75px] flex-shrink-0 overflow-hidden rounded-[4px]">
                                     <img
