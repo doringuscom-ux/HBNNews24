@@ -16,11 +16,11 @@ export async function getHomeNewsData() {
         const categories = ['sports', 'religion', 'lifestyle', 'technology', 'business', 'entertainment', 'superfast', 'featured'];
         
         const queries = categories.map(cat => 
-            News.find({ category: cat, status: { $ne: 'draft' } }).sort({ createdAt: -1 }).limit(12).lean()
+            News.find({ category: cat, status: { $ne: 'draft' } }).select('-content -seoTitle -seoDescription -tags').sort({ createdAt: -1 }).limit(12).lean()
         );
         
-        queries.push(News.find({ category: { $nin: categories }, status: { $ne: 'draft' } }).sort({ createdAt: -1 }).limit(12).lean());
-        queries.push(News.find({ status: { $ne: 'draft' } }).sort({ createdAt: -1 }).limit(20).lean());
+        queries.push(News.find({ category: { $nin: categories }, status: { $ne: 'draft' } }).select('-content -seoTitle -seoDescription -tags').sort({ createdAt: -1 }).limit(12).lean());
+        queries.push(News.find({ status: { $ne: 'draft' } }).select('-content -seoTitle -seoDescription -tags').sort({ createdAt: -1 }).limit(20).lean());
 
         const results = await Promise.all(queries);
         
