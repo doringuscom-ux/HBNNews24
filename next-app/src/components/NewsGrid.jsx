@@ -2,6 +2,7 @@
 import React from 'react';
 import { Play, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { optimizeImage } from '../utils/imageOptimizer';
 export default function NewsGrid({ news = [] }) {
     // Show 8 items
@@ -14,13 +15,11 @@ export default function NewsGrid({ news = [] }) {
                 <Link href={`/news/${item.slug || item._id}`} key={item._id || index} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 md:border-b-0 md:pb-0">
                     {/* Image */}
                     <div className="relative w-[140px] h-[90px] flex-shrink-0 overflow-hidden rounded-[4px]">
-                        <img
-                            src={optimizeImage(item.image, 300) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
-                            alt={item.title}
-                            loading="lazy"
-                            decoding="async"
-                            width="140"
-                            height="90"
+                        <Image
+                            src={item.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
+                            alt={item.title || "News"}
+                            width={140}
+                            height={90}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                         {/* Icons */}

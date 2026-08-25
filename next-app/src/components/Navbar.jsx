@@ -9,6 +9,7 @@ import {
     X,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import logo from "../assets/HBN Thumbnail.webp";
 
@@ -298,11 +299,12 @@ export default function AajTakNavbar() {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center justify-center flex-shrink-0 mr-8 group cursor-pointer h-full z-50">
-                    <img
-                        src={logo?.src || logo}
+                    <Image
+                        src={logo}
                         alt="HBN 24"
-                        width="150"
-                        height="60"
+                        width={150}
+                        height={60}
+                        priority
                         className="h-full w-auto object-contain rounded-[4px] scale-[1.6] group-hover:scale-[1.7] transition-transform duration-300 transform-gpu"
                         style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
                     />
@@ -444,9 +446,11 @@ export default function AajTakNavbar() {
                                                     onClick={() => setNotificationsOpen(false)}
                                                     className="flex items-start gap-3 p-3 pr-8"
                                                 >
-                                                    <img loading="lazy" width="400" height="250" 
+                                                    <Image 
                                                         src={news.image || '/favicon.png'} 
                                                         alt="" 
+                                                        width={80} 
+                                                        height={56}
                                                         className="w-20 h-14 object-cover rounded-md flex-shrink-0"
                                                     />
                                                     <div>

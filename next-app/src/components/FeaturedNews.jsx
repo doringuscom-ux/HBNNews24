@@ -1,6 +1,7 @@
  'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -59,13 +60,14 @@ export default function FeaturedNews({ news = [] }) {
                     return (
                         <div key={featured._id || index} className="w-full flex-shrink-0">
                             <Link href={`/news/${featured.slug || featured._id}`} className="block w-full cursor-pointer">
-                                <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center">
-                                    <img 
-                                        src={optimizeImage(featured.image, 800)} 
-                                        alt="Featured" 
-                                        fetchPriority={index === 0 ? "high" : "auto"}
-                                        loading={index === 0 ? "eager" : "lazy"}
-                                        className="w-full h-auto max-h-[450px] object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
+                                <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
+                                    <Image 
+                                        src={featured.image} 
+                                        alt={featured.title || "Featured"} 
+                                        fill
+                                        priority={index === 0}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
+                                        className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />
                                 </div>
                                 <div className="p-6 bg-gradient-to-b from-white to-gray-50/50">
