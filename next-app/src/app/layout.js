@@ -34,11 +34,7 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
-        icons: {
-          icon: '/HBNFavicon.webp',
-          shortcut: '/HBNFavicon.webp',
-          apple: '/HBNFavicon.webp',
-        },
+
         openGraph: {
           title: seo.siteTitle || 'HBN24 News',
           description: seo.metaDescription || '',
@@ -57,11 +53,6 @@ export async function generateMetadata() {
     metadataBase: new URL(siteUrl),
     alternates: {
       canonical: './',
-    },
-    icons: {
-      icon: '/HBNFavicon.webp',
-      shortcut: '/HBNFavicon.webp',
-      apple: '/HBNFavicon.webp',
     },
     title: {
       template: `%s | HBN24 News`,
