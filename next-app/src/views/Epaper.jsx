@@ -164,13 +164,14 @@ const NewspaperGame = () => {
     );
 };
 
-export default function Epaper() {
-    const [news, setNews] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Epaper({ initialNews, initialSuvichar, initialPanchang }) {
+    const [news, setNews] = useState(initialNews || []);
+    const [loading, setLoading] = useState(!initialNews || initialNews.length === 0);
     const [currentPage, setCurrentPage] = useState(1);
     const [cuttingModalData, setCuttingModalData] = useState(null);
-    const [suvicharText, setSuvicharText] = useState('मंजिलें क्या हैं, रास्ता क्या है? हौसला हो तो फासला क्या है?');
+    const [suvicharText, setSuvicharText] = useState(initialSuvichar || 'मंजिलें क्या हैं, रास्ता क्या है? हौसला हो तो फासला क्या है?');
     const [panchangData, setPanchangData] = useState(() => {
+        if (initialPanchang) return initialPanchang;
         const daysInHindi = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
         const todayHindi = daysInHindi[new Date().getDay()];
         return {
@@ -181,6 +182,8 @@ export default function Epaper() {
     const itemsPerPage = 11; // 11 stories per page to allow the last one to be wide
 
     useEffect(() => {
+        if (initialNews && initialNews.length > 0) return; // Skip fetch if SSR data exists
+
         const fetchSuvichar = async () => {
             try {
                 const res = await fetch('/api/suvichar');
@@ -297,9 +300,13 @@ export default function Epaper() {
     const stripHtml = (html) => {
         if (!html) return '';
         const cleanHtml = html.replace(/&amp;nbsp;/gi, ' ').replace(/&nbsp;/gi, ' ');
-        const doc = new DOMParser().parseFromString(cleanHtml, 'text/html');
-        const text = doc.body.textContent || doc.body.innerText || '';
-        return text.replace(/&nbsp;/gi, ' ').replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+        if (typeof window !== 'undefined' && window.DOMParser) {
+            const doc = new DOMParser().parseFromString(cleanHtml, 'text/html');
+            const text = doc.body.textContent || doc.body.innerText || '';
+            return text.replace(/&nbsp;/gi, ' ').replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+        } else {
+            return cleanHtml.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/gi, ' ').replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+        }
     };
 
     const totalPages = Math.ceil(news.length / itemsPerPage);
