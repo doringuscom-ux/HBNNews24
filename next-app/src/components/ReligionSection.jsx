@@ -8,7 +8,7 @@ import rashifalBg from '../assets/rashiphal_circle1.webp';
 export default function ReligionSection({ news = [] }) {
     const [fetchedRashifal, setFetchedRashifal] = useState([]);
     const mainNews = news.length > 0 ? {
-        image: news[0].image,
+        image: optimizeImage(news[0].image, 600),
         title: news[0].title,
         _id: news[0].slug || news[0]._id
     } : {
@@ -18,7 +18,7 @@ export default function ReligionSection({ news = [] }) {
     };
 
     const sideNews = news.slice(1, 4).map(n => ({
-        image: n.image,
+        image: optimizeImage(n.image, 400),
         title: n.title,
         _id: n.slug || n._id
     }));

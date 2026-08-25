@@ -16,7 +16,7 @@ export default function NewsGrid({ news = [] }) {
                     {/* Image */}
                     <div className="relative w-[140px] h-[90px] flex-shrink-0 overflow-hidden rounded-[4px]">
                         <Image
-                            src={item.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
+                            src={optimizeImage(item.image, 400) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
                             alt={item.title || "News"}
                             width={140}
                             height={90}

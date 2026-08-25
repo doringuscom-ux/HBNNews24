@@ -62,7 +62,7 @@ export default function FeaturedNews({ news = [] }) {
                             <Link href={`/news/${featured.slug || featured._id}`} className="block w-full cursor-pointer">
                                 <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
                                     <Image 
-                                        src={featured.image} 
+                                        src={optimizeImage(featured.image, 800)} 
                                         alt={featured.title || "Featured"} 
                                         fill
                                         unoptimized={true}
