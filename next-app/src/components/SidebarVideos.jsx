@@ -8,7 +8,7 @@ export default function SidebarVideos({ videos = [], title = "ट्रेंड
         return [...videos].slice(0, 7);
     }, [videos]);
 
-    const [playingIndex, setPlayingIndex] = useState(0); // Auto-play first video
+    const [playingIndex, setPlayingIndex] = useState(null); // Do not auto-play first video
     const [isMuted, setIsMuted] = useState(true);
 
     const containerRef = useRef(null);
