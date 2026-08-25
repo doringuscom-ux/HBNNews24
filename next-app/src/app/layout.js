@@ -35,9 +35,9 @@ export async function generateMetadata() {
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
         icons: {
-          icon: '/favicon.png',
-          shortcut: '/favicon.png',
-          apple: '/favicon.png',
+          icon: '/HBNFavicon.webp',
+          shortcut: '/HBNFavicon.webp',
+          apple: '/HBNFavicon.webp',
         },
         openGraph: {
           title: seo.siteTitle || 'HBN24 News',
@@ -59,9 +59,9 @@ export async function generateMetadata() {
       canonical: './',
     },
     icons: {
-      icon: '/favicon.png',
-      shortcut: '/favicon.png',
-      apple: '/favicon.png',
+      icon: '/HBNFavicon.webp',
+      shortcut: '/HBNFavicon.webp',
+      apple: '/HBNFavicon.webp',
     },
     title: {
       template: `%s | HBN24 News`,
