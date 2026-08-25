@@ -7,12 +7,13 @@ import { BsGraphUpArrow } from 'react-icons/bs';
 import { BiBriefcase } from 'react-icons/bi';
 import { FaBuilding } from 'react-icons/fa';
 
-export default function Education() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Education({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 // Fetch all news

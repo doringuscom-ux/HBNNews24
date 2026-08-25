@@ -8,12 +8,13 @@ import lfCircleImg from '../assets/lf-circel.png';
 import rhCircleImg from '../assets/rh-circel.png';
 import dhrmIconImg from '../assets/dhrmH.png';
 
-export default function Religion() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Religion({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 // Fetch religion specific news

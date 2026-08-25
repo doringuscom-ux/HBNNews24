@@ -8,12 +8,13 @@ import lifeStyleImg from '../assets/LifeStyle.webp';
 import lifeImg from '../assets/life.webp';
 import cloudImg from '../assets/cloud.webp';
 
-export default function Lifestyle() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Lifestyle({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 // Fetch lifestyle specific news

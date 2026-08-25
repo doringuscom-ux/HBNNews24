@@ -5,12 +5,13 @@ import { Pencil } from 'lucide-react';
 import { FaXTwitter, FaFacebookF, FaWhatsapp } from 'react-icons/fa6';
 import { BiWorld } from 'react-icons/bi';
 
-export default function International() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function International({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 const allRes = await fetch('/api/news');

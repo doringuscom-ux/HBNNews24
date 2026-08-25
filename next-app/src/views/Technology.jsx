@@ -6,12 +6,13 @@ import { FaXTwitter, FaFacebookF, FaWhatsapp, FaRobot } from 'react-icons/fa6';
 import { FaLaptopCode } from 'react-icons/fa';
 import { FaMicrochip } from 'react-icons/fa6';
 
-export default function Technology() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Technology({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 // Fetch technology specific news

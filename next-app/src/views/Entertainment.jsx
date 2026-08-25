@@ -6,12 +6,13 @@ import { FaXTwitter, FaFacebookF, FaWhatsapp } from 'react-icons/fa6';
 import { MdLocalMovies } from 'react-icons/md';
 import cinemaImg from '../assets/Cinema.webp';
 
-export default function Entertainment() {
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function Entertainment({ initialNewsData = [], initialLatestNewsData = [] }) {
+    const [newsData, setNewsData] = useState(initialNewsData);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNewsData);
+    const [loading, setLoading] = useState(!initialNewsData || initialNewsData.length === 0);
 
     useEffect(() => {
+        if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
                 // Fetch entertainment specific news
