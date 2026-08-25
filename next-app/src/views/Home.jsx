@@ -26,7 +26,6 @@ export default function Home({ initialNews, initialVideos }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 1. Instantly load from cache if available and no initial server props
                 if (!hasInitialData) {
                     const cachedNews = typeof window !== 'undefined' ? localStorage.getItem('hbn24_home_cache') : null;
                     const cachedVideos = typeof window !== 'undefined' ? localStorage.getItem('hbn24_video_cache') : null;
@@ -38,34 +37,34 @@ export default function Home({ initialNews, initialVideos }) {
                         setNews24Shorts(v.news24Shorts || []);
                         setLoading(false);
                     }
-                }
 
-                // 2. Refresh fresh data in the background
-                const [newsRes, videoRes] = await Promise.all([
-                    fetch('/api/news/home', { priority: 'low' }),
-                    fetch('/api/youtube', { priority: 'low' })
-                ]);
-                let newsData = await newsRes.json();
-                const videoData = await videoRes.json();
+                    // Fetch fresh data only if we don't have initial SSR data
+                    const [newsRes, videoRes] = await Promise.all([
+                        fetch('/api/news/home', { priority: 'low' }),
+                        fetch('/api/youtube', { priority: 'low' })
+                    ]);
+                    let newsData = await newsRes.json();
+                    const videoData = await videoRes.json();
 
-                if (newsData && (newsData.mixNews?.length || newsData.latestNews?.length)) {
-                    setNews(newsData);
-                    if (typeof window !== 'undefined') localStorage.setItem('hbn24_home_cache', JSON.stringify(newsData));
+                    if (newsData && (newsData.mixNews?.length || newsData.latestNews?.length)) {
+                        setNews(newsData);
+                        if (typeof window !== 'undefined') localStorage.setItem('hbn24_home_cache', JSON.stringify(newsData));
+                    }
+                    if (videoData && videoData.videos?.length) {
+                        setVideos(videoData.videos || []);
+                        setShorts(videoData.shorts || []);
+                        setNews24Shorts(videoData.news24Shorts || []);
+                        if (typeof window !== 'undefined') localStorage.setItem('hbn24_video_cache', JSON.stringify(videoData));
+                    }
+                    setLoading(false);
                 }
-                if (videoData && videoData.videos?.length) {
-                    setVideos(videoData.videos || []);
-                    setShorts(videoData.shorts || []);
-                    setNews24Shorts(videoData.news24Shorts || []);
-                    if (typeof window !== 'undefined') localStorage.setItem('hbn24_video_cache', JSON.stringify(videoData));
-                }
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching home data:", err);
                 setLoading(false);
             }
         };
         fetchData();
-    }, []);
+    }, [hasInitialData]);
 
 
     const [loadBelowFold, setLoadBelowFold] = useState(false);
