@@ -5,14 +5,15 @@ import { toJpeg } from 'html-to-image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ThumbsUp, MessageCircle, Share2, Bookmark, Pencil, Trash2 } from 'lucide-react';
+import optimizeImage from '@/utils/imageOptimizer';
 
-export default function SingleArticle() {
+export default function SingleArticle({ initialArticle }) {
     const { id } = useParams();
     const navigate = useRouter();
-    const [article, setArticle] = useState(null);
+    const [article, setArticle] = useState(initialArticle || null);
     const [authorProfileImage, setAuthorProfileImage] = useState('');
     const [latestNews, setLatestNews] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!initialArticle);
     const [isExpanded, setIsExpanded] = useState(false);
 
     // New states for interaction
@@ -108,29 +109,30 @@ export default function SingleArticle() {
         // Fetch article and latest news
         const fetchData = async () => {
             try {
-                // Fetch specific article with retry logic for Vercel cold starts
-                let articleRes;
-                let retries = 2;
-                while (retries >= 0) {
-                    try {
-                        articleRes = await fetch(`/api/news/article/${id}`);
-                        if (articleRes.ok) break;
-                    } catch (e) {
-                        if (retries === 0) throw e;
+                // If we don't have initialArticle, fetch it client-side
+                if (!initialArticle) {
+                    let articleRes;
+                    let retries = 2;
+                    while (retries >= 0) {
+                        try {
+                            articleRes = await fetch(`/api/news/article/${id}`);
+                            if (articleRes.ok) break;
+                        } catch (e) {
+                            if (retries === 0) throw e;
+                        }
+                        if (retries > 0) await new Promise(r => setTimeout(r, 1500));
+                        retries--;
                     }
-                    if (retries > 0) await new Promise(r => setTimeout(r, 1500)); // wait 1.5s before retry
-                    retries--;
-                }
-                
-                if (!articleRes || !articleRes.ok) {
-                    throw new Error("API Failed");
-                }
+                    
+                    if (!articleRes || !articleRes.ok) throw new Error("API Failed");
 
-                const articleData = await articleRes.json();
+                    const articleData = await articleRes.json();
 
-                if (articleData.redirect) {
-                    navigate(`/news/${articleData.newSlug}`, { replace: true });
-                    return;
+                    if (articleData.redirect) {
+                        navigate(`/news/${articleData.newSlug}`, { replace: true });
+                        return;
+                    }
+                    setArticle(articleData);
                 }
 
                 // Fetch latest news for sidebar (also with retry)
@@ -149,51 +151,35 @@ export default function SingleArticle() {
                 
                 const newsData = newsRes && newsRes.ok ? await newsRes.json() : [];
 
-                // Optimize Cloudinary images
-                const optimizeCloudinaryUrl = (url) => {
-                    if (!url || typeof url !== 'string') return url;
-                    if (url.includes('cloudinary.com') && url.includes('/upload/') && !url.includes('/upload/q_auto')) {
-                        return url.replace('/upload/', '/upload/q_auto,f_auto,w_800/');
-                    }
-                    return url;
-                };
-
-                articleData.image = optimizeCloudinaryUrl(articleData.image);
-                let optimizedNewsData = newsData.map(n => ({ ...n, image: optimizeCloudinaryUrl(n.image) }));
-
-                setArticle(articleData);
-                setLikes(articleData.likes || 0);
-
-                // Check if user already liked
-                const likedArticles = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
-                if (likedArticles.includes(articleData._id)) {
-                    setHasLiked(true);
-                } else {
-                    setHasLiked(false);
-                }
-
-                const mySavedComments = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
-                setMyComments(mySavedComments);
-
-                const adminToken = typeof window !== 'undefined' ? null : null;
-                if (adminToken) {
-                    setIsAdmin(true);
-                }
-
-                // Filter out the current article from sidebar
-                setLatestNews(optimizedNewsData.filter(n => n._id !== articleData._id).slice(0, 8));
-
-                // Fetch comments
-                const commentsRes = await fetch(`/api/news/${articleData._id}/comments`);
-                if (commentsRes.ok) {
-                    const commentsData = await commentsRes.json();
-                    setComments(commentsData);
-                }
-
+                setLatestNews(newsData);
                 setLoading(false);
+
+                // Fetch likes/comments based on loaded article
+                if (article || initialArticle) {
+                    const activeArticle = article || initialArticle;
+                    setLikes(activeArticle.likes || 0);
+
+                    // Check if user already liked
+                    const likedArticles = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
+                    if (likedArticles.includes(activeArticle._id)) {
+                        setHasLiked(true);
+                    } else {
+                        setHasLiked(false);
+                    }
+
+                    const mySavedComments = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
+                    setMyComments(mySavedComments);
+
+                    // Fetch comments
+                    const commentsRes = await fetch(`/api/news/${activeArticle._id}/comments`);
+                    if (commentsRes.ok) {
+                        const commentsData = await commentsRes.json();
+                        setComments(commentsData);
+                    }
+                }
             } catch (error) {
-                console.error("Error fetching article:", error);
-                setArticle({ message: 'Server timeout. Please refresh.' }); // set dummy message so it shows error
+                console.error("Error fetching data:", error);
+                if (!initialArticle) setArticle({ message: 'Server timeout. Please refresh.' });
                 setLoading(false);
             }
         };
@@ -402,7 +388,7 @@ export default function SingleArticle() {
                             return `
                                 <a href="${linkUrl}" class="flex-none w-[280px] sm:w-[320px] flex gap-3 snap-start border-r border-gray-200 pr-4 ${isLast ? 'border-r-0 pr-0' : ''}" style="text-decoration: none !important;">
                                     <div class="w-[120px] sm:w-[140px] h-[90px] sm:h-[100px] flex-shrink-0 overflow-hidden bg-gray-50 rounded">
-                                        <img src="${related.image}" alt="News" class="w-full h-full object-contain" />
+                                        <img src="${optimizeImage(related.image, 300)}" alt="News" class="w-full h-full object-contain" />
                                     </div>
                                     <div class="flex-1">
                                         <span class="font-bold hover:text-[#da0000] transition-colors block" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #111827 !important; font-size: 15px !important; line-height: 1.3 !important;">
@@ -473,7 +459,7 @@ export default function SingleArticle() {
 
                 <div className="w-full flex flex-col group cursor-pointer">
                     <div className="w-full bg-gray-100 overflow-hidden">
-                        <img src={article.image} alt={article.imageAlt || article.title} className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
+                        <img src={optimizeImage(article.image, 800)} alt={article.imageAlt || article.title} className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
                     </div>
                     <p className="text-sm text-gray-500 py-2 px-1 border-b border-gray-200">
                         {article.imageAlt || `${article.title} (Photo)`}
@@ -698,7 +684,7 @@ export default function SingleArticle() {
                             <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 last:border-0">
                                 <div className="relative w-[110px] h-[75px] flex-shrink-0 overflow-hidden rounded-[4px]">
                                     <img
-                                        src={news.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
+                                        src={optimizeImage(news.image, 300) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
                                         alt={news.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />

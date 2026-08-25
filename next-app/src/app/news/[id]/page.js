@@ -40,6 +40,28 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function Page() {
-  return <SingleArticle />;
+export default async function Page({ params }) {
+  const { id } = await params;
+  let initialArticle = null;
+  
+  try {
+    await connectToDatabase();
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        initialArticle = await News.findById(id).lean();
+    }
+    if (!initialArticle) {
+        initialArticle = await News.findOne({ slug: id }).lean();
+    }
+    
+    if (initialArticle) {
+        // Convert MongoDB ObjectId and Dates to strings to pass safely to Client Component
+        initialArticle._id = initialArticle._id.toString();
+        if (initialArticle.createdAt) initialArticle.createdAt = initialArticle.createdAt.toString();
+        if (initialArticle.updatedAt) initialArticle.updatedAt = initialArticle.updatedAt.toString();
+    }
+  } catch (error) {
+    console.error('Error fetching initial article:', error);
+  }
+
+  return <SingleArticle initialArticle={initialArticle} />;
 }
