@@ -65,6 +65,7 @@ export default function FeaturedNews({ news = [] }) {
                                         src={featured.image} 
                                         alt={featured.title || "Featured"} 
                                         fill
+                                        unoptimized={true}
                                         priority={index === 0}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"

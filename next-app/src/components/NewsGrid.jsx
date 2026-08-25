@@ -20,6 +20,7 @@ export default function NewsGrid({ news = [] }) {
                             alt={item.title || "News"}
                             width={140}
                             height={90}
+                            unoptimized={true}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                         {/* Icons */}

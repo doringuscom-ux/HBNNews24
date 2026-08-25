@@ -305,6 +305,7 @@ export default function AajTakNavbar() {
                         width={150}
                         height={60}
                         priority
+                        unoptimized={true}
                         className="h-full w-auto object-contain rounded-[4px] scale-[1.6] group-hover:scale-[1.7] transition-transform duration-300 transform-gpu"
                         style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
                     />
