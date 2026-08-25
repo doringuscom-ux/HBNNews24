@@ -5,7 +5,7 @@ import { toJpeg } from 'html-to-image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ThumbsUp, MessageCircle, Share2, Bookmark, Pencil, Trash2 } from 'lucide-react';
-import optimizeImage from '@/utils/imageOptimizer';
+import { optimizeImage } from '@/utils/imageOptimizer';
 
 export default function SingleArticle({ initialArticle }) {
     const { id } = useParams();
