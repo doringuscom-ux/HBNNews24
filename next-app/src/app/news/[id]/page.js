@@ -1,10 +1,20 @@
 import SingleArticle from '@/views/SingleArticle';
+import connectToDatabase from '@/lib/mongodb';
+import News from '@/models/News';
+import mongoose from 'mongoose';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {
-    const res = await fetch(`http://localhost:3000/api/news/article/${id}`, { next: { revalidate: 60 } });
-    const data = await res.json();
+    await connectToDatabase();
+    
+    let data;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        data = await News.findById(id).lean();
+    }
+    if (!data) {
+        data = await News.findOne({ slug: id }).lean();
+    }
     
     if (data && data._id) {
       return {
@@ -13,7 +23,7 @@ export async function generateMetadata({ params }) {
         keywords: data.metaKeywords || '',
         robots: data.robots || 'index, follow',
         alternates: {
-          canonical: `/news/${data.slug || data._id || id}`,
+          canonical: `https://hbnnews24.com/news/${data.slug || data._id || id}`,
         },
         openGraph: {
           title: data.metaTitle || data.title,
