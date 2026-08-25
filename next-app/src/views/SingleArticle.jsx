@@ -108,8 +108,24 @@ export default function SingleArticle() {
         // Fetch article and latest news
         const fetchData = async () => {
             try {
-                // Fetch specific article
-                const articleRes = await fetch(`/api/news/article/${id}`);
+                // Fetch specific article with retry logic for Vercel cold starts
+                let articleRes;
+                let retries = 2;
+                while (retries >= 0) {
+                    try {
+                        articleRes = await fetch(`/api/news/article/${id}`);
+                        if (articleRes.ok) break;
+                    } catch (e) {
+                        if (retries === 0) throw e;
+                    }
+                    if (retries > 0) await new Promise(r => setTimeout(r, 1500)); // wait 1.5s before retry
+                    retries--;
+                }
+                
+                if (!articleRes || !articleRes.ok) {
+                    throw new Error("API Failed");
+                }
+
                 const articleData = await articleRes.json();
 
                 if (articleData.redirect) {
@@ -117,9 +133,21 @@ export default function SingleArticle() {
                     return;
                 }
 
-                // Fetch latest news for sidebar
-                const newsRes = await fetch(`/api/news`);
-                const newsData = await newsRes.json();
+                // Fetch latest news for sidebar (also with retry)
+                let newsRes;
+                retries = 2;
+                while (retries >= 0) {
+                    try {
+                        newsRes = await fetch(`/api/news`);
+                        if (newsRes.ok) break;
+                    } catch (e) {
+                        if (retries === 0) throw e;
+                    }
+                    if (retries > 0) await new Promise(r => setTimeout(r, 1000));
+                    retries--;
+                }
+                
+                const newsData = newsRes && newsRes.ok ? await newsRes.json() : [];
 
                 // Optimize Cloudinary images
                 const optimizeCloudinaryUrl = (url) => {
@@ -165,6 +193,7 @@ export default function SingleArticle() {
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching article:", error);
+                setArticle({ message: 'Server timeout. Please refresh.' }); // set dummy message so it shows error
                 setLoading(false);
             }
         };
@@ -318,6 +347,16 @@ export default function SingleArticle() {
     }
 
     if (!article || article.message) {
+        if (article?.message?.includes('timeout')) {
+            return (
+                <div className="text-center py-20">
+                    <p className="text-xl font-bold text-red-600 mb-4">Server loading timeout.</p>
+                    <button onClick={() => window.location.reload()} className="bg-[#da0000] text-white px-4 py-2 rounded">
+                        Refresh Page
+                    </button>
+                </div>
+            );
+        }
         return <div className="text-center py-20 text-xl font-bold text-red-600">Article not found (URL me shayad error hai)</div>;
     }
 
