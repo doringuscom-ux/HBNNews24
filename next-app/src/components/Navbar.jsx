@@ -55,7 +55,7 @@ export default function AajTakNavbar() {
                 script.async = true;
                 script.defer = true;
                 document.body.appendChild(script);
-            }, 8000); // Wait 8 seconds to completely bypass Lighthouse TBT measurement
+            }, 2500); // Wait 2.5 seconds after mount to prevent blocking main thread
         }
 
         // Auto-prompt or re-verify notifications
@@ -305,7 +305,6 @@ export default function AajTakNavbar() {
                         width={150}
                         height={60}
                         priority
-                        unoptimized={true}
                         className="h-full w-auto object-contain rounded-[4px] scale-[1.6] group-hover:scale-[1.7] transition-transform duration-300 transform-gpu"
                         style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
                     />

@@ -62,12 +62,10 @@ export default function FeaturedNews({ news = [] }) {
                             <Link href={`/news/${featured.slug || featured._id}`} className="block w-full cursor-pointer">
                                 <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
                                     <Image 
-                                        src={optimizeImage(featured.image, 800)} 
+                                        src={featured.image} 
                                         alt={featured.title || "Featured"} 
                                         fill
-                                        unoptimized={true}
                                         priority={index === 0}
-                                        fetchPriority={index === 0 ? "high" : "auto"}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />

@@ -26,7 +26,7 @@ export default function BreakingNews({ news = [] }) {
         if (breakingNewsItems.length <= 1) return;
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % breakingNewsItems.length);
-        }, 5000);
+        }, 3000);
         return () => clearInterval(interval);
     }, [breakingNewsItems.length]);
 

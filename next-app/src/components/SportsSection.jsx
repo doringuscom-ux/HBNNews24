@@ -7,7 +7,7 @@ export default function SportsSection({ news = [] }) {
     const textNews = news.slice(3, 6).map(n => ({ title: n.title, id: n.slug || n._id }));
     
     const imageNews = news.slice(0, 3).map(n => ({
-        image: optimizeImage(n.image, 400),
+        image: n.image,
         title: n.title,
         id: n.slug || n._id
     }));
