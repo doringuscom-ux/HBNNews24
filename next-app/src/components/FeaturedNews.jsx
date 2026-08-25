@@ -67,6 +67,7 @@ export default function FeaturedNews({ news = [] }) {
                                         fill
                                         unoptimized={true}
                                         priority={index === 0}
+                                        fetchPriority={index === 0 ? "high" : "auto"}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />
