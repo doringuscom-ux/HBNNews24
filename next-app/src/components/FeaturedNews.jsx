@@ -70,12 +70,12 @@ export default function FeaturedNews({ news = [] }) {
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />
                                 </div>
-                                <div className="p-6 bg-gradient-to-b from-white to-gray-50/50">
-                                    <h1 className="text-[24px] md:text-[34px] font-black text-[#111] mb-4 group-hover:text-[#da0000] transition-colors leading-[1.25]">
+                                <div className="p-5 bg-gradient-to-b from-white to-gray-50/50">
+                                    <h2 className="text-[22px] md:text-[30px] font-black text-[#111] mb-2 group-hover:text-[#da0000] transition-colors leading-[1.3] line-clamp-1">
                                         {featured.title}
-                                    </h1>
-                                    <div className="w-12 h-1.5 bg-[#da0000] mb-4 rounded-full"></div>
-                                    <p className="text-gray-600 text-[17px] leading-relaxed line-clamp-2">
+                                    </h2>
+                                    <div className="w-10 h-1 bg-[#da0000] mb-3 rounded-full"></div>
+                                    <p className="text-gray-600 text-[15px] leading-relaxed line-clamp-1">
                                         {displayDesc}
                                     </p>
                                 </div>

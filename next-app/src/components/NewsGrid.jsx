@@ -36,9 +36,9 @@ export default function NewsGrid({ news = [] }) {
                     </div>
                     {/* Content */}
                     <div className="flex-1 pt-1">
-                        <h2 className="text-[16px] font-bold text-[#222] leading-[1.4] group-hover:text-[#da0000] transition-colors line-clamp-3">
+                        <h3 className="text-[16px] font-bold text-[#222] leading-[1.4] group-hover:text-[#da0000] transition-colors line-clamp-3">
                             {item.title}
-                        </h2>
+                        </h3>
                     </div>
                 </Link>
             ))}

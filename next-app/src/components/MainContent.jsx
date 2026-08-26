@@ -11,9 +11,21 @@ export default function MainContent({ mixNews = [], entertainmentNews = [], vide
             {/* Upper Section: Featured + NewsGrid on left, Sidebar on right */}
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left Column (70%) */}
-                <div className="w-full lg:w-[70%] flex flex-col gap-8">
+                <div className="w-full lg:w-[70%] flex flex-col gap-6">
                     <FeaturedNews news={featuredNews} />
-                    <div className="w-full h-[1px] bg-gray-200"></div>
+
+                    {/* Header: Aaj Ki Taza News (Below Featured News) */}
+                    <div className="flex justify-between items-center pb-2 border-b-2 border-gray-100 mt-1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-0 h-0 border-x-[5px] border-x-transparent border-t-[7px] border-t-[#da0000]"></div>
+                            <h1 className="text-black text-[22px] font-black leading-none tracking-tight">
+                                Aaj Ki Taza News
+                            </h1>
+
+                            <p className='text-gray-400 font-normal text-[13px] md:text-[14px] ml-1.5'>Get Daily updates & Latest Breaking News in Hindi at HBN News 24</p>
+                        </div>
+                    </div>
+
                     <NewsGrid news={mixNews} />
                 </div>
 

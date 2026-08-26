@@ -4,13 +4,13 @@ import Link from 'next/link';
 
 const Footer = () => {
     const footerLinks = [
-        { name: 'होम', path: '/' },
-        { name: 'मनोरंजन', path: '/entertainment' },
-        { name: 'धर्म', path: '/religion' },
-        { name: 'खेल', path: '/sports' },
-        { name: 'लाइफस्टाइल', path: '/lifestyle' },
-        { name: 'बिजनेस', path: '/business' },
-        { name: 'टेक्नोलॉजी', path: '/technology' },
+        { name: 'Home', path: '/' },
+        { name: 'Entertainment', path: '/entertainment' },
+        { name: 'Religion', path: '/religion' },
+        { name: 'Sports', path: '/sports' },
+        { name: 'Lifestyle', path: '/lifestyle' },
+        { name: 'Business', path: '/business' },
+        { name: 'Technology', path: '/technology' },
         { name: 'About Us', path: '/about' },
         { name: 'Contact Us', path: '/contact' },
         { name: 'Privacy Policy', path: '/privacy-policy' },
