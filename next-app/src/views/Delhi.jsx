@@ -1,9 +1,6 @@
- 'use client';
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Pencil } from 'lucide-react';
-import { FaXTwitter, FaFacebookF, FaWhatsapp } from 'react-icons/fa6';
-import { BiWorld } from 'react-icons/bi';
 
 export default function Delhi({ initialNewsData = [], initialLatestNewsData = [] }) {
     const [newsData, setNewsData] = useState(initialNewsData);
@@ -38,7 +35,7 @@ export default function Delhi({ initialNewsData = [], initialLatestNewsData = []
             }
         };
         fetchNews();
-    }, []);
+    }, [initialNewsData]);
 
     const mainNews = newsData[0] || { title: 'Loading...', image: '' };
     const topSideNews = newsData[1] || { title: 'Loading...', image: '' };
@@ -50,25 +47,42 @@ export default function Delhi({ initialNewsData = [], initialLatestNewsData = []
 
     return (
         <div className="w-full min-h-screen bg-[#f3f4f6]">
-            <div className="w-full min-h-[120px] md:h-[160px] py-4 md:py-0 relative overflow-hidden flex items-center px-4 md:px-10" style={{ background: 'linear-gradient(to right, #4c1d95, #6d28d9, #8b5cf6)' }}>
-                <div className="w-full max-w-[1270px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 md:pl-[120px] gap-4 md:gap-0">
-                    <div className="flex flex-col justify-center w-full md:w-auto">
-                        <div className="flex items-center gap-2 mb-3 md:mb-1.5">
-                            <span className="text-white text-[11px] font-bold px-2 py-0.5 rounded-[2px] leading-tight shadow-sm" style={{ border: '1px solid white' }}>Hindi News</span>
-                            <span className="text-white text-[13px] font-bold">/ दिल्ली</span>
+            {/* Header Banner */}
+            <div className="w-full relative overflow-hidden py-6 md:py-8 px-4 md:px-10 border-b-2 border-[#da0000]/30 shadow-md" style={{ background: 'linear-gradient(135deg, #0d0d0d 0%, #1c0a0a 45%, #660808 100%)' }}>
+                {/* Subtle decorative background glow */}
+                <div className="absolute -left-20 -top-20 w-72 h-72 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute right-0 bottom-0 w-96 h-96 bg-red-700/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="w-full max-w-[1270px] mx-auto flex flex-row items-center justify-start relative z-10 gap-5 sm:gap-8">
+                    {/* Left: Graphic Image with soft ambient glow */}
+                    <div className="flex items-center justify-center flex-shrink-0 p-2 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg">
+                        <img 
+                            src="https://res.cloudinary.com/dsd6oj52y/image/upload/v1787727118/ChatGPT_Image_Aug_26_2026_12_21_48_PM.png" 
+                            alt="Delhi News Map" 
+                            className="h-[80px] sm:h-[105px] md:h-[125px] w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(255,255,255,0.25)] hover:scale-105 transition-transform duration-300"
+                        />
+                    </div>
+
+                    {/* Content: Text & H1 */}
+                    <div className="flex flex-col justify-center flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="bg-[#da0000] text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded shadow-sm uppercase tracking-wider">
+                                Hindi News
+                            </span>
+                            <span className="text-gray-300 text-[13px] font-bold">
+                                / दिल्ली
+                            </span>
                         </div>
-                        <div className="flex items-center justify-between w-full md:w-auto">
-                            <div className="flex items-center gap-3">
-                                <BiWorld className="text-white w-10 h-10 md:hidden" />
-                                <div className="hidden md:flex bg-transparent items-center justify-center border-2 border-white rounded-full p-2">
-                                    <BiWorld className="text-white w-[30px] h-[30px]" />
-                                </div>
-                                <h1 className="text-white text-[32px] md:text-[46px] font-black tracking-wide drop-shadow-md" style={{ fontFamily: '"Mukta", sans-serif' }}>दिल्ली</h1>
-                            </div>
-                        </div>
+                        <h1 className="text-white text-[26px] sm:text-[34px] md:text-[42px] font-black tracking-tight drop-shadow-md leading-[1.2]" style={{ fontFamily: '"Mukta", sans-serif' }}>
+                            Delhi Ki Taza News
+                        </h1>
+                        <p className="text-gray-300 text-[13px] sm:text-[14px] md:text-[15px] font-medium mt-1.5 drop-shadow-sm max-w-2xl">
+                            Get Latest Delhi Breaking News in Hindi at HBN News 24
+                        </p>
                     </div>
                 </div>
             </div>
+
             <div className="w-full max-w-[1270px] mx-auto px-4 py-6 md:py-10">
                 <div className="flex flex-col lg:flex-row gap-6 mt-2">
                     <div className="w-full lg:w-[70%] flex flex-col gap-4">
@@ -100,6 +114,19 @@ export default function Delhi({ initialNewsData = [], initialLatestNewsData = []
                                 </Link>
                             ))}
                         </div>
+                        <div className="flex flex-col gap-4 mt-6">
+                            {newsData.slice(5).map((news, idx) => (
+                                <Link href={`/news/${news.slug || news._id}`} key={idx} className="bg-white p-4 shadow-sm border border-gray-200 flex flex-col sm:flex-row gap-4 group cursor-pointer">
+                                    <div className="w-full sm:w-[220px] aspect-[16/9] overflow-hidden flex-shrink-0 relative">
+                                        {news.image && <img src={news.image} alt="news" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />}
+                                    </div>
+                                    <div className="flex-1 flex flex-col justify-center">
+                                        <h3 className="text-black text-[18px] font-bold leading-[1.4] group-hover:text-[#d91f26] transition-colors mb-2">{news.title}</h3>
+                                        <p className="text-gray-600 text-sm line-clamp-2">{news.description || (news.content ? news.content.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '')}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                     <div className="w-full lg:w-[30%] bg-white p-5 shadow-sm border border-gray-200 h-fit lg:sticky lg:top-4">
                         <div className="flex items-center gap-2 mb-4 border-b-[2px] border-gray-100 pb-2">
@@ -109,11 +136,13 @@ export default function Delhi({ initialNewsData = [], initialLatestNewsData = []
                         <div className="flex flex-col">
                             {latestNewsData.slice(0, 15).map((news, idx) => (
                                 <Link href={`/news/${news.slug || news._id}`} key={idx} className={`flex gap-3 py-3.5 group cursor-pointer ${idx !== Math.min(latestNewsData.length, 15) - 1 ? 'border-b border-gray-100' : ''}`}>
-                                    <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px]">
-                                        {news.image && <img src={news.image} alt="latest" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-300" />}
+                                    <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px] bg-gray-100">
+                                        <img src={news.image} alt="latest" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1">
-                                        <h4 className="text-[14px] font-medium leading-[1.4] text-gray-800 group-hover:text-[#d91f26] transition-colors line-clamp-3">{news.title}</h4>
+                                        <h4 className="text-[14px] font-medium leading-[1.4] text-gray-800 group-hover:text-[#d91f26] transition-colors line-clamp-3">
+                                            {news.title}
+                                        </h4>
                                     </div>
                                 </Link>
                             ))}
@@ -124,7 +153,3 @@ export default function Delhi({ initialNewsData = [], initialLatestNewsData = []
         </div>
     );
 }
-
-
-
-
