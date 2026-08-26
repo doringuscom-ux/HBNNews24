@@ -63,15 +63,74 @@ export async function generateMetadata() {
 
 export default async function RootLayout({ children }) {
   let googleAnalyticsId = null;
+  let siteTitle = 'HBN News 24';
+  let metaDescription = 'Latest Hindi News, Breaking News, National, Punjab, Haryana, Sports, and Entertainment updates.';
+  
   try {
     const seo = await getGlobalSeo();
-    if (seo && seo.googleAnalyticsId) {
-      googleAnalyticsId = seo.googleAnalyticsId;
+    if (seo) {
+      if (seo.googleAnalyticsId) googleAnalyticsId = seo.googleAnalyticsId;
+      if (seo.siteTitle) siteTitle = seo.siteTitle;
+      if (seo.metaDescription) metaDescription = seo.metaDescription;
     }
   } catch (e) {}
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsMediaOrganization',
+    name: 'HBN News 24',
+    url: siteUrl,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${siteUrl}/favicon.png`,
+      width: 512,
+      height: 512
+    },
+    sameAs: [
+      'https://x.com/HbnNews24',
+      'https://www.youtube.com/@hbnnews24x7'
+    ]
+  };
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteTitle,
+    url: siteUrl,
+    description: metaDescription,
+    publisher: {
+      '@type': 'NewsMediaOrganization',
+      name: 'HBN News 24',
+      url: siteUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/favicon.png`
+      }
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteUrl}/search?q={search_term_string}`
+      },
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
   return (
     <html lang="hi" suppressHydrationWarning className={`${notoDevanagari.variable} ${yatraOne.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-white">
         <ClientLayout googleAnalyticsId={googleAnalyticsId}>
           {children}
@@ -80,4 +139,3 @@ export default async function RootLayout({ children }) {
     </html>
   );
 }
-
