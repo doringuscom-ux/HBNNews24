@@ -342,6 +342,9 @@ export default function AdminDashboard() {
     const [isSavingPoll, setIsSavingPoll] = useState(false);
     const [isPollActive, setIsPollActive] = useState(false);
 
+    const [savedLocalDraft, setSavedLocalDraft] = useState(null);
+    const [newsStatusFilter, setNewsStatusFilter] = useState('published'); // 'published', 'draft', 'all'
+
     const [formData, setFormData] = useState({
         title: '',
         slug: '',
@@ -359,6 +362,32 @@ export default function AdminDashboard() {
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
+
+    // Auto-save draft to local storage while typing
+    useEffect(() => {
+        if (isModalOpen && !editingId) {
+            if (formData.title?.trim() || formData.content?.trim()) {
+                try {
+                    localStorage.setItem('hbn_news_autosave_draft', JSON.stringify({
+                        formData,
+                        savedAt: new Date().toISOString()
+                    }));
+                } catch (e) {}
+            }
+        }
+    }, [formData, isModalOpen, editingId]);
+
+    // Warn before closing tab if unsaved changes exist
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isModalOpen && (formData.title?.trim() || formData.content?.trim())) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isModalOpen, formData.title, formData.content]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -1234,7 +1263,9 @@ export default function AdminDashboard() {
             }
 
             if (res.ok) {
-                alert(editingId ? 'News article updated successfully!' : 'News article created successfully!');
+                if (typeof window !== 'undefined') localStorage.removeItem('hbn_news_autosave_draft');
+                setSavedLocalDraft(null);
+                alert(editingId ? 'News article updated successfully!' : (submitStatusRef.current === 'draft' ? 'Draft saved successfully!' : 'News article published successfully!'));
                 setIsModalOpen(false);
                 setEditingId(null);
                 setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
@@ -1338,6 +1369,7 @@ export default function AdminDashboard() {
         setEditingId(item._id);
         setIsModalOpen(true);
     };
+
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this news item?')) {
             const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
@@ -1361,7 +1393,34 @@ export default function AdminDashboard() {
     const openCreateModal = () => {
         setEditingId(null);
         setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
+        try {
+            const draftStr = typeof window !== 'undefined' ? localStorage.getItem('hbn_news_autosave_draft') : null;
+            if (draftStr) {
+                const parsed = JSON.parse(draftStr);
+                if (parsed?.formData && (parsed.formData.title?.trim() || parsed.formData.content?.trim())) {
+                    setSavedLocalDraft(parsed);
+                } else {
+                    setSavedLocalDraft(null);
+                }
+            } else {
+                setSavedLocalDraft(null);
+            }
+        } catch (e) {
+            setSavedLocalDraft(null);
+        }
         setIsModalOpen(true);
+    };
+
+    const handleRestoreDraft = () => {
+        if (savedLocalDraft?.formData) {
+            setFormData(savedLocalDraft.formData);
+            setSavedLocalDraft(null);
+        }
+    };
+
+    const handleDiscardDraft = () => {
+        if (typeof window !== 'undefined') localStorage.removeItem('hbn_news_autosave_draft');
+        setSavedLocalDraft(null);
     };
 
     const handleImageSelect = (e) => {
@@ -1420,11 +1479,23 @@ export default function AdminDashboard() {
     };
 
     // Derived State
+    const draftNewsCount = news.filter(item => item.status === 'draft').length;
+    const publishedNewsCount = news.filter(item => item.status !== 'draft').length;
+
     const filteredNews = news.filter(item => {
         const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
         const itemCats = Array.isArray(item.category) ? item.category : (item.category ? [item.category] : []);
         const matchesCategory = filterCategory === 'all' || itemCats.includes(filterCategory);
-        const matchesView = currentView === 'all' || (currentView === 'epaper' && item.isEpaper);
+        const isDraft = item.status === 'draft';
+        
+        let matchesView = true;
+        if (currentView === 'all') {
+            matchesView = newsStatusFilter === 'draft' ? isDraft : (newsStatusFilter === 'published' ? !isDraft : true);
+        } else if (currentView === 'drafts') {
+            matchesView = isDraft;
+        } else if (currentView === 'epaper') {
+            matchesView = item.isEpaper;
+        }
         return matchesSearch && matchesCategory && matchesView;
     });
 
@@ -1434,7 +1505,7 @@ export default function AdminDashboard() {
     // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchQuery, filterCategory]);
+    }, [searchQuery, filterCategory, newsStatusFilter, currentView]);
 
     const categories = [
         { id: 'all', label: 'All' },
@@ -1443,7 +1514,7 @@ export default function AdminDashboard() {
         { id: 'entertainment', label: 'मनोरंजन' },
         { id: 'sports', label: 'खेल' },
         { id: 'religion', label: 'धर्म' },
-        { id: 'lifestyle', label: 'लाइफस्टाइल' },
+        { id: 'lifestyle', label: 'लाइਫस्टाइल' },
         { id: 'technology', label: 'टेक्नोलॉजी' },
         { id: 'business', label: 'बिज़नेस' },
         { id: 'national', label: 'राष्ट्रीय' },
@@ -1492,10 +1563,28 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex-1 py-6 flex flex-col gap-2 overflow-y-auto">
                     <button
-                        onClick={() => setCurrentView('all')}
-                        className={`px-6 py-3 border-l-4 flex items-center gap-3 font-medium transition-colors text-left ${currentView === 'all' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                        onClick={() => { setCurrentView('all'); setNewsStatusFilter('published'); }}
+                        className={`px-6 py-3 border-l-4 flex items-center justify-between font-medium transition-colors text-left ${currentView === 'all' && newsStatusFilter !== 'draft' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
                     >
-                        <LayoutDashboard size={20} className={currentView === 'all' ? 'text-red-500' : ''} /> All News
+                        <div className="flex items-center gap-3">
+                            <LayoutDashboard size={20} className={currentView === 'all' && newsStatusFilter !== 'draft' ? 'text-red-500' : ''} /> Published News
+                        </div>
+                        <span className="text-xs bg-gray-800 text-gray-300 font-bold px-2 py-0.5 rounded-full">
+                            {publishedNewsCount}
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => { setCurrentView('drafts'); setNewsStatusFilter('draft'); }}
+                        className={`px-6 py-3 border-l-4 flex items-center justify-between font-medium transition-colors text-left ${currentView === 'drafts' || (currentView === 'all' && newsStatusFilter === 'draft') ? 'bg-amber-500/10 border-amber-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                    >
+                        <div className="flex items-center gap-3">
+                            <FileText size={20} className={currentView === 'drafts' || (currentView === 'all' && newsStatusFilter === 'draft') ? 'text-amber-500' : ''} /> Drafts (ਡਰਾਫਟ)
+                        </div>
+                        {draftNewsCount > 0 && (
+                            <span className="text-xs bg-amber-500 text-black font-black px-2 py-0.5 rounded-full animate-pulse">
+                                {draftNewsCount}
+                            </span>
+                        )}
                     </button>
                     <button
                         onClick={() => setCurrentView('epaper')}
@@ -2471,6 +2560,29 @@ export default function AdminDashboard() {
                         <>
                             {/* Stats & Filters */}
                             <div className="mb-6 flex flex-col gap-4">
+                                {/* Top Status Filter Buttons */}
+                                <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider pl-2">Status Filter:</span>
+                                    <button
+                                        onClick={() => { setNewsStatusFilter('published'); if (currentView === 'drafts') setCurrentView('all'); }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${newsStatusFilter === 'published' && currentView !== 'drafts' ? 'bg-red-600 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'}`}
+                                    >
+                                        Published ({publishedNewsCount})
+                                    </button>
+                                    <button
+                                        onClick={() => { setNewsStatusFilter('draft'); setCurrentView('drafts'); }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${newsStatusFilter === 'draft' || currentView === 'drafts' ? 'bg-amber-500 text-black shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'}`}
+                                    >
+                                        Drafts (ਡਰਾਫਟ) {draftNewsCount > 0 && <span className="bg-black text-amber-400 text-xs px-2 py-0.5 rounded-full font-black">{draftNewsCount}</span>}
+                                    </button>
+                                    <button
+                                        onClick={() => { setNewsStatusFilter('all'); if (currentView === 'drafts') setCurrentView('all'); }}
+                                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${newsStatusFilter === 'all' && currentView !== 'drafts' ? 'bg-gray-900 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'}`}
+                                    >
+                                        Show All ({news.length})
+                                    </button>
+                                </div>
+
                                 <div className="flex flex-wrap gap-2">
                                     {categories.map(cat => (
                                         <button
@@ -2513,11 +2625,18 @@ export default function AdminDashboard() {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <div className="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-red-700 transition-colors">{item.title}</div>
-                                                            {item.isEpaper && (
-                                                                <span className="inline-block mt-1 text-[10px] bg-red-100 text-red-800 border border-red-200 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                                                                    Active on E-Paper
-                                                                </span>
-                                                            )}
+                                                            <div className="flex items-center gap-2 mt-1">
+                                                                {item.status === 'draft' && (
+                                                                    <span className="inline-block text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded font-black uppercase tracking-wider">
+                                                                        📝 DRAFT (ਡਰਾਫਟ)
+                                                                    </span>
+                                                                )}
+                                                                {item.isEpaper && (
+                                                                    <span className="inline-block text-[10px] bg-red-100 text-red-800 border border-red-200 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                                                                        Active on E-Paper
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap">
                                                             <span className="px-2.5 py-1 inline-flex text-[11px] leading-5 font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100 capitalize">
@@ -2664,6 +2783,37 @@ export default function AdminDashboard() {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 lg:pt-6">
+                            {/* Unsaved Local Draft Notification Banner */}
+                            {savedLocalDraft && !editingId && (
+                                <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-fadeIn">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl flex-shrink-0">📝</span>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-amber-900">Unsaved Local Draft Found (ਅਧੂਰੀ ਖ਼ਬਰ ਮਿਲੀ ਹੈ)</h4>
+                                            <p className="text-xs text-amber-700 font-medium">
+                                                We detected an unfinished article draft saved on this browser from {savedLocalDraft.savedAt ? new Date(savedLocalDraft.savedAt).toLocaleTimeString() : 'earlier'}.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 w-full sm:w-auto flex-shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={handleRestoreDraft}
+                                            className="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm cursor-pointer"
+                                        >
+                                            Restore Draft (ਰੀਸਟੋਰ ਕਰੋ)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleDiscardDraft}
+                                            className="flex-1 sm:flex-none bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                                        >
+                                            Discard (ਹਟਾਓ)
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-10 flex-1">
                                 {/* Left Column: Main Content */}
                                 <div className="flex-1 flex flex-col gap-5 lg:mt-2">
