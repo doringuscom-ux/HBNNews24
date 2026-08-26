@@ -1,12 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertCircle, Copy, Check } from 'lucide-react';
+import { Clock, AlertCircle } from 'lucide-react';
 import { FaWhatsapp, FaFacebookF, FaXTwitter } from 'react-icons/fa6';
 
 export default function BreakingNewsPage({ initialNews = [] }) {
     const [news, setNews] = useState(initialNews);
     const [loading, setLoading] = useState(!initialNews || initialNews.length === 0);
-    const [copiedId, setCopiedId] = useState(null);
 
     useEffect(() => {
         if (initialNews && initialNews.length > 0) return;
@@ -33,15 +32,6 @@ export default function BreakingNewsPage({ initialNews = [] }) {
         } else if (platform === 'twitter') {
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`🔴 BREAKING: ${text}`)}&url=${encodeURIComponent(url)}`, '_blank');
         }
-    };
-
-    const handleCopy = (id, text) => {
-        const url = typeof window !== 'undefined' ? window.location.href : 'https://hbnnews24.com/breaking-news';
-        const shareText = `🔴 BREAKING NEWS: ${text}\n\nRead more at: ${url}`;
-        navigator.clipboard.writeText(shareText).then(() => {
-            setCopiedId(id);
-            setTimeout(() => setCopiedId(null), 2500);
-        });
     };
 
     // Format date as time ago
@@ -146,16 +136,6 @@ export default function BreakingNewsPage({ initialNews = [] }) {
                                             <FaXTwitter size={14} />
                                         </button>
                                     </div>
-
-                                    {/* Copy Button */}
-                                    <button
-                                        onClick={() => handleCopy(item._id, item.text)}
-                                        type="button"
-                                        className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${copiedId === item._id ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'}`}
-                                    >
-                                        {copiedId === item._id ? <Check size={14} /> : <Copy size={14} />}
-                                        <span>{copiedId === item._id ? 'Copied!' : 'Copy News'}</span>
-                                    </button>
                                 </div>
                             </div>
                         ))}

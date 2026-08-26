@@ -1,10 +1,6 @@
- 'use client';
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Pencil, Star } from 'lucide-react';
-import { FaXTwitter, FaFacebookF, FaWhatsapp } from 'react-icons/fa6';
-import { MdLocalMovies } from 'react-icons/md';
-import cinemaImg from '../assets/Cinema.webp';
 
 export default function Entertainment({ initialNewsData = [], initialLatestNewsData = [] }) {
     const [newsData, setNewsData] = useState(initialNewsData);
@@ -15,16 +11,14 @@ export default function Entertainment({ initialNewsData = [], initialLatestNewsD
         if (initialNewsData && initialNewsData.length > 0) return;
         const fetchNews = async () => {
             try {
-                // Fetch entertainment specific news
                 const entRes = await fetch('/api/news/entertainment');
                 const entData = await entRes.json();
                 
-                // Fetch all news for the 'latest' sidebar across all fields
                 const allRes = await fetch('/api/news');
                 const allData = await allRes.json();
 
-                setNewsData(entData);
-                setLatestNewsData(allData);
+                setNewsData(Array.isArray(entData) ? entData : []);
+                setLatestNewsData(Array.isArray(allData) ? allData : []);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching news:", error);
@@ -32,12 +26,12 @@ export default function Entertainment({ initialNewsData = [], initialLatestNewsD
             }
         };
         fetchNews();
-    }, []);
+    }, [initialNewsData]);
 
     const mainNews = newsData[0] || { title: 'Loading...', image: '' };
     const topSideNews = newsData[1] || { title: 'Loading...', image: '' };
     const bottomNews = newsData.slice(2, 5);
-    const latestNews = latestNewsData.slice(0, 5);
+    const latestNews = latestNewsData.slice(0, 15);
 
     if (loading) {
         return <div className="min-h-screen flex items-center justify-center text-xl font-bold">Loading...</div>;
@@ -45,166 +39,174 @@ export default function Entertainment({ initialNewsData = [], initialLatestNewsD
 
     return (
         <div className="w-full min-h-screen bg-[#f3f4f6]">
-            {/* Banner Section */}
-            <div className="w-full min-h-[120px] md:h-[160px] py-4 md:py-0 bg-gradient-to-r from-[#b32b13] via-[#df6a22] to-[#f4b647] relative overflow-hidden flex items-center px-4 md:px-10">
-                
-                {/* Background Watermark Right */}
-                <div className="absolute right-[-20px] top-1/2 transform -translate-y-1/2 opacity-20 pointer-events-none">
-                    <MdLocalMovies className="w-[200px] h-[200px] text-white" />
-                </div>
+            {/* Header Banner */}
+            <div className="w-full relative overflow-hidden py-6 md:py-8 px-4 md:px-10 border-b-2 border-[#da0000]/30 shadow-md" style={{ background: 'linear-gradient(135deg, #0d0d0d 0%, #1c0a0a 45%, #660808 100%)' }}>
+                {/* Subtle decorative background glow */}
+                <div className="absolute -left-20 -top-20 w-72 h-72 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute right-0 bottom-0 w-96 h-96 bg-red-700/15 rounded-full blur-3xl pointer-events-none"></div>
 
-                {/* Left side Graphics */}
-                <div className="absolute left-0 bottom-0 h-full hidden md:flex items-end">
-                    {/* Stars Background */}
-                    <div className="absolute inset-0 pointer-events-none w-[250px]">
-                        <Star className="absolute top-4 left-6 text-white/40 w-6 h-6 fill-current animate-pulse" />
-                        <Star className="absolute top-8 left-20 text-white/30 w-4 h-4 fill-current animate-pulse" style={{ animationDelay: '0.5s' }} />
-                        <Star className="absolute top-[50px] left-[130px] text-white/50 w-8 h-8 fill-current animate-pulse" style={{ animationDelay: '1s' }} />
-                        <Star className="absolute bottom-6 left-[140px] text-white/20 w-5 h-5 fill-current animate-pulse" style={{ animationDelay: '0.2s' }} />
-                        <Star className="absolute top-1 left-28 text-white/60 w-3 h-3 fill-current" />
+                <div className="w-full max-w-[1270px] mx-auto flex flex-row items-center justify-start relative z-10 gap-5 sm:gap-8">
+                    {/* Left: Entertainment Graphic with soft ambient glow */}
+                    <div className="flex items-center justify-center flex-shrink-0 p-2 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg">
+                        <img 
+                            src="https://res.cloudinary.com/dsd6oj52y/image/upload/v1787734423/Entertainment.png" 
+                            alt="Entertainment News Icon" 
+                            className="h-[80px] sm:h-[105px] md:h-[125px] w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(255,255,255,0.25)] hover:scale-105 transition-transform duration-300"
+                        />
                     </div>
 
-                    <div className="h-[140px] w-[140px] flex items-end pb-2 pl-4 relative z-10">
-                         <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full scale-110 transform translate-y-4 translate-x-2"></div>
-                         <img src={cinemaImg?.src || cinemaImg} alt="Cinema" className="w-full h-full object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] relative z-20" />
-                    </div>
-                </div>
-
-                <div className="w-full max-w-[1270px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 md:pl-[120px] gap-4 md:gap-0">
-                    {/* Center Title */}
-                    <div className="flex flex-col justify-center w-full md:w-auto">
-                        <div className="flex items-center gap-2 mb-3 md:mb-1.5">
-                            <span className="bg-[#a61c0a] text-white text-[11px] font-bold px-2 py-0.5 rounded-[2px] leading-tight shadow-sm">Hindi News</span>
-                            <span className="text-white text-[13px] font-bold">/ मनोरंजन</span>
+                    {/* Content: Text & H1 */}
+                    <div className="flex flex-col justify-center flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="bg-[#da0000] text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded shadow-sm uppercase tracking-wider">
+                                Hindi News
+                            </span>
+                            <span className="text-gray-300 text-[13px] font-bold">
+                                / मनोरंजन
+                            </span>
                         </div>
-                        <div className="flex items-center justify-between w-full md:w-auto">
-                            <div className="flex items-center gap-3">
-                                {/* Mobile Icon */}
-                                <img src={cinemaImg?.src || cinemaImg} alt="Cinema" className="w-12 h-12 object-contain drop-shadow-md md:hidden" />
-                                {/* Desktop Icon */}
-                                <div className="hidden md:flex bg-white rounded-full p-1.5 items-center justify-center shadow-md">
-                                    <MdLocalMovies className="text-[#df6a22] w-6 h-6" />
-                                </div>
-                                <h1 className="text-white text-[26px] md:text-[34px] font-black tracking-wide drop-shadow-md">मूवी मसाला</h1>
-                            </div>
-                            
-                            {/* Mobile Socials */}
-                            <div className="flex items-center gap-3 text-white md:hidden">
-                                <FaWhatsapp size={16} className="cursor-pointer hover:text-green-400 drop-shadow-sm" />
-                                <FaFacebookF size={15} className="cursor-pointer hover:text-blue-500 drop-shadow-sm" />
-                                <FaXTwitter size={15} className="cursor-pointer hover:text-black drop-shadow-sm" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right side Feedback & Socials (Desktop) */}
-                    <div className="hidden md:flex flex-col items-end gap-3 pr-[40px]">
-                        <button className="bg-white text-[#d32f2f] text-[12px] font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm hover:bg-gray-100 transition-colors">
-                            <Pencil size={12} strokeWidth={3} /> Feedback
-                        </button>
-                        <div className="flex items-center gap-4 text-white">
-                            <FaWhatsapp size={18} className="cursor-pointer hover:text-green-400 drop-shadow-sm" />
-                            <FaFacebookF size={17} className="cursor-pointer hover:text-blue-500 drop-shadow-sm" />
-                            <FaXTwitter size={17} className="cursor-pointer hover:text-black drop-shadow-sm" />
-                        </div>
+                        <h1 className="text-white text-[24px] sm:text-[32px] md:text-[40px] font-black tracking-tight drop-shadow-md leading-[1.2]" style={{ fontFamily: '"Mukta", sans-serif' }}>
+                            Aaj Ki Entertainment News
+                        </h1>
+                        <p className="text-gray-300 text-[13px] sm:text-[14px] md:text-[15px] font-medium mt-1.5 drop-shadow-sm max-w-2xl">
+                            Latest Bollywood News in Hindi | HBN News 24
+                        </p>
                     </div>
                 </div>
             </div>
-            
-            {/* Main Content Area */}
-            <div className="w-full max-w-[1270px] mx-auto px-4 py-6 md:py-10">
-                <div className="flex flex-col lg:flex-row gap-6 mt-2">
-                    {/* Left Main Content */}
-                    <div className="w-full lg:w-[70%] flex flex-col gap-4">
-                        {/* Top Row: 2 columns */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {/* Main Article (Takes 2 columns) */}
-                            <Link href={`/news/${mainNews.slug || mainNews._id}`} className="col-span-1 md:col-span-2 relative group cursor-pointer overflow-hidden shadow-sm bg-black border border-gray-200 flex flex-col w-full md:aspect-[16/9] h-[250px] md:h-auto">
-                                <img src={mainNews.image} alt={mainNews.title} className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500 opacity-95 group-hover:opacity-100 absolute inset-0" />
-                                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/80 to-transparent pt-12 pb-4 px-5 z-10">
-                                    <h3 className="text-white text-[22px] font-bold leading-[1.4]">
-                                        {mainNews.title}
-                                    </h3>
-                                </div>
-                            </Link>
 
-                            {/* Top Side Article (Takes 1 column) */}
-                            <Link href={`/news/${topSideNews.slug || topSideNews._id}`} className="col-span-1 bg-[#f0f2f5] shadow-sm flex flex-col group cursor-pointer border border-gray-200 block">
-                                <div className="w-full aspect-[16/9] overflow-hidden flex-shrink-0">
-                                    <img src={topSideNews.image} alt="news" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />
+            {/* Main Content Layout */}
+            <div className="w-full max-w-[1270px] mx-auto px-4 py-6 md:py-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                    {/* Left Column (8 cols) */}
+                    <div className="lg:col-span-8 flex flex-col gap-6">
+
+                        {/* Top 2 News (Main Left + Top Right Balanced) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                            
+                            {/* Big Main Featured Card */}
+                            <div className="flex flex-col h-full justify-between">
+                                <div>
+                                    <Link href={`/news/${mainNews.slug || mainNews._id}`} className="group relative block overflow-hidden rounded-lg bg-gray-100">
+                                        <div className="w-full aspect-[16/10] overflow-hidden">
+                                            <img 
+                                                src={mainNews.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"} 
+                                                alt={mainNews.title} 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                            />
+                                        </div>
+                                        <div className="absolute top-3 left-3 bg-[#da0000] text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
+                                            मनोरंजन
+                                        </div>
+                                    </Link>
+                                    <Link href={`/news/${mainNews.slug || mainNews._id}`} className="mt-3 block">
+                                        <h2 className="text-[20px] sm:text-[22px] font-extrabold text-[#111] leading-[1.35] hover:text-[#da0000] transition-colors line-clamp-2" style={{ fontFamily: '"Mukta", sans-serif' }}>
+                                            {mainNews.title}
+                                        </h2>
+                                    </Link>
+                                    <p className="text-[#555] text-[14px] leading-relaxed mt-2.5 line-clamp-4">
+                                        {mainNews.shortDescription || mainNews.description || (mainNews.content ? mainNews.content.replace(/<[^>]*>?/gm, '').substring(0, 240) + '...' : '')}
+                                    </p>
                                 </div>
-                                <div className="p-4 flex-1 flex flex-col justify-center bg-[#f0f2f5]">
-                                    <h3 className="text-black text-[18px] font-bold leading-[1.4] group-hover:text-[#d91f26] transition-colors">
-                                        {topSideNews.title}
-                                    </h3>
+                            </div>
+
+                            {/* Top Right Card */}
+                            <div className="flex flex-col h-full justify-between border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                                <div>
+                                    <Link href={`/news/${topSideNews.slug || topSideNews._id}`} className="group relative block overflow-hidden rounded-lg bg-gray-100">
+                                        <div className="w-full aspect-[16/10] overflow-hidden">
+                                            <img 
+                                                src={topSideNews.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"} 
+                                                alt={topSideNews.title} 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                            />
+                                        </div>
+                                    </Link>
+                                    <Link href={`/news/${topSideNews.slug || topSideNews._id}`} className="mt-3 block">
+                                        <h3 className="text-[20px] sm:text-[22px] font-extrabold text-[#111] leading-[1.35] hover:text-[#da0000] transition-colors line-clamp-2" style={{ fontFamily: '"Mukta", sans-serif' }}>
+                                            {topSideNews.title}
+                                        </h3>
+                                    </Link>
+                                    <p className="text-[#555] text-[14px] leading-relaxed mt-2.5 line-clamp-4">
+                                        {topSideNews.shortDescription || topSideNews.description || (topSideNews.content ? topSideNews.content.replace(/<[^>]*>?/gm, '').substring(0, 240) + '...' : '')}
+                                    </p>
                                 </div>
-                            </Link>
+                            </div>
+
                         </div>
 
-                        {/* Bottom Row: 3 columns */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                            {bottomNews.map((news, idx) => (
-                                <Link href={`/news/${news.slug || news._id}`} key={idx} className="col-span-1 bg-white shadow-sm flex flex-col group cursor-pointer border border-gray-200 block">
-                                    <div className="w-full aspect-[16/9] overflow-hidden relative">
-                                        <img src={news.image} alt="news" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />
+                        {/* Bottom 3 Cards Row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {bottomNews.map((newsItem) => (
+                                <div key={newsItem._id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                                    <Link href={`/news/${newsItem.slug || newsItem._id}`} className="group block">
+                                        <div className="w-full h-[140px] overflow-hidden rounded-lg bg-gray-100 mb-2.5">
+                                            <img 
+                                                src={newsItem.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"} 
+                                                alt={newsItem.title} 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                            />
+                                        </div>
+                                        <h4 className="text-[15px] font-bold text-[#222] leading-[1.35] group-hover:text-[#da0000] transition-colors line-clamp-3" style={{ fontFamily: '"Mukta", sans-serif' }}>
+                                            {newsItem.title}
+                                        </h4>
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Extended Feed */}
+                        <div className="flex flex-col gap-4 mt-2">
+                            {newsData.slice(5).map((newsItem, idx) => (
+                                <Link href={`/news/${newsItem.slug || newsItem._id}`} key={idx} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 group cursor-pointer hover:shadow-md transition-shadow">
+                                    <div className="w-full sm:w-[220px] aspect-[16/9] overflow-hidden rounded-lg flex-shrink-0 relative">
+                                        <img src={newsItem.image} alt={newsItem.title} className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />
                                     </div>
-                                    <div className="p-4">
-                                        <h3 className="text-black text-[16px] font-bold leading-[1.4] group-hover:text-[#d91f26] transition-colors line-clamp-3">
-                                            {news.title}
-                                        </h3>
+                                    <div className="flex-1 flex flex-col justify-center">
+                                        <h3 className="text-black text-[18px] font-bold leading-[1.4] group-hover:text-[#da0000] transition-colors mb-2">{newsItem.title}</h3>
+                                        <p className="text-gray-600 text-sm line-clamp-2">{newsItem.description || (newsItem.content ? newsItem.content.replace(/<[^>]+>/g, '').substring(0, 120) + '...' : '')}</p>
                                     </div>
                                 </Link>
                             ))}
                         </div>
 
-                        {/* Rest of the news */}
-                        {newsData.length > 5 && (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
-                                {newsData.slice(5).map((news, idx) => (
-                                    <Link href={`/news/${news.slug || news._id}`} key={idx} className="col-span-1 bg-white shadow-sm flex flex-col group cursor-pointer border border-gray-200 block">
-                                        <div className="w-full aspect-[16/9] overflow-hidden relative">
-                                            <img src={news.image} alt="news" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />
+                    </div>
+
+                    {/* Right Column - Sidebar (4 cols) */}
+                    <div className="lg:col-span-4 flex flex-col gap-6">
+                        
+                        {/* Latest News Widget */}
+                        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-fit lg:sticky lg:top-4">
+                            <div className="flex items-center gap-2 mb-4 border-b-[2px] border-gray-100 pb-2">
+                                <div className="w-0 h-0 border-t-[10px] border-t-[#da0000] border-l-[10px] border-l-transparent"></div>
+                                <h2 className="text-[20px] font-black text-black">लेटेस्ट</h2>
+                            </div>
+
+                            <div className="flex flex-col">
+                                {latestNews.map((news, index) => (
+                                    <Link href={`/news/${news.slug || news._id}`} key={news._id || index} className={`flex gap-3 py-3.5 group cursor-pointer ${index !== latestNews.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                                        <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px] bg-gray-100">
+                                            <img 
+                                                src={news.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"} 
+                                                alt={news.title} 
+                                                className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-300" 
+                                            />
                                         </div>
-                                        <div className="p-4">
-                                            <h3 className="text-black text-[16px] font-bold leading-[1.4] group-hover:text-[#d91f26] transition-colors line-clamp-3">
+                                        <div className="flex-1">
+                                            <h4 className="text-[14px] font-medium leading-[1.4] text-gray-800 group-hover:text-[#da0000] transition-colors line-clamp-3">
                                                 {news.title}
-                                            </h3>
+                                            </h4>
                                         </div>
                                     </Link>
                                 ))}
                             </div>
-                        )}
+                        </div>
+
                     </div>
 
-                    {/* Right Sidebar */}
-                    <div className="w-full lg:w-[30%] bg-white p-5 shadow-sm border border-gray-200 h-fit lg:sticky lg:top-4">
-                        <div className="flex items-center gap-2 mb-4 border-b-[2px] border-gray-100 pb-2">
-                            <div className="w-0 h-0 border-t-[10px] border-t-[#d91f26] border-l-[10px] border-l-transparent"></div>
-                            <h2 className="text-[20px] font-black text-black">लेटेस्ट</h2>
-                        </div>
-                        <div className="flex flex-col">
-                            {latestNewsData.slice(0, 15).map((news, idx) => (
-                                <Link href={`/news/${news.slug || news._id}`} key={idx} className={`flex gap-3 py-3.5 group cursor-pointer ${idx !== Math.min(latestNewsData.length, 15) - 1 ? 'border-b border-gray-100' : ''}`}>
-                                    <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px]">
-                                        <img src={news.image} alt="latest" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-300" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="text-[14px] font-medium leading-[1.4] text-gray-800 group-hover:text-[#d91f26] transition-colors line-clamp-3">
-                                            {news.title}
-                                        </h4>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     );
 }
-
-
-
-
-
-
