@@ -391,11 +391,11 @@ export default function SingleArticle({ initialArticle }) {
                             const linkUrl = `/news/${related.slug || related._id}`;
                             const isLast = index === relatedArticlesToInject.length - 1;
                             return `
-                                <a href="${linkUrl}" class="flex-none w-[280px] sm:w-[320px] flex gap-3 snap-start border-r border-gray-200 pr-4 ${isLast ? 'border-r-0 pr-0' : ''}" style="text-decoration: none !important;">
+                                <a href="${linkUrl}" class="flex-none w-[280px] sm:w-[320px] flex items-center gap-3 snap-start border-r border-gray-200 pr-4 ${isLast ? 'border-r-0 pr-0' : ''}" style="text-decoration: none !important;">
                                     <div class="w-[120px] sm:w-[140px] h-[90px] sm:h-[100px] flex-shrink-0 overflow-hidden bg-gray-50 rounded">
                                         <img src="${optimizeImage(related.image, 300)}" alt="News" class="w-full h-full object-contain" />
                                     </div>
-                                    <div class="flex-1">
+                                    <div class="flex-1 flex flex-col justify-center">
                                         <span class="font-bold hover:text-[#da0000] transition-colors block" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #111827 !important; font-size: 15px !important; line-height: 1.3 !important;">
                                             ${related.title}
                                         </span>
