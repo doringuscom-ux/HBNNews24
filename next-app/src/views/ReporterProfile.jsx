@@ -49,16 +49,18 @@ export default function ReporterProfile() {
                 }
 
                 const authorRes = await fetch(`/api/news/author/${encodeURIComponent(name)}`);
-                const authorData = await authorRes.json();
+                const authorData = authorRes.ok ? await authorRes.json() : [];
                 
                 const allRes = await fetch('/api/news');
-                const allData = await allRes.json();
+                const allData = allRes.ok ? await allRes.json() : [];
 
-                setNewsData(authorData);
-                setLatestNewsData(allData);
+                setNewsData(Array.isArray(authorData) ? authorData : []);
+                setLatestNewsData(Array.isArray(allData) ? allData : []);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching news:", error);
+                setNewsData([]);
+                setLatestNewsData([]);
                 setLoading(false);
             }
         };
