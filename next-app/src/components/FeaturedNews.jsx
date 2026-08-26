@@ -59,11 +59,12 @@ export default function FeaturedNews({ news = [] }) {
 
                     return (
                         <div key={featured._id || index} className="w-full flex-shrink-0">
-                            <Link href={`/news/${featured.slug || featured._id}`} className="block w-full cursor-pointer">
+                            <Link href={`/news/${featured.slug || featured._id}`} title={featured.title || "Featured News"} className="block w-full cursor-pointer">
                                 <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
                                     <Image 
                                         src={featured.image} 
-                                        alt={featured.title || "Featured"} 
+                                        alt={featured.title || "Featured News"} 
+                                        title={featured.title || "Featured News"}
                                         fill
                                         priority={index === 0}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"

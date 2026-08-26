@@ -1,8 +1,5 @@
-
 import React from 'react';
 import Link from 'next/link';
-import { Play } from 'lucide-react';
-import { entertainmentNews } from '../data/mockNews';
 import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function EntertainmentSection({ news = [] }) {
@@ -10,7 +7,7 @@ export default function EntertainmentSection({ news = [] }) {
         if (news[index]) return { image: optimizeImage(news[index].image, width), title: news[index].title, id: news[index].slug || news[index]._id };
         return { 
             image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E", 
-            title: "Loading...", 
+            title: "मनोरंजन समाचार", 
             id: `loading-${index}`
         };
     };
@@ -28,21 +25,22 @@ export default function EntertainmentSection({ news = [] }) {
                     <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-[#da0000] border-b-[6px] border-b-transparent transform rotate-45"></div>
                     <h2 className="text-xl font-bold">मनोरंजन</h2>
                 </div>
-                <a href="#" className="flex items-center gap-1 text-[#da0000] font-medium text-sm hover:underline">
+                <Link href="/entertainment" title="मनोरंजन की सभी खबरें" className="flex items-center gap-1 text-[#da0000] font-medium text-sm hover:underline">
                     और भी
                     <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[5px] border-l-[#da0000] border-b-[4px] border-b-transparent"></div>
-                </a>
+                </Link>
             </div>
 
             <div className="flex flex-col md:flex-row gap-6">
                 {/* Left Column (Main Feature + 1 small) */}
                 <div className="w-full md:w-1/3 flex flex-col gap-4">
                     {/* Main Feature */}
-                    <Link href={main.id !== 'loading' && typeof main.id === 'string' ? `/news/${main.id}` : '#'} className="relative group cursor-pointer block">
+                    <Link href={main.id !== 'loading' && typeof main.id === 'string' ? `/news/${main.id}` : '#'} title={main.title} className="relative group cursor-pointer block">
                         <div className="overflow-hidden bg-black rounded-[4px]">
                             <img loading="lazy" width="400" height="250" 
                                 src={main.image} 
-                                alt={main.title}
+                                alt={main.title || "Entertainment News"}
+                                title={main.title || "Entertainment News"}
                                 className="w-full h-[272px] object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
                             />
                         </div>
@@ -54,11 +52,12 @@ export default function EntertainmentSection({ news = [] }) {
                     </Link>
 
                     {/* Secondary Left Feature */}
-                    <Link href={subMain.id !== 'loading' && typeof subMain.id === 'string' ? `/news/${subMain.id}` : '#'} className="flex gap-4 group cursor-pointer border-t border-gray-200 pt-4 block">
+                    <Link href={subMain.id !== 'loading' && typeof subMain.id === 'string' ? `/news/${subMain.id}` : '#'} title={subMain.title} className="flex gap-4 group cursor-pointer border-t border-gray-200 pt-4 block">
                         <div className="w-1/2 overflow-hidden bg-gray-50 rounded">
                             <img loading="lazy" width="400" height="250" 
                                 src={subMain.image} 
-                                alt={subMain.title}
+                                alt={subMain.title || "Entertainment News"}
+                                title={subMain.title || "Entertainment News"}
                                 className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
                             />
                         </div>
@@ -74,11 +73,12 @@ export default function EntertainmentSection({ news = [] }) {
                 <div className="w-full md:w-1/3 flex flex-col gap-4">
                     {list.map((item, index) => (
                         <React.Fragment key={item.id}>
-                            <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} className="flex gap-4 group cursor-pointer block">
+                            <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} title={item.title} className="flex gap-4 group cursor-pointer block">
                                 <div className="w-1/2 overflow-hidden relative bg-gray-50 rounded">
                                     <img loading="lazy" width="400" height="250" 
                                         src={item.image} 
-                                        alt={item.title}
+                                        alt={item.title || "Entertainment News"}
+                                        title={item.title || "Entertainment News"}
                                         className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
                                     />
                                 </div>
@@ -99,11 +99,12 @@ export default function EntertainmentSection({ news = [] }) {
                 <div className="w-full md:w-1/3 flex flex-col gap-4">
                     {list2.map((item, index) => (
                         <React.Fragment key={item.id}>
-                            <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} className="flex gap-4 group cursor-pointer block">
+                            <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} title={item.title} className="flex gap-4 group cursor-pointer block">
                                 <div className="w-1/2 overflow-hidden relative bg-gray-50 rounded">
                                     <img loading="lazy" width="400" height="250" 
                                         src={item.image} 
-                                        alt={item.title}
+                                        alt={item.title || "Entertainment News"}
+                                        title={item.title || "Entertainment News"}
                                         className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
                                     />
                                 </div>
@@ -123,8 +124,3 @@ export default function EntertainmentSection({ news = [] }) {
         </div>
     );
 }
-
-
-
-
-

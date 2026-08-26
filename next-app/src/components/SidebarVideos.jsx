@@ -139,7 +139,8 @@ export default function SidebarVideos({ videos = [], title = "ट्रेंड
                                     {/* Image */}
                                     <img
                                         src={optimizeImage(item.image, 600) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
-                                        alt={item.title}
+                                        alt={item.title || "Video"}
+                                        title={item.title || "Video"}
                                         loading="lazy"
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                     />

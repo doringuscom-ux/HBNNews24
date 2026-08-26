@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
@@ -13,7 +12,7 @@ export default function SportsSection({ news = [] }) {
     }));
 
     while (textNews.length < 3) textNews.push({ title: "Loading...", id: "loading" });
-    while (imageNews.length < 3) imageNews.push({ image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E", title: "Loading...", id: Math.random() });
+    while (imageNews.length < 3) imageNews.push({ image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E", title: "Sports News", id: Math.random() });
 
     return (
         <section className="w-full bg-white py-8 font-sans">
@@ -24,9 +23,9 @@ export default function SportsSection({ news = [] }) {
                         <div className="w-0 h-0 border-t-[8px] border-t-[#d91f26] border-l-[8px] border-l-transparent -mt-1"></div>
                         <h2 className="text-black text-[22px] font-black leading-none">खेल</h2>
                     </div>
-                    <a href="#" className="text-[#d91f26] text-[14px] font-bold hover:underline flex items-center gap-1">
+                    <Link href="/sports" title="खेल जगत की सभी ख़बरें" className="text-[#d91f26] text-[14px] font-bold hover:underline flex items-center gap-1">
                         और भी <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="mt-0.5"><path d="M5 3l14 9-14 9V3z" /></svg>
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Content Box with thick border */}
@@ -36,7 +35,7 @@ export default function SportsSection({ news = [] }) {
                         {/* Left Column (Text List) */}
                         <div className="flex flex-col justify-between">
                             {textNews.map((item, index) => (
-                                <Link href={item.id !== 'loading' ? `/news/${item.id}` : '#'} key={index} className={`flex-1 flex flex-col justify-center block ${index !== textNews.length - 1 ? 'border-b border-gray-200' : ''}`}>
+                                <Link href={item.id !== 'loading' ? `/news/${item.id}` : '#'} title={item.title || "Sports News"} key={index} className={`flex-1 flex flex-col justify-center block ${index !== textNews.length - 1 ? 'border-b border-gray-200' : ''}`}>
                                     <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors py-3 hover:text-[#d91f26]">
                                         {item.title}
                                     </h3>
@@ -45,9 +44,9 @@ export default function SportsSection({ news = [] }) {
                         </div>
 
                         {/* Middle Column (Image + Text) */}
-                        <Link href={imageNews[0].id !== 'loading' && typeof imageNews[0].id === 'string' ? `/news/${imageNews[0].id}` : '#'} className="group cursor-pointer flex flex-col gap-2.5 block">
+                        <Link href={imageNews[0].id !== 'loading' && typeof imageNews[0].id === 'string' ? `/news/${imageNews[0].id}` : '#'} title={imageNews[0].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
                             <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[0].image, 400)} alt={imageNews[0].title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[0].image, 400)} alt={imageNews[0].title || "Sports News"} title={imageNews[0].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[0].title}
@@ -55,9 +54,9 @@ export default function SportsSection({ news = [] }) {
                         </Link>
 
                         {/* Right Column (Image + Text) */}
-                        <Link href={imageNews[1].id !== 'loading' && typeof imageNews[1].id === 'string' ? `/news/${imageNews[1].id}` : '#'} className="group cursor-pointer flex flex-col gap-2.5 block">
+                        <Link href={imageNews[1].id !== 'loading' && typeof imageNews[1].id === 'string' ? `/news/${imageNews[1].id}` : '#'} title={imageNews[1].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
                             <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[1].image, 300)} alt={imageNews[1].title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[1].image, 300)} alt={imageNews[1].title || "Sports News"} title={imageNews[1].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[1].title}
@@ -65,9 +64,9 @@ export default function SportsSection({ news = [] }) {
                         </Link>
 
                         {/* 4th Column (Image + Text) */}
-                        <Link href={imageNews[2].id !== 'loading' && typeof imageNews[2].id === 'string' ? `/news/${imageNews[2].id}` : '#'} className="group cursor-pointer flex flex-col gap-2.5 block">
+                        <Link href={imageNews[2].id !== 'loading' && typeof imageNews[2].id === 'string' ? `/news/${imageNews[2].id}` : '#'} title={imageNews[2].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
                             <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[2].image, 300)} alt={imageNews[2].title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[2].image, 300)} alt={imageNews[2].title || "Sports News"} title={imageNews[2].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[2].title}
@@ -80,8 +79,3 @@ export default function SportsSection({ news = [] }) {
         </section>
     );
 }
-
-
-
-
-

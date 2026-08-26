@@ -94,9 +94,9 @@ export default function ReligionSection({ news = [] }) {
                         <div className="w-0 h-0 border-t-[8px] border-t-[#d91f26] border-l-[8px] border-l-transparent -mt-1"></div>
                         <h2 className="text-black text-[22px] font-black leading-none">धर्म</h2>
                     </div>
-                    <a href="#" className="text-[#d91f26] text-[14px] font-bold hover:underline flex items-center gap-1">
+                    <Link href="/religion" title="धर्म और अध्यात्म की सभी ख़बरें" className="text-[#d91f26] text-[14px] font-bold hover:underline flex items-center gap-1">
                         और भी <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="mt-0.5"><path d="M5 3l14 9-14 9V3z" /></svg>
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-10">
@@ -104,9 +104,9 @@ export default function ReligionSection({ news = [] }) {
                     <div className="w-full md:w-[55%] flex flex-col md:pr-5">
                         
                         {/* Top Main News */}
-                        <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} className="flex flex-col sm:flex-row gap-4 group cursor-pointer mb-6">
+                        <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} title={mainNews.title} className="flex flex-col sm:flex-row gap-4 group cursor-pointer mb-6">
                             <div className="w-full sm:w-[260px] aspect-[16/9] overflow-hidden flex-shrink-0 border border-gray-200 p-[2px]">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title || "Dharmik News"} title={mainNews.title || "Dharmik News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-[#000] text-[26px] font-bold leading-[1.3] group-hover:text-[#d84315] transition-colors pt-1">
@@ -118,9 +118,9 @@ export default function ReligionSection({ news = [] }) {
                         {/* Bottom List News */}
                         <div className="flex flex-col">
                             {sideNews.map((news, index) => (
-                                <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} key={index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer pt-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e5e5e5] pb-4' : ''} ${index === 0 ? 'border-t-2 border-[#f57c00]/20' : ''}`}>
+                                <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} title={news.title} key={index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer pt-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e5e5e5] pb-4' : ''} ${index === 0 ? 'border-t-2 border-[#f57c00]/20' : ''}`}>
                                     <div className="w-full sm:w-[140px] aspect-[16/9] overflow-hidden flex-shrink-0 rounded-[4px]">
-                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title || "Dharmik News"} title={news.title || "Dharmik News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-1">
                                         <h3 className="text-[#000] text-[17px] font-medium leading-[1.3] group-hover:text-[#d84315] transition-colors mt-0.5">

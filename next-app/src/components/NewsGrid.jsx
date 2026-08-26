@@ -12,12 +12,13 @@ export default function NewsGrid({ news = [] }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
             {gridItems.map((item, index) => (
-                <Link href={`/news/${item.slug || item._id}`} key={item._id || index} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 md:border-b-0 md:pb-0">
+                <Link href={`/news/${item.slug || item._id}`} title={item.title || "News"} key={item._id || index} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 md:border-b-0 md:pb-0">
                     {/* Image */}
                     <div className="relative w-[140px] h-[90px] flex-shrink-0 overflow-hidden rounded-[4px]">
                         <Image
                             src={optimizeImage(item.image, 300) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
                             alt={item.title || "News"}
+                            title={item.title || "News"}
                             width={140}
                             height={90}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

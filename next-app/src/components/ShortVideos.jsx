@@ -99,7 +99,8 @@ export default function ShortVideos({ shorts = [], title = "शॉर्ट व�
                                         width="400" 
                                         height="250" 
                                         src={optimizeImage(video.image, 300)} 
-                                        alt={video.title} 
+                                        alt={video.title || "Short Video"} 
+                                        title={video.title || "Short Video"}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
                                     {/* Overlay Gradient */}

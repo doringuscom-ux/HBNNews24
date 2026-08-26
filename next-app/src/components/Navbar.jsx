@@ -298,10 +298,11 @@ export default function AajTakNavbar() {
                 </button>
 
                 {/* Logo */}
-                <Link href="/" className="flex items-center justify-center flex-shrink-0 mr-8 group cursor-pointer h-full z-50">
+                <Link href="/" title="HBN News 24 Home" className="flex items-center justify-center flex-shrink-0 mr-8 group cursor-pointer h-full z-50">
                     <Image
                         src={logo}
-                        alt="HBN 24"
+                        alt="HBN News 24 Logo"
+                        title="HBN News 24"
                         width={150}
                         height={60}
                         priority
@@ -318,6 +319,7 @@ export default function AajTakNavbar() {
                             <div key={link.name} className="relative group h-full flex items-center">
                                 <Link
                                     href={link.path}
+                                    title={link.name}
                                     className={`flex items-center text-[15px] font-bold px-4 h-full transition-all duration-300 hover:bg-white/5 hover:text-[#ff3b22] ${isActive
                                         ? "text-white"
                                         : "text-gray-200"
@@ -334,7 +336,7 @@ export default function AajTakNavbar() {
                                 {link.hasDropdown && link.subLinks && (
                                     <div className="absolute top-[60px] left-0 w-48 bg-white border border-gray-100 shadow-xl rounded-b-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col z-50 overflow-hidden">
                                         {link.subLinks.map(sub => (
-                                            <Link key={sub.name} href={sub.path} className="px-5 py-3.5 text-[15px] text-gray-800 hover:bg-gray-50 hover:text-[#ff3b22] font-bold border-b border-gray-50 last:border-0 transition-colors">
+                                            <Link key={sub.name} href={sub.path} title={sub.name} className="px-5 py-3.5 text-[15px] text-gray-800 hover:bg-gray-50 hover:text-[#ff3b22] font-bold border-b border-gray-50 last:border-0 transition-colors">
                                                 {sub.name}
                                             </Link>
                                         ))}
@@ -363,12 +365,12 @@ export default function AajTakNavbar() {
                         <option value="pa" className="text-black">Punjabi</option>
                     </select>
 
-                    <Link href="/epaper" aria-label="E-paper" className="hidden md:flex hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
+                    <Link href="/epaper" title="ई-पेपर" aria-label="E-paper" className="hidden md:flex hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
                         <Newspaper size={22} />
                     </Link>
 
                     {/* X */}
-                    <a href="https://x.com/HbnNews24" aria-label="Follow us on X" target="_blank" rel="noopener noreferrer" className="hidden md:block hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
+                    <a href="https://x.com/HbnNews24" title="Follow us on X" aria-label="Follow us on X" target="_blank" rel="noopener noreferrer" className="hidden md:block hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="18"
@@ -381,7 +383,7 @@ export default function AajTakNavbar() {
                     </a>
 
                     {/* YouTube */}
-                    <a href="https://www.youtube.com/@hbnnews24x7" aria-label="Subscribe on YouTube" target="_blank" rel="noopener noreferrer" className="hidden md:block hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
+                    <a href="https://www.youtube.com/@hbnnews24x7" title="Subscribe on YouTube" aria-label="Subscribe on YouTube" target="_blank" rel="noopener noreferrer" className="hidden md:block hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="22"
@@ -443,12 +445,14 @@ export default function AajTakNavbar() {
                                             <div key={news._id} className="relative border-b border-gray-50 hover:bg-gray-50 transition-colors group">
                                                 <Link 
                                                     href={`/news/${news.slug || news._id}`}
+                                                    title={news.title}
                                                     onClick={() => setNotificationsOpen(false)}
                                                     className="flex items-start gap-3 p-3 pr-8"
                                                 >
                                                     <Image 
                                                         src={news.image || '/favicon.png'} 
-                                                        alt="" 
+                                                        alt={news.title || "News"} 
+                                                        title={news.title || "News"}
                                                         width={80} 
                                                         height={56}
                                                         className="w-20 h-14 object-cover rounded-md flex-shrink-0"
@@ -515,6 +519,7 @@ export default function AajTakNavbar() {
                             <div key={item.name}>
                                 <Link
                                     href={item.path}
+                                    title={item.name}
                                     onClick={() => setOpen(false)}
                                     className={`flex justify-between items-center px-6 py-4 font-bold border-b border-gray-100/50 hover:bg-gray-50 hover:text-[#ff3b22] hover:pl-8 transition-all duration-300 ${location.pathname === item.path ? 'text-[#ff3b22]' : 'text-gray-800'}`}
                                 >
@@ -526,6 +531,7 @@ export default function AajTakNavbar() {
                                             <Link
                                                 key={sub.name}
                                                 href={sub.path}
+                                                title={sub.name}
                                                 onClick={() => setOpen(false)}
                                                 className="block px-10 py-3 text-[15px] font-bold text-gray-600 hover:text-[#ff3b22] hover:pl-12 transition-all duration-300"
                                             >
@@ -538,11 +544,11 @@ export default function AajTakNavbar() {
                         ))}
                         <div className="px-6 py-4 flex flex-col gap-4 bg-gray-50 border-t border-gray-100/50">
                             <div className="flex items-center justify-between px-4 text-gray-800 mt-2">
-                                <Link href="/epaper" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300"><Newspaper size={24} /></Link>
-                                <a href="https://x.com/HbnNews24" target="_blank" rel="noopener noreferrer" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
+                                <Link href="/epaper" title="ई-पेपर" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300"><Newspaper size={24} /></Link>
+                                <a href="https://x.com/HbnNews24" title="Follow us on X" target="_blank" rel="noopener noreferrer" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                                 </a>
-                                <a href="https://www.youtube.com/@hbnnews24x7" target="_blank" rel="noopener noreferrer" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
+                                <a href="https://www.youtube.com/@hbnnews24x7" title="Subscribe on YouTube" target="_blank" rel="noopener noreferrer" className="hover:text-[#ff3b22] hover:scale-110 transition-all duration-300">
                                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2.5 7.1c.3-1.5 1.5-2.6 3-2.9C8.9 3.8 12 3.8 12 3.8s3.1 0 6.5.4c1.5.3 2.7 1.4 3 2.9.5 2.1.5 4.9.5 4.9s0 2.8-.5 4.9c-.3 1.5-1.5 2.6-3 2.9-3.4.4-6.5.4-6.5.4s-3.1 0-6.5-.4c-1.5-.3-2.7-1.4-3-2.9-.5-2.1-.5-4.9-.5-4.9s0-2.8.5-4.9z" /><path d="m10 15 5-3-5-3z" /></svg>
                                 </a>
                             </div>

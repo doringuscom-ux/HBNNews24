@@ -168,7 +168,7 @@ export default function BreakingNews({ news = [] }) {
                                 const className = `block absolute w-[95%] transition-all duration-500 ease-in-out ${slideClass}`;
 
                                 return isCustom ? (
-                                    <Link key={item._id || index} href="/breaking-news" className={className}>
+                                    <Link key={item._id || index} href="/breaking-news" title={content} className={className}>
                                         <p className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">
                                             {content}
                                         </p>
@@ -177,6 +177,7 @@ export default function BreakingNews({ news = [] }) {
                                     <Link
                                         key={item._id || index}
                                         href={`/news/${item.slug || item._id}`}
+                                        title={content}
                                         className={className}
                                     >
                                         <p className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">

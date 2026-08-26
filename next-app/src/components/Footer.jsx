@@ -29,6 +29,7 @@ const Footer = () => {
                     <Link
                         key={index}
                         href={link.path}
+                        title={link.name}
                         className="text-[#4da6ff] text-[13px] hover:text-white transition-colors tracking-wide"
                     >
                         {link.name}
