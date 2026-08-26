@@ -160,21 +160,20 @@ export default function SingleArticle({ initialArticle }) {
                     setLikes(activeArticle.likes || 0);
 
                     // Check if user already liked
-                    const likedArticles = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
-                    if (likedArticles.includes(activeArticle._id)) {
-                        setHasLiked(true);
-                    } else {
-                        setHasLiked(false);
-                    }
-
-                    const mySavedComments = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
+                    let likedArticles = [];
+                    let mySavedComments = [];
+                    try {
+                        likedArticles = JSON.parse(localStorage.getItem('hbn_liked_articles') || '[]');
+                        mySavedComments = JSON.parse(localStorage.getItem('hbn_my_comments') || '[]');
+                    } catch (e) {}
+                    setHasLiked(likedArticles.includes(activeArticle._id));
                     setMyComments(mySavedComments);
 
                     // Fetch comments
                     const commentsRes = await fetch(`/api/news/${activeArticle._id}/comments`);
                     if (commentsRes.ok) {
                         const commentsData = await commentsRes.json();
-                        setComments(commentsData);
+                        setComments(Array.isArray(commentsData) ? commentsData : []);
                     }
                 }
             } catch (error) {
@@ -196,9 +195,12 @@ export default function SingleArticle({ initialArticle }) {
         // Optimistic UI
         setLikes(prev => prev + 1);
         setHasLiked(true);
-        const likedArticles = JSON.parse((typeof window !== 'undefined' ? localStorage.getItem('PLACEHOLDER_KEY') : null) || '[]');
-        likedArticles.push(article._id);
-        if (typeof window !== 'undefined') localStorage.setItem('PLACEHOLDER_ERROR_KEY', 'PLACEHOLDER_ERROR_VAL');
+        let likedArticles = [];
+        try {
+            likedArticles = JSON.parse(localStorage.getItem('hbn_liked_articles') || '[]');
+            likedArticles.push(article._id);
+            localStorage.setItem('hbn_liked_articles', JSON.stringify(likedArticles));
+        } catch (e) {}
 
         try {
             const res = await fetch(`/api/news/${article._id}/like`, { method: 'PUT' });
@@ -207,7 +209,7 @@ export default function SingleArticle({ initialArticle }) {
                 setLikes(prev => prev - 1);
                 setHasLiked(false);
                 const revertedLiked = likedArticles.filter(id => id !== article._id);
-                if (typeof window !== 'undefined') localStorage.setItem('PLACEHOLDER_ERROR_KEY', 'PLACEHOLDER_ERROR_VAL');
+                try { localStorage.setItem('hbn_liked_articles', JSON.stringify(revertedLiked)); } catch(e) {}
             }
         } catch (error) {
             console.error('Error liking article:', error);
@@ -233,10 +235,13 @@ export default function SingleArticle({ initialArticle }) {
                 // Save to myComments
                 const updatedMyComments = [...myComments, addedComment._id];
                 setMyComments(updatedMyComments);
-                if (typeof window !== 'undefined') localStorage.setItem('PLACEHOLDER_ERROR_KEY', 'PLACEHOLDER_ERROR_VAL');
+                try { localStorage.setItem('hbn_my_comments', JSON.stringify(updatedMyComments)); } catch(e) {}
+            } else {
+                alert('Failed to post comment. Please try again.');
             }
         } catch (error) {
             console.error('Error posting comment:', error);
+            alert('Error posting comment. Please try again.');
         } finally {
             setIsSubmittingComment(false);
         }
@@ -271,7 +276,7 @@ export default function SingleArticle({ initialArticle }) {
                 setComments(comments.filter(c => c._id !== commentId));
                 const updatedMyComments = myComments.filter(id => id !== commentId);
                 setMyComments(updatedMyComments);
-                if (typeof window !== 'undefined') localStorage.setItem('PLACEHOLDER_ERROR_KEY', 'PLACEHOLDER_ERROR_VAL');
+                try { localStorage.setItem('hbn_my_comments', JSON.stringify(updatedMyComments)); } catch(e) {}
             }
         } catch (error) {
             console.error('Error deleting comment:', error);
