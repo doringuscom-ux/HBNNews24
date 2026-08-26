@@ -40,7 +40,7 @@ export default function PollWidget() {
         // Optimistic UI update
         setSelectedOption(optionId);
         setShowResults(true);
-        (typeof window !== 'undefined' ? localStorage.setItem : () => {})(`voted_poll_${pollData.id}`, optionId);
+        if (typeof window !== 'undefined') localStorage.setItem(`voted_poll_${pollData.id}`, optionId);
 
         try {
             const res = await fetch(`${API_URL}/api/poll/${pollData.id}/vote`, {

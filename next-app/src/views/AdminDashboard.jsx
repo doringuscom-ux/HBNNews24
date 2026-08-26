@@ -367,8 +367,22 @@ export default function AdminDashboard() {
 
     const joditConfig = useMemo(() => ({
         readonly: false,
-        height: 300,
+        height: 380,
         placeholder: 'Paste the full article content here...',
+        toolbarAdaptive: false,
+        toolbarSticky: false,
+        toolbarButtonSize: 'middle',
+        buttons: [
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'superscript', 'subscript', '|',
+            'ul', 'ol', '|',
+            'outdent', 'indent', '|',
+            'font', 'fontsize', 'brush', 'paragraph', '|',
+            'image', 'video', 'table', 'link', '|',
+            'align', 'undo', 'redo', '|',
+            'hr', 'eraser', 'copyformat', '|',
+            'symbol', 'fullsize', 'source'
+        ],
         uploader: {
             insertImageAsBase64URI: false,
             url: '/api/upload',
@@ -439,7 +453,7 @@ export default function AdminDashboard() {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -472,7 +486,7 @@ export default function AdminDashboard() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -756,7 +770,7 @@ export default function AdminDashboard() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -836,7 +850,7 @@ export default function AdminDashboard() {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.status === 401) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -853,7 +867,7 @@ export default function AdminDashboard() {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.status === 401) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -894,7 +908,7 @@ export default function AdminDashboard() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1001,7 +1015,7 @@ export default function AdminDashboard() {
                 body: JSON.stringify(seoData)
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1040,7 +1054,7 @@ export default function AdminDashboard() {
                 body: JSON.stringify({ signs: rashifalData })
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1099,7 +1113,7 @@ export default function AdminDashboard() {
                 body: JSON.stringify({ text: suvicharText })
             });
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1198,7 +1212,7 @@ export default function AdminDashboard() {
                     body: JSON.stringify(payload)
                 });
                 if (res.status === 401) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -1212,7 +1226,7 @@ export default function AdminDashboard() {
                     body: JSON.stringify(payload)
                 });
                 if (res.status === 401) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -1250,7 +1264,7 @@ export default function AdminDashboard() {
             });
 
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1323,7 +1337,7 @@ export default function AdminDashboard() {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.status === 401) {
-                    (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                    if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                     navigate.push('/admin/login');
                     return;
                 }
@@ -1369,7 +1383,7 @@ export default function AdminDashboard() {
             });
 
             if (res.status === 401) {
-                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                 navigate.push('/admin/login');
                 return;
             }
@@ -1391,7 +1405,7 @@ export default function AdminDashboard() {
     };
 
     const handleLogout = () => {
-        (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+        if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
         navigate.push('/admin/login');
     };
 
@@ -2605,7 +2619,7 @@ export default function AdminDashboard() {
                         try {
                             const res = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd });
                             if (res.status === 401) {
-                                (typeof window !== 'undefined' ? localStorage.removeItem : () => {})('adminToken');
+                                if (typeof window !== 'undefined') localStorage.removeItem('adminToken');
                                 navigate.push('/admin/login');
                                 return;
                             }
