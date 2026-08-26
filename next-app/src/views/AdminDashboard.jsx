@@ -1202,8 +1202,9 @@ export default function AdminDashboard() {
         const payload = { ...formData, status: submitStatusRef.current };
 
         try {
+            let res;
             if (editingId) {
-                const res = await fetch(`${API_URL}/${editingId}`, {
+                res = await fetch(`${API_URL}/${editingId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1217,7 +1218,7 @@ export default function AdminDashboard() {
                     return;
                 }
             } else {
-                const res = await fetch(API_URL, {
+                res = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1231,12 +1232,21 @@ export default function AdminDashboard() {
                     return;
                 }
             }
-            setIsModalOpen(false);
-            setEditingId(null);
-            setFormData({ title: '', slug: '', image: '', imageAlt: '', category: 'entertainment', content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
-            fetchNews();
+
+            if (res.ok) {
+                alert(editingId ? 'News article updated successfully!' : 'News article created successfully!');
+                setIsModalOpen(false);
+                setEditingId(null);
+                setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
+                fetchNews();
+            } else {
+                let errData;
+                try { errData = await res.json(); } catch(e) {}
+                alert(errData?.message || 'Failed to save news article.');
+            }
         } catch (error) {
             console.error('Error saving news:', error);
+            alert('Network error while saving news article.');
         } finally {
             setIsSubmitting(false);
         }

@@ -3,9 +3,30 @@ import News from '@/models/News';
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import NodeCache from 'node-cache';
+import jwt from 'jsonwebtoken';
 
 const cache = global.newsCategoryCache || new NodeCache({ stdTTL: 120 });
 if (!global.newsCategoryCache) global.newsCategoryCache = cache;
+
+const clearAllNewsCache = () => {
+    try {
+        if (global.newsCache) global.newsCache.flushAll();
+        if (global.newsCategoryCache) global.newsCategoryCache.flushAll();
+    } catch (e) {
+        console.error('Error clearing news cache:', e);
+    }
+};
+
+const verifyAuthToken = (req) => {
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+    const token = authHeader.split(' ')[1];
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+    } catch (e) {
+        return null;
+    }
+};
 
 export async function GET(req, { params }) {
     try {
@@ -50,5 +71,76 @@ export async function GET(req, { params }) {
     } catch (error) {
         console.error('Error fetching news by id/category:', error);
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
+    }
+}
+
+export async function PUT(req, { params }) {
+    try {
+        const user = verifyAuthToken(req);
+        if (!user) {
+            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+        }
+
+        const resolvedParams = await params;
+        const id = resolvedParams?.id;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Valid Article ID is required' }, { status: 400 });
+        }
+
+        const body = await req.json();
+        await connectToDatabase();
+
+        // Ensure category is array of trimmed strings
+        let categoryArr = [];
+        if (Array.isArray(body.category)) {
+            categoryArr = body.category.map(c => typeof c === 'string' ? c.trim() : c).filter(Boolean);
+        } else if (typeof body.category === 'string' && body.category.trim() !== '') {
+            categoryArr = [body.category.trim()];
+        }
+
+        const updateData = {
+            ...body,
+            category: categoryArr
+        };
+
+        const updatedNews = await News.findByIdAndUpdate(id, updateData, { new: true });
+        if (!updatedNews) {
+            return NextResponse.json({ message: 'Article not found' }, { status: 404 });
+        }
+
+        clearAllNewsCache();
+
+        return NextResponse.json(updatedNews);
+    } catch (error) {
+        console.error('Error updating news article:', error);
+        return NextResponse.json({ message: 'Server error updating article', error: error.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(req, { params }) {
+    try {
+        const user = verifyAuthToken(req);
+        if (!user) {
+            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+        }
+
+        const resolvedParams = await params;
+        const id = resolvedParams?.id;
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ message: 'Valid Article ID is required' }, { status: 400 });
+        }
+
+        await connectToDatabase();
+        const deletedNews = await News.findByIdAndDelete(id);
+        if (!deletedNews) {
+            return NextResponse.json({ message: 'Article not found' }, { status: 404 });
+        }
+
+        clearAllNewsCache();
+
+        return NextResponse.json({ message: 'Article deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting news article:', error);
+        return NextResponse.json({ message: 'Server error deleting article', error: error.message }, { status: 500 });
     }
 }
