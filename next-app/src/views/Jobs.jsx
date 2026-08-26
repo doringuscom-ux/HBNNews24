@@ -59,7 +59,7 @@ export default function Jobs({ initialNewsData = [], initialLatestNewsData = [] 
                     <div className="flex items-center justify-center flex-shrink-0 p-2 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg">
                         <img 
                             src="https://res.cloudinary.com/dsd6oj52y/image/upload/v1787734912/1704798217jobs.jpg" 
-                            alt="Jobs News Icon" 
+                            alt="Jobs Ki Taza News - Latest Govt Job and Exam Updates HBN News 24" 
                             className="h-[80px] sm:h-[105px] md:h-[125px] w-auto object-contain rounded-xl filter drop-shadow-[0_4px_16px_rgba(255,255,255,0.25)] hover:scale-105 transition-transform duration-300"
                         />
                     </div>

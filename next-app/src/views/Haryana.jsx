@@ -58,7 +58,7 @@ export default function Haryana({ initialNewsData = [], initialLatestNewsData = 
                     <div className="flex items-center justify-center flex-shrink-0 p-2 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg">
                         <img 
                             src="https://res.cloudinary.com/dsd6oj52y/image/upload/v1787726513/ChatGPT_Image_Aug_26_2026_12_11_30_PM.png" 
-                            alt="Haryana News Map" 
+                            alt="Haryana Ki Taza News - Get Latest Haryana Breaking News in Hindi HBN News 24" 
                             className="h-[80px] sm:h-[105px] md:h-[125px] w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(255,255,255,0.25)] hover:scale-105 transition-transform duration-300"
                         />
                     </div>
