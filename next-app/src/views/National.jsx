@@ -77,7 +77,7 @@ export default function National({ initialNewsData = [], initialLatestNewsData =
                             India Ki Taza News
                         </h1>
                         <p className="text-gray-300 text-[13px] sm:text-[14px] md:text-[15px] font-medium mt-1.5 drop-shadow-sm max-w-2xl">
-                            Latest India Breaking News & National Headlines in Hindi at HBN News 24
+                            Get Latest National News in Hindi | HBN News 24
                         </p>
                     </div>
                 </div>
