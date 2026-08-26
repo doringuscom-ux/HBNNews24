@@ -11,7 +11,8 @@ const adminSchema = new mongoose.Schema({
     },
     email: { type: String, required: false },
     phone: { type: String, required: false },
-    profileImage: { type: String, required: false }
+    profileImage: { type: String, required: false },
+    designation: { type: String, default: 'Content Writer' }
 });
 
 // Pre-save hook to hash password before saving to database

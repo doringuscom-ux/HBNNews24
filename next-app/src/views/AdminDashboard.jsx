@@ -315,16 +315,16 @@ export default function AdminDashboard() {
     const [userRole, setUserRole] = useState('user');
     const [currentUsername, setCurrentUsername] = useState('');
     const [usersList, setUsersList] = useState([]);
-    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'user', email: '', phone: '', profileImage: '' });
+    const [newUser, setNewUser] = useState({ username: '', password: '', role: 'user', email: '', phone: '', profileImage: '', designation: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
-    const [editUserData, setEditUserData] = useState({ id: '', username: '', role: '', email: '', phone: '', password: '', profileImage: '' });
+    const [editUserData, setEditUserData] = useState({ id: '', username: '', role: '', email: '', phone: '', password: '', profileImage: '', designation: '' });
     const [showEditPassword, setShowEditPassword] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [rashifalData, setRashifalData] = useState([]);
     const [suvicharText, setSuvicharText] = useState('');
     const [isGeneratingSuvichar, setIsGeneratingSuvichar] = useState(false);
-    const [myProfileData, setMyProfileData] = useState({ username: '', password: '', email: '', phone: '', profileImage: '' });
+    const [myProfileData, setMyProfileData] = useState({ username: '', password: '', email: '', phone: '', profileImage: '', designation: '' });
     const [activityLogs, setActivityLogs] = useState([]);
     const [seoData, setSeoData] = useState({
         googleAnalyticsId: '',
@@ -500,7 +500,8 @@ export default function AdminDashboard() {
                     password: '',
                     email: data.email || '',
                     phone: data.phone || '',
-                    profileImage: data.profileImage || ''
+                    profileImage: data.profileImage || '',
+                    designation: data.designation || ''
                 });
             }
         } catch (error) {
@@ -683,7 +684,7 @@ export default function AdminDashboard() {
             });
             if (res.ok) {
                 alert('User created successfully');
-                setNewUser({ username: '', password: '', role: 'user', email: '', phone: '', profileImage: '' });
+                setNewUser({ username: '', password: '', role: 'user', email: '', phone: '', profileImage: '', designation: '' });
                 fetchUsers();
             } else {
                 const err = await res.json();
@@ -702,7 +703,8 @@ export default function AdminDashboard() {
             email: u.email || '',
             phone: u.phone || '',
             password: '',
-            profileImage: u.profileImage || ''
+            profileImage: u.profileImage || '',
+            designation: u.designation || ''
         });
         setIsEditUserModalOpen(true);
     };
@@ -2100,6 +2102,10 @@ export default function AdminDashboard() {
                                     <input type="text" value={myProfileData.phone} onChange={e => setMyProfileData({ ...myProfileData, phone: e.target.value })} className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none" placeholder="Enter phone" />
                                 </div>
                                 <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1">Designation / Role Title <span className="text-gray-400 font-normal">(e.g. Senior Journalist, Crime Reporter, Chief Editor)</span></label>
+                                    <input type="text" value={myProfileData.designation} onChange={e => setMyProfileData({ ...myProfileData, designation: e.target.value })} className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none" placeholder="Content Writer (Default)" />
+                                </div>
+                                <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-1">New Password <span className="text-gray-400 font-normal">(Leave empty to keep current)</span></label>
                                     <input type="password" value={myProfileData.password} onChange={e => setMyProfileData({ ...myProfileData, password: e.target.value })} className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none" placeholder="Enter new password" />
                                 </div>
@@ -2216,6 +2222,16 @@ export default function AdminDashboard() {
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                                     <div className="flex-1 w-full">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">Designation (Optional)</label>
+                                        <input
+                                            type="text"
+                                            value={newUser.designation}
+                                            onChange={e => setNewUser({ ...newUser, designation: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+                                            placeholder="Content Writer (Default)"
+                                        />
+                                    </div>
+                                    <div className="flex-1 w-full">
                                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email (Optional)</label>
                                         <input
                                             type="email"
@@ -2260,6 +2276,7 @@ export default function AdminDashboard() {
                                     <thead className="bg-gray-50/80">
                                         <tr>
                                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Username</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Designation</th>
                                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Contact</th>
                                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Role</th>
                                             <th className="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase w-20">Actions</th>
@@ -2269,6 +2286,11 @@ export default function AdminDashboard() {
                                         {usersList.map((u) => (
                                             <tr key={u._id} className="hover:bg-gray-50 transition-colors">
                                                 <td className="px-4 py-3 text-sm font-semibold text-gray-800">{u.username}</td>
+                                                <td className="px-4 py-3 text-xs text-gray-700 font-medium">
+                                                    <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded border border-gray-200">
+                                                        {u.designation || 'Content Writer'}
+                                                    </span>
+                                                </td>
                                                 <td className="px-4 py-3 text-xs text-gray-600">
                                                     {u.email && <div>✉️ {u.email}</div>}
                                                     {u.phone && <div>📞 {u.phone}</div>}
@@ -2321,6 +2343,16 @@ export default function AdminDashboard() {
                                                         value={editUserData.username}
                                                         onChange={e => setEditUserData({ ...editUserData, username: e.target.value })}
                                                         className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-semibold text-gray-700 mb-1">Designation / Role Title</label>
+                                                    <input
+                                                        type="text"
+                                                        value={editUserData.designation}
+                                                        onChange={e => setEditUserData({ ...editUserData, designation: e.target.value })}
+                                                        className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none"
+                                                        placeholder="Content Writer (Default)"
                                                     />
                                                 </div>
                                                 <div>

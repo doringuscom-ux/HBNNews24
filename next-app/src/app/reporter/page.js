@@ -1,5 +1,4 @@
 import ReportersList from '@/views/ReportersList';
-
 import connectToDatabase from '@/lib/mongodb';
 import PageSeo from '@/models/PageSeo';
 
@@ -13,12 +12,26 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: {
+          canonical: '/reporter',
+        },
+        openGraph: {
+          title: seo.metaTitle,
+          description: seo.metaDescription || '',
+          url: 'https://hbnnews24.com/reporter',
+          type: 'website',
+        },
       };
     }
   } catch (e) {}
+
   return {
-    title: 'Our Authors & Journalists | HBN News 24',
-    description: 'Meet the dedicated journalists, field reporters, editors, and columnists delivering accurate, verified news daily at HBN News 24.',
+    title: 'Our Reporters & Journalists Directory | HBN News 24',
+    description: 'Meet the dedicated journalists, field reporters, and editors delivering truthful, verified news 24x7 at HBN News 24.',
+    robots: 'index, follow',
+    alternates: {
+      canonical: '/reporter',
+    },
   };
 }
 

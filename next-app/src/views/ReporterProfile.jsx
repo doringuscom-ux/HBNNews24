@@ -1,76 +1,88 @@
- 'use client';
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaFacebookF, FaYoutube, FaInstagram } from 'react-icons/fa6';
 
-export default function ReporterProfile() {
+export default function ReporterProfile({ 
+    initialNews = null, 
+    initialProfile = null, 
+    initialLatestNews = null,
+    name: propName = '' 
+}) {
     const params = useParams();
-    const name = params?.name || '';
-    const [newsData, setNewsData] = useState([]);
-    const [latestNewsData, setLatestNewsData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [profileImage, setProfileImage] = useState('');
-    const [profileEmail, setProfileEmail] = useState('');
-    const [profilePhone, setProfilePhone] = useState('');
+    const name = propName || params?.name || '';
+    
+    const [newsData, setNewsData] = useState(initialNews || []);
+    const [latestNewsData, setLatestNewsData] = useState(initialLatestNews || []);
+    const [loading, setLoading] = useState(!initialNews);
+    const [profileImage, setProfileImage] = useState(initialProfile?.profileImage || '');
+    const [profileEmail, setProfileEmail] = useState(initialProfile?.email || '');
+    const [profilePhone, setProfilePhone] = useState(initialProfile?.phone || '');
 
     const displayName = newsData.length > 0 && newsData[0].author 
         ? newsData[0].author 
-        : (name ? name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Reporter');
+        : (name ? decodeURIComponent(name).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Reporter');
+    
     const authorBio = `${displayName} is a dedicated journalist and reporter for HBN News 24, committed to bringing you the most accurate and fastest news updates from ground zero.`;
     
     const getInitials = (fullName) => {
-        if (!fullName) return '';
+        if (!fullName) return 'R';
         const names = fullName.trim().split(' ');
         if (names.length === 1) return names[0].charAt(0).toUpperCase();
         return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
     };
 
     useEffect(() => {
+        // If initial data was provided by Server Component, skip client fetch
+        if (initialNews && initialProfile && initialLatestNews) {
+            return;
+        }
+
         const fetchNews = async () => {
             try {
-                // Fetch profile data
-                try {
-                    const profileRes = await fetch(`/api/auth/profile/${encodeURIComponent(name)}`);
-                    if (profileRes.ok) {
-                        const profileData = await profileRes.json();
-                        if (profileData.profileImage) {
-                            setProfileImage(profileData.profileImage);
-                        }
-                        if (profileData.email) {
-                            setProfileEmail(profileData.email);
-                        }
-                        if (profileData.phone) {
-                            setProfilePhone(profileData.phone);
-                        }
-                    }
-                } catch (e) {
-                    console.error("Error fetching profile:", e);
+                // Fetch in parallel
+                const [profileRes, authorRes, allRes] = await Promise.allSettled([
+                    fetch(`/api/auth/profile/${encodeURIComponent(name)}`),
+                    fetch(`/api/news/author/${encodeURIComponent(name)}`),
+                    fetch(`/api/news?limit=15`)
+                ]);
+
+                if (profileRes.status === 'fulfilled' && profileRes.value.ok) {
+                    const profileData = await profileRes.value.json();
+                    if (profileData.profileImage) setProfileImage(profileData.profileImage);
+                    if (profileData.email) setProfileEmail(profileData.email);
+                    if (profileData.phone) setProfilePhone(profileData.phone);
                 }
 
-                const authorRes = await fetch(`/api/news/author/${encodeURIComponent(name)}`);
-                const authorData = authorRes.ok ? await authorRes.json() : [];
-                
-                const allRes = await fetch('/api/news');
-                const allData = allRes.ok ? await allRes.json() : [];
+                if (authorRes.status === 'fulfilled' && authorRes.value.ok) {
+                    const authorData = await authorRes.value.json();
+                    setNewsData(Array.isArray(authorData) ? authorData : []);
+                }
 
-                setNewsData(Array.isArray(authorData) ? authorData : []);
-                setLatestNewsData(Array.isArray(allData) ? allData : []);
-                setLoading(false);
+                if (allRes.status === 'fulfilled' && allRes.value.ok) {
+                    const allData = await allRes.value.json();
+                    setLatestNewsData(Array.isArray(allData) ? allData : []);
+                }
             } catch (error) {
-                console.error("Error fetching news:", error);
-                setNewsData([]);
-                setLatestNewsData([]);
+                console.error("Error fetching reporter data:", error);
+            } finally {
                 setLoading(false);
             }
         };
+
         if (name) {
             fetchNews();
         }
-    }, [name]);
+    }, [name, initialNews, initialProfile, initialLatestNews]);
 
     if (loading) {
-        return <div className="min-h-[60vh] flex items-center justify-center text-xl font-bold">Loading...</div>;
+        return (
+            <div className="w-full min-h-[70vh] flex flex-col items-center justify-center gap-3">
+                <div className="w-10 h-10 border-4 border-gray-200 border-t-[#da0000] rounded-full animate-spin"></div>
+                <div className="text-sm font-semibold text-gray-500">Loading Profile...</div>
+            </div>
+        );
     }
 
     return (
@@ -127,7 +139,7 @@ export default function ReporterProfile() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {newsData.map((news, idx) => (
                                     <Link href={`/news/${news.slug || news._id}`} key={idx} className="col-span-1 bg-white shadow-sm flex flex-col group cursor-pointer border border-gray-200 rounded-sm overflow-hidden">
-                                        <div className="w-full aspect-[16/9] overflow-hidden relative">
+                                        <div className="w-full aspect-[16/9] overflow-hidden relative bg-gray-100">
                                             <img src={news.image} alt={news.title} className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-500" />
                                             {news.category && !Array.isArray(news.category) && (
                                                 <span className="absolute top-2 left-2 bg-[#da0000] text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
@@ -159,7 +171,7 @@ export default function ReporterProfile() {
                             <div className="flex flex-col">
                                 {latestNewsData.slice(0, 15).map((news, idx) => (
                                     <Link href={`/news/${news.slug || news._id}`} key={idx} className={`flex gap-3 py-3.5 group cursor-pointer ${idx !== Math.min(latestNewsData.length, 15) - 1 ? 'border-b border-gray-100' : ''}`}>
-                                        <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px]">
+                                        <div className="w-[110px] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-[2px] bg-gray-100">
                                             <img src={news.image} alt="latest" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-300" />
                                         </div>
                                         <div className="flex-1">
@@ -177,9 +189,3 @@ export default function ReporterProfile() {
         </div>
     );
 }
-
-
-
-
-
-

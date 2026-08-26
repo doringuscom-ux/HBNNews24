@@ -12,22 +12,36 @@ export async function GET(req, { params }) {
       return NextResponse.json([]);
     }
 
-    // Split words by hyphens, underscores, or spaces to safely match
-    const words = rawName.split(/[-_\s]+/).filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    if (words.length === 0) {
-      return NextResponse.json([]);
+    const lowerName = rawName.toLowerCase().trim();
+    const isAdminAlias = lowerName === 'shiv-kumar' || lowerName === 'shiv kumar' || lowerName === 'admin' || lowerName === 'एडमिन';
+
+    let query = {};
+    if (isAdminAlias) {
+      query = {
+        author: { $in: [/shiv[\s\-_]*kumar/i, /admin/i, /एडमिन/] },
+        status: { $ne: 'draft' }
+      };
+    } else {
+      const words = rawName.split(/[-_\s]+/).filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      if (words.length === 0) {
+        return NextResponse.json([]);
+      }
+      const regexPattern = new RegExp(words.join('[\\s\\-_]+'), 'i');
+      query = {
+        author: { $regex: regexPattern },
+        status: { $ne: 'draft' }
+      };
     }
 
-    const regexPattern = new RegExp(words.join('[\\s\\-_]+'), 'i');
-
-    const newsList = await News.find({
-      author: { $regex: regexPattern },
-      status: { $ne: 'draft' }
-    }).sort({ createdAt: -1 });
+    const newsList = await News.find(query)
+      .select('title slug image category createdAt author')
+      .sort({ createdAt: -1 })
+      .limit(60)
+      .lean();
 
     return NextResponse.json(newsList || []);
   } catch (error) {
     console.error('Error fetching author news:', error);
-    return NextResponse.json([], { status: 200 }); // Return empty array so UI doesn't crash
+    return NextResponse.json([], { status: 200 });
   }
 }
