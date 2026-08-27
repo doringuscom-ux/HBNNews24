@@ -276,18 +276,79 @@ body {
 
 /* Force article content styles to override Rich Text Editor inline styles */
 .force-article-font {
-    font-family: 'Noto Sans Devanagari', sans-serif !important;
+    font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     font-size: 21px !important;
     line-height: 1.8 !important;
     font-weight: 500 !important;
     color: #2c2c2c !important;
 }
 
+.force-article-font,
+.force-article-font *,
+.force-article-font p,
+.force-article-font span,
+.force-article-font div,
+.force-article-font h1,
+.force-article-font h2,
+.force-article-font h3,
+.force-article-font h4,
+.force-article-font h5,
+.force-article-font h6,
+.force-article-font li,
+.force-article-font a,
+.force-article-font font {
+    font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 .force-article-font b,
 .force-article-font strong,
 .jodit-wysiwyg b,
 .jodit-wysiwyg strong {
-    font-weight: bold !important;
+    font-weight: 700 !important;
+}
+
+.force-article-font i,
+.force-article-font em,
+.jodit-wysiwyg i,
+.jodit-wysiwyg em {
+    font-style: italic !important;
+}
+
+.force-article-font u,
+.jodit-wysiwyg u {
+    text-decoration: underline !important;
+}
+
+.force-article-font s,
+.force-article-font strike,
+.force-article-font del,
+.jodit-wysiwyg s,
+.jodit-wysiwyg strike,
+.jodit-wysiwyg del {
+    text-decoration: line-through !important;
+}
+
+.force-article-font h1, .force-article-font h2, .force-article-font h3, .force-article-font h4 {
+    font-weight: 800 !important;
+    margin-top: 24px !important;
+    margin-bottom: 14px !important;
+    color: #111827 !important;
+}
+
+.force-article-font ul {
+    list-style-type: disc !important;
+    padding-left: 28px !important;
+    margin-bottom: 18px !important;
+}
+
+.force-article-font ol {
+    list-style-type: decimal !important;
+    padding-left: 28px !important;
+    margin-bottom: 18px !important;
+}
+
+.force-article-font li {
+    margin-bottom: 6px !important;
 }
 
 .force-article-font a,
@@ -301,9 +362,6 @@ body {
     color: #1d4ed8 !important;
 }
 
-.force-article-font * {
-    font-family: 'Noto Sans Devanagari', sans-serif;
-}
 .force-article-font p {
     margin-bottom: 24px !important;
 }

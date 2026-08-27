@@ -402,6 +402,9 @@ export default function AdminDashboard() {
         toolbarAdaptive: false,
         toolbarSticky: false,
         toolbarButtonSize: 'middle',
+        askBeforePasteHTML: false,
+        askBeforePasteFromWord: false,
+        defaultActionOnPaste: 'insert_as_html',
         buttons: [
             'bold', 'italic', 'underline', 'strikethrough', '|',
             'superscript', 'subscript', '|',

@@ -351,8 +351,11 @@ export default function SingleArticle({ initialArticle }) {
         return <div className="text-center py-20 text-xl font-bold text-red-600">Article not found (URL me shayad error hai)</div>;
     }
 
-    // Removed complex regex cleaner; relying on useEffect DOM cleaner for better accuracy
-    let cleanContent = article.content || '';
+    // Sanitize any foreign font-family and legacy font tags
+    let cleanContent = (article.content || '')
+        .replace(/font-family\s*:\s*[^;"]+;?/gi, '')
+        .replace(/<font[^>]*>/gi, '')
+        .replace(/<\/font>/gi, '');
 
     // Auto-linkify raw URLs that aren't already part of an HTML tag
     cleanContent = cleanContent.replace(/<[^>]+>|(\b(https?:\/\/[^\s<]+))/g, (match, url) => {
