@@ -102,9 +102,9 @@ export default function BreakingNewsPage({ initialNews = [] }) {
                                     </div>
                                 </div>
 
-                                <p className="text-gray-900 font-bold text-base md:text-lg leading-relaxed mb-4">
+                                <h2 className="text-gray-900 font-bold text-base md:text-lg leading-relaxed mb-4">
                                     {item.text}
-                                </p>
+                                </h2>
 
                                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                                     <div className="flex items-center gap-2">

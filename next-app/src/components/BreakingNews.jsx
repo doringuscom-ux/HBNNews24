@@ -186,9 +186,9 @@ export default function BreakingNews({ news = [] }) {
 
                                 return isCustom ? (
                                     <Link key={item._id || index} href="/breaking-news" title={content} className={className}>
-                                        <p className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">
+                                        <h2 className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">
                                             {content}
-                                        </p>
+                                        </h2>
                                     </Link>
                                 ) : (
                                     <Link
@@ -197,9 +197,9 @@ export default function BreakingNews({ news = [] }) {
                                         title={content}
                                         className={className}
                                     >
-                                        <p className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">
+                                        <h2 className="text-[13px] md:text-xl font-extrabold line-clamp-2 md:truncate cursor-pointer hover:underline leading-snug">
                                             {content}
-                                        </p>
+                                        </h2>
                                     </Link>
                                 );
                             })}
