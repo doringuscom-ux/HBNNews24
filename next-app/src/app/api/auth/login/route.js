@@ -14,7 +14,7 @@ export async function POST(request) {
         const isMatch = await admin.comparePassword(password);
         if (!isMatch) return NextResponse.json({ message: 'Invalid Credentials' }, { status: 400 });
 
-        const payload = { admin: { id: admin.id, role: admin.role || 'user' } };
+        const payload = { admin: { id: admin.id, username: admin.username, role: admin.role || 'user' } };
         const token = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '24h' });
 
         return NextResponse.json({ token, username: admin.username, role: admin.role || 'user' });

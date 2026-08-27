@@ -18,12 +18,24 @@ const clearAllNewsCache = () => {
     }
 };
 
-const verifyAuthToken = (req) => {
+import Admin from '@/models/Admin';
+
+const verifyAuthToken = async (req) => {
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
     const token = authHeader.split(' ')[1];
     try {
-        return jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const adminData = decoded.admin || decoded;
+        let username = adminData.username;
+        if (!username && adminData.id) {
+            await connectToDatabase();
+            const adminDoc = await Admin.findById(adminData.id);
+            if (adminDoc) {
+                username = adminDoc.username;
+            }
+        }
+        return { ...adminData, username };
     } catch (e) {
         return null;
     }
@@ -77,7 +89,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
     try {
-        const user = verifyAuthToken(req);
+        const user = await verifyAuthToken(req);
         if (!user) {
             return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
         }
@@ -104,6 +116,10 @@ export async function PUT(req, { params }) {
             category: categoryArr
         };
 
+        if (body.author && body.author.trim() !== '') {
+            updateData.author = body.author.trim();
+        }
+
         const updatedNews = await News.findByIdAndUpdate(id, updateData, { new: true });
         if (!updatedNews) {
             return NextResponse.json({ message: 'Article not found' }, { status: 404 });
@@ -120,7 +136,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
     try {
-        const user = verifyAuthToken(req);
+        const user = await verifyAuthToken(req);
         if (!user) {
             return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
         }

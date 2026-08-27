@@ -358,7 +358,8 @@ export default function AdminDashboard() {
         robots: 'index, follow',
         canonicalUrl: '',
         isEpaper: false,
-        location: 'नई दिल्ली'
+        location: 'नई दिल्ली',
+        author: ''
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
@@ -488,6 +489,9 @@ export default function AdminDashboard() {
                 }
                 let data; try { data = await res.json(); } catch(e) { console.error('Failed to parse JSON for', res.url); return; }
                 setUserRole(data.role || 'user');
+                if (data.username) {
+                    setCurrentUsername(data.username);
+                }
 
                 if (data.role === 'admin') {
                     fetchUsers();
@@ -499,7 +503,7 @@ export default function AdminDashboard() {
                     fetchSuvichar();
                     fetchSeo();
                 }
-                fetchMyProfile(data.username || typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null);
+                fetchMyProfile(data.username || (typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null));
             } catch (error) {
                 console.error('Verify error:', error);
             }
@@ -1228,7 +1232,11 @@ export default function AdminDashboard() {
         setIsSubmitting(true);
         const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
         
-        const payload = { ...formData, status: submitStatusRef.current };
+        const payload = { 
+            ...formData, 
+            author: (formData.author && formData.author.trim() !== '') ? formData.author.trim() : (currentUsername || 'एडमिन'),
+            status: submitStatusRef.current 
+        };
 
         try {
             let res;
@@ -1268,7 +1276,7 @@ export default function AdminDashboard() {
                 alert(editingId ? 'News article updated successfully!' : (submitStatusRef.current === 'draft' ? 'Draft saved successfully!' : 'News article published successfully!'));
                 setIsModalOpen(false);
                 setEditingId(null);
-                setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
+                setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली', author: currentUsername || '' });
                 fetchNews();
             } else {
                 let errData;
@@ -1364,7 +1372,8 @@ export default function AdminDashboard() {
             robots: item.robots || 'index, follow',
             canonicalUrl: item.canonicalUrl || '',
             isEpaper: item.isEpaper || false,
-            location: item.location || 'नई दिल्ली'
+            location: item.location || 'नई दिल्ली',
+            author: item.author || currentUsername || ''
         });
         setEditingId(item._id);
         setIsModalOpen(true);
@@ -1392,7 +1401,22 @@ export default function AdminDashboard() {
 
     const openCreateModal = () => {
         setEditingId(null);
-        setFormData({ title: '', slug: '', image: '', imageAlt: '', category: [], content: '', metaTitle: '', metaDescription: '', metaKeywords: '', robots: 'index, follow', canonicalUrl: '', isEpaper: false, location: 'नई दिल्ली' });
+        setFormData({ 
+            title: '', 
+            slug: '', 
+            image: '', 
+            imageAlt: '', 
+            category: [], 
+            content: '', 
+            metaTitle: '', 
+            metaDescription: '', 
+            metaKeywords: '', 
+            robots: 'index, follow', 
+            canonicalUrl: '', 
+            isEpaper: false, 
+            location: 'नई दिल्ली',
+            author: currentUsername || ''
+        });
         try {
             const draftStr = typeof window !== 'undefined' ? localStorage.getItem('hbn_news_autosave_draft') : null;
             if (draftStr) {
@@ -2828,10 +2852,16 @@ export default function AdminDashboard() {
                                         </div>
                                         <textarea required name="title" value={formData.title} onChange={handleInputChange} className={`w-full border rounded-lg shadow-sm p-3 text-sm focus:ring-2 focus:ring-red-500 transition-all outline-none ${formData.title?.length >= 50 && formData.title?.length <= 60 ? 'bg-green-50 border-green-400 text-green-900 focus:border-green-500' : formData.title?.length > 60 ? 'bg-red-50 border-red-400 text-red-900 focus:border-red-500' : formData.title?.length > 0 ? 'bg-orange-50 border-orange-400 text-orange-900 focus:border-orange-500' : 'bg-white border-gray-300 focus:border-red-500'}`} rows="2" placeholder="Enter an engaging headline..."></textarea>
                                     </div>
-                                    <div className="mb-4">
-                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex items-center gap-2"><Globe size={16} /> Location (City/Place)</label>
-                                        <input type="text" name="location" value={formData.location} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg shadow-sm p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none" placeholder="e.g. नई दिल्ली" />
-                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-2">
+                                         <div className="flex-1">
+                                             <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex items-center gap-2"><Users size={16} /> Author / Reporter (ਲੇਖਕ / ਰਿਪੋਰਟਰ)</label>
+                                             <input type="text" name="author" value={formData.author || ''} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg shadow-sm p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none" placeholder="Enter author/reporter name" />
+                                         </div>
+                                         <div className="flex-1">
+                                             <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex items-center gap-2"><Globe size={16} /> Location (City/Place)</label>
+                                             <input type="text" name="location" value={formData.location} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg shadow-sm p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none" placeholder="e.g. नई दिल्ली" />
+                                         </div>
+                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <div className="flex flex-col lg:flex-row gap-4">
                                             <div className="flex-1">

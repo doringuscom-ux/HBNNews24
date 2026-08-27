@@ -21,12 +21,24 @@ const clearAllNewsCache = () => {
     }
 };
 
-const verifyAuthToken = (req) => {
+import Admin from '@/models/Admin';
+
+const verifyAuthToken = async (req) => {
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
     const token = authHeader.split(' ')[1];
     try {
-        return jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const adminData = decoded.admin || decoded;
+        let username = adminData.username;
+        if (!username && adminData.id) {
+            await connectToDatabase();
+            const adminDoc = await Admin.findById(adminData.id);
+            if (adminDoc) {
+                username = adminDoc.username;
+            }
+        }
+        return { ...adminData, username };
     } catch (e) {
         return null;
     }
@@ -53,7 +65,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const user = verifyAuthToken(req);
+    const user = await verifyAuthToken(req);
     if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
@@ -69,10 +81,14 @@ export async function POST(req) {
       categoryArr = [body.category.trim()];
     }
 
+    const authorName = (body.author && body.author.trim() !== '') 
+      ? body.author.trim() 
+      : (user.username || 'एडमिन');
+
     const newArticle = new News({
       ...body,
       category: categoryArr,
-      author: user.username || body.author || 'एडमिन'
+      author: authorName
     });
 
     const savedArticle = await newArticle.save();
