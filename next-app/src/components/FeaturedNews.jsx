@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -45,6 +46,33 @@ export default function FeaturedNews({ news = [] }) {
         }
     };
 
+    const handlePrev = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        setIsTransitioning(true);
+        setCurrentIndex((prev) => prev - 1);
+    };
+
+    const handleNext = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        setIsTransitioning(true);
+        setCurrentIndex((prev) => prev + 1);
+    };
+
+    const handleDotClick = (e, idx) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        setIsTransitioning(true);
+        setCurrentIndex(idx + 1);
+    };
+
     const handleTouchStart = (e) => {
         setTouchEndX(null);
         setTouchEndY(null);
@@ -65,12 +93,10 @@ export default function FeaturedNews({ news = [] }) {
         if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
             if (diffX > 0) {
                 // Swiped Left -> Next slide
-                setIsTransitioning(true);
-                setCurrentIndex((prev) => prev + 1);
+                handleNext();
             } else {
                 // Swiped Right -> Previous slide
-                setIsTransitioning(true);
-                setCurrentIndex((prev) => prev - 1);
+                handlePrev();
             }
         }
     };
@@ -152,6 +178,41 @@ export default function FeaturedNews({ news = [] }) {
                     );
                 })}
             </div>
+
+            {/* Left & Right Navigation Buttons (PC / Desktop & Hover) */}
+            {count > 1 && (
+                <>
+                    <button
+                        type="button"
+                        onClick={handlePrev}
+                        aria-label="Previous Slide"
+                        className="absolute left-3 top-[38%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-[#da0000] text-white flex items-center justify-center backdrop-blur-sm transition-all duration-300 shadow-lg md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 cursor-pointer"
+                    >
+                        <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleNext}
+                        aria-label="Next Slide"
+                        className="absolute right-3 top-[38%] -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-[#da0000] text-white flex items-center justify-center backdrop-blur-sm transition-all duration-300 shadow-lg md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 cursor-pointer"
+                    >
+                        <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
+                    </button>
+
+                    {/* Pagination Dots */}
+                    <div className="absolute bottom-3 right-4 flex items-center gap-1.5 z-20 bg-white/80 backdrop-blur-xs px-2 py-1 rounded-full shadow-xs">
+                        {featuredList.map((_, idx) => (
+                            <button
+                                key={idx}
+                                type="button"
+                                onClick={(e) => handleDotClick(e, idx)}
+                                aria-label={`Go to slide ${idx + 1}`}
+                                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${idx === activeDotIndex ? 'w-5 bg-[#da0000]' : 'w-1.5 bg-gray-300 hover:bg-gray-500'}`}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

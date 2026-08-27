@@ -1,7 +1,7 @@
  'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function BreakingNews({ news = [] }) {
     const [isVisible, setIsVisible] = useState(true);
@@ -205,14 +205,37 @@ export default function BreakingNews({ news = [] }) {
                             })}
                         </div>
 
-                        {/* Right Side: Close Button */}
-                        <button
-                            onClick={() => setIsVisible(false)}
-                            className="flex-shrink-0 self-center ml-1 md:ml-4 mr-2 md:mr-3 hover:bg-white/20 p-1.5 rounded-full transition-colors cursor-pointer"
-                            aria-label="Close"
-                        >
-                            <X className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.5} />
-                        </button>
+                        {/* Right Side: Navigation & Close Controls */}
+                        <div className="flex-shrink-0 self-center flex items-center gap-0.5 ml-1 md:ml-4 mr-2 md:mr-3 z-30">
+                            {breakingNewsItems.length > 1 && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentIndex((prev) => (prev - 1 + breakingNewsItems.length) % breakingNewsItems.length)}
+                                        className="hover:bg-white/20 p-1 md:p-1.5 rounded-full transition-colors cursor-pointer text-white flex items-center justify-center"
+                                        aria-label="Previous Breaking News"
+                                    >
+                                        <ChevronLeft className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.5} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentIndex((prev) => (prev + 1) % breakingNewsItems.length)}
+                                        className="hover:bg-white/20 p-1 md:p-1.5 rounded-full transition-colors cursor-pointer text-white flex items-center justify-center"
+                                        aria-label="Next Breaking News"
+                                    >
+                                        <ChevronRight className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.5} />
+                                    </button>
+                                </>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => setIsVisible(false)}
+                                className="hover:bg-white/20 p-1 md:p-1.5 rounded-full transition-colors cursor-pointer text-white flex items-center justify-center ml-0.5"
+                                aria-label="Close"
+                            >
+                                <X className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.5} />
+                            </button>
+                        </div>
 
                     </div>
                 </div>
