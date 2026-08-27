@@ -535,7 +535,7 @@ export default function SingleArticle({ initialArticle }) {
                     </div>
                 </div>
 
-                {/* Article Body */}
+                {/* Article Body - Always Full View */}
                 {hasContent && (
                     <div className="relative">
                         <style>{`
@@ -581,34 +581,10 @@ export default function SingleArticle({ initialArticle }) {
                         `}</style>
                         <div
                             ref={articleContentRef}
-                            className={`force-article-font overflow-hidden transition-all duration-500 ease-in-out [&_img]:mx-auto [&_img]:block [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4 ${isExpanded ? 'max-h-none' : 'max-h-[300px]'}`}
+                            className="force-article-font [&_img]:mx-auto [&_img]:block [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4"
                             dangerouslySetInnerHTML={{ __html: cleanContent }}
                         />
-                        {!isExpanded && (
-                            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-                        )}
                     </div>
-                )}
-
-                {/* Read More Button OR End Text */}
-                {hasContent && (
-                    !isExpanded ? (
-                        <div className="flex justify-center mt-4 relative z-10">
-                            <button
-                                onClick={() => setIsExpanded(true)}
-                                className="bg-[#da0000] text-white px-8 py-2 rounded-full font-bold text-lg hover:bg-red-700 transition-colors shadow-md flex items-center gap-2"
-                            >
-                                और पढ़ें <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center gap-4 mt-8">
-                            <div className="flex items-center gap-4 text-gray-500 font-bold text-lg">
-                                <span>---- समाप्त ----</span>
-                                <div className="w-2 h-2 bg-[#da0000]"></div>
-                            </div>
-                        </div>
-                    )
                 )}
 
                 {/* Author Bio Box for Google News */}
