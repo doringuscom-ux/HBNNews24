@@ -7,6 +7,10 @@ import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function FeaturedNews({ news = [] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [touchStartX, setTouchStartX] = useState(null);
+    const [touchStartY, setTouchStartY] = useState(null);
+    const [touchEndX, setTouchEndX] = useState(null);
+    const [touchEndY, setTouchEndY] = useState(null);
 
     const featuredList = news.slice(0, 10);
 
@@ -18,6 +22,35 @@ export default function FeaturedNews({ news = [] }) {
 
         return () => clearInterval(interval);
     }, [featuredList.length]);
+
+    const handleTouchStart = (e) => {
+        setTouchEndX(null);
+        setTouchEndY(null);
+        setTouchStartX(e.targetTouches[0].clientX);
+        setTouchStartY(e.targetTouches[0].clientY);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.targetTouches[0].clientX);
+        setTouchEndY(e.targetTouches[0].clientY);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartX === null || touchEndX === null) return;
+        const diffX = touchStartX - touchEndX;
+        const diffY = touchStartY !== null && touchEndY !== null ? touchStartY - touchEndY : 0;
+
+        // Ensure horizontal swipe is dominant over vertical scroll
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+            if (diffX > 0) {
+                // Swiped Left -> Next
+                setCurrentIndex((prev) => (prev + 1) % featuredList.length);
+            } else {
+                // Swiped Right -> Prev
+                setCurrentIndex((prev) => (prev === 0 ? featuredList.length - 1 : prev - 1));
+            }
+        }
+    };
 
     if (news.length === 0) {
         return (
@@ -32,7 +65,12 @@ export default function FeaturedNews({ news = [] }) {
     }
 
     return (
-        <div className="w-full relative bg-white rounded-[16px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group">
+        <div 
+            className="w-full relative bg-white rounded-[16px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
             <div 
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -71,12 +109,12 @@ export default function FeaturedNews({ news = [] }) {
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />
                                 </div>
-                                <div className="p-5 bg-gradient-to-b from-white to-gray-50/50">
-                                    <h2 className="text-[22px] md:text-[30px] font-black text-[#111] mb-2 group-hover:text-[#da0000] transition-colors leading-[1.3] line-clamp-1">
+                                <div className="p-4 sm:p-5 bg-gradient-to-b from-white to-gray-50/50">
+                                    <h2 className="text-[20px] md:text-[30px] font-black text-[#111] mb-2 group-hover:text-[#da0000] transition-colors leading-[1.3] line-clamp-2 sm:line-clamp-1">
                                         {featured.title}
                                     </h2>
                                     <div className="w-10 h-1 bg-[#da0000] mb-3 rounded-full"></div>
-                                    <p className="text-gray-600 text-[15px] leading-relaxed line-clamp-1">
+                                    <p className="text-gray-600 text-[14px] sm:text-[15px] leading-relaxed line-clamp-2 sm:line-clamp-1">
                                         {displayDesc}
                                     </p>
                                 </div>
@@ -86,24 +124,18 @@ export default function FeaturedNews({ news = [] }) {
                 })}
             </div>
 
-            {/* Slider Controls */}
+            {/* Pagination Dots */}
             {featuredList.length > 1 && (
-                <>
-                    <button 
-                        onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev === 0 ? featuredList.length - 1 : prev - 1)); }}
-                        className="absolute left-4 top-[25%] md:top-[30%] transform -translate-y-1/2 bg-white/80 hover:bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.1)] z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        aria-label="Previous"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                    </button>
-                    <button 
-                        onClick={(e) => { e.preventDefault(); setCurrentIndex((prev) => (prev + 1) % featuredList.length); }}
-                        className="absolute right-4 top-[25%] md:top-[30%] transform -translate-y-1/2 bg-white/80 hover:bg-white text-black w-10 h-10 flex items-center justify-center rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.1)] z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        aria-label="Next"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </button>
-                </>
+                <div className="absolute bottom-2 right-4 flex items-center gap-1.5 z-10">
+                    {featuredList.map((_, idx) => (
+                        <button
+                            key={idx}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex(idx); }}
+                            aria-label={`Slide ${idx + 1}`}
+                            className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-5 bg-[#da0000]' : 'w-1.5 bg-gray-300 hover:bg-gray-400'}`}
+                        />
+                    ))}
+                </div>
             )}
         </div>
     );
