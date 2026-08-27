@@ -583,16 +583,14 @@ export default function AdminDashboard() {
                 let data; try { data = await res.json(); } catch(e) { console.error('Failed to parse JSON for', res.url); return; }
                 setPollQuestion(data.question);
                 
-                if (data.options) {
-                    setPollOptions(prevOptions => {
-                        return data.options.map((opt, i) => ({
-                            ...prevOptions[i],
-                            id: opt.id,
-                            text: opt.text,
-                            emoji: opt.emoji,
-                            realVotes: opt.realVotes || 0,
-                        }));
-                    });
+                if (data.options && Array.isArray(data.options)) {
+                    setPollOptions(data.options.map(opt => ({
+                        id: opt.id,
+                        text: opt.text || '',
+                        emoji: opt.emoji || '',
+                        initialVotes: opt.initialVotes || 0,
+                        realVotes: opt.realVotes || 0,
+                    })));
                 }
             } else {
                 setIsPollActive(false);

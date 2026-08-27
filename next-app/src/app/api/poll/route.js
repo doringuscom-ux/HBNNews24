@@ -22,10 +22,45 @@ export async function POST(request) {
 
     try {
         const body = await request.json();
-        const item = new Poll(body);
-        await item.save();
-        return NextResponse.json(item, { status: 201 });
+        const { question, options } = body;
+
+        let activePoll = await Poll.findOne({ isActive: true }).sort({ createdAt: -1 });
+
+        if (activePoll) {
+            // Update active poll
+            activePoll.question = question;
+            activePoll.options = (options || []).map(opt => {
+                const prevOpt = activePoll.options.find(p => p.id === opt.id);
+                return {
+                    id: opt.id,
+                    text: opt.text,
+                    emoji: opt.emoji || '',
+                    initialVotes: parseInt(opt.initialVotes) || 0,
+                    realVotes: opt.realVotes !== undefined ? parseInt(opt.realVotes) : (prevOpt?.realVotes || 0)
+                };
+            });
+            activePoll.isActive = true;
+            await activePoll.save();
+            return NextResponse.json(activePoll, { status: 200 });
+        } else {
+            // Create new active poll
+            await Poll.updateMany({}, { $set: { isActive: false } });
+            const item = new Poll({
+                question,
+                options: (options || []).map(opt => ({
+                    id: opt.id,
+                    text: opt.text,
+                    emoji: opt.emoji || '',
+                    initialVotes: parseInt(opt.initialVotes) || 0,
+                    realVotes: parseInt(opt.realVotes) || 0
+                })),
+                isActive: true
+            });
+            await item.save();
+            return NextResponse.json(item, { status: 201 });
+        }
     } catch (err) {
+        console.error('Error saving poll:', err);
         return NextResponse.json({ message: 'Server error', error: err.message }, { status: 500 });
     }
 }

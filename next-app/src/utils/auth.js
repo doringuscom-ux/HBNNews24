@@ -9,7 +9,7 @@ export async function getAuthUser() {
     
     try {
         const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET || 'fallback_secret_key');
-        return decoded.admin;
+        return decoded.admin || decoded;
     } catch (err) {
         return null;
     }

@@ -16,12 +16,14 @@ export async function GET() {
         });
 
         const formattedOptions = activePoll.options.map(opt => {
-            const optionTotal = opt.initialVotes + opt.realVotes;
+            const optionTotal = (opt.initialVotes || 0) + (opt.realVotes || 0);
             const percentage = totalVotes === 0 ? 0 : Math.round((optionTotal / totalVotes) * 100);
             return {
                 id: opt.id,
                 text: opt.text,
                 emoji: opt.emoji,
+                initialVotes: opt.initialVotes || 0,
+                realVotes: opt.realVotes || 0,
                 percentage: percentage
             };
         });

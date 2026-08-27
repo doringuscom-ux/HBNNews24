@@ -13,13 +13,14 @@ export default function PollWidget() {
     useEffect(() => {
         const fetchPoll = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/poll/active`);
+                const res = await fetch('/api/poll/active');
                 if (res.ok) {
                     const data = await res.json();
                     setPollData(data);
                     
                     // Check if already voted
-                    const votedPollId = typeof window !== 'undefined' ? localStorage.getItem(``) : null;
+                    const pollId = data.id || data._id;
+                    const votedPollId = typeof window !== 'undefined' && pollId ? localStorage.getItem(`voted_poll_${pollId}`) : null;
                     if (votedPollId) {
                         setSelectedOption(parseInt(votedPollId));
                         setShowResults(true);
@@ -37,16 +38,20 @@ export default function PollWidget() {
     const handleVote = async (optionId) => {
         if (!pollData || showResults) return;
         
+        const currentPollId = pollData.id || pollData._id;
+
         // Optimistic UI update
         setSelectedOption(optionId);
         setShowResults(true);
-        if (typeof window !== 'undefined') localStorage.setItem(`voted_poll_${pollData.id}`, optionId);
+        if (typeof window !== 'undefined' && currentPollId) {
+            localStorage.setItem(`voted_poll_${currentPollId}`, optionId);
+        }
 
         try {
-            const res = await fetch(`${API_URL}/api/poll/${pollData.id}/vote`, {
+            const res = await fetch(`/api/poll/${currentPollId}/vote`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ optionId })
+                body: JSON.stringify({ optionId, pollId: currentPollId })
             });
             if (res.ok) {
                 const updatedData = await res.json();
