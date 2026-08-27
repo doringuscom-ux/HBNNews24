@@ -6,22 +6,44 @@ import Image from 'next/image';
 import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function FeaturedNews({ news = [] }) {
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const featuredList = news.slice(0, 10);
+    const count = featuredList.length;
+
+    // Extended list with clones for seamless infinite looping
+    // [LastClone, ...items, FirstClone]
+    const extendedList = count > 1 ? [featuredList[count - 1], ...featuredList, featuredList[0]] : featuredList;
+
+    const [currentIndex, setCurrentIndex] = useState(count > 1 ? 1 : 0);
+    const [isTransitioning, setIsTransitioning] = useState(true);
     const [touchStartX, setTouchStartX] = useState(null);
     const [touchStartY, setTouchStartY] = useState(null);
     const [touchEndX, setTouchEndX] = useState(null);
     const [touchEndY, setTouchEndY] = useState(null);
 
-    const featuredList = news.slice(0, 10);
-
+    // Auto-advance every 5 seconds
     useEffect(() => {
-        if (featuredList.length <= 1) return;
+        if (count <= 1) return;
         const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % featuredList.length);
+            setIsTransitioning(true);
+            setCurrentIndex((prev) => prev + 1);
         }, 5000);
 
         return () => clearInterval(interval);
-    }, [featuredList.length]);
+    }, [count, currentIndex]);
+
+    // Handle seamless infinite loop jump when reaching clones
+    const handleTransitionEnd = () => {
+        if (count <= 1) return;
+        if (currentIndex >= count + 1) {
+            // Reached clone of first slide (at end) -> snap silently to real first slide
+            setIsTransitioning(false);
+            setCurrentIndex(1);
+        } else if (currentIndex <= 0) {
+            // Reached clone of last slide (at start) -> snap silently to real last slide
+            setIsTransitioning(false);
+            setCurrentIndex(count);
+        }
+    };
 
     const handleTouchStart = (e) => {
         setTouchEndX(null);
@@ -40,19 +62,20 @@ export default function FeaturedNews({ news = [] }) {
         const diffX = touchStartX - touchEndX;
         const diffY = touchStartY !== null && touchEndY !== null ? touchStartY - touchEndY : 0;
 
-        // Ensure horizontal swipe is dominant over vertical scroll
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
             if (diffX > 0) {
-                // Swiped Left -> Next
-                setCurrentIndex((prev) => (prev + 1) % featuredList.length);
+                // Swiped Left -> Next slide
+                setIsTransitioning(true);
+                setCurrentIndex((prev) => prev + 1);
             } else {
-                // Swiped Right -> Prev
-                setCurrentIndex((prev) => (prev === 0 ? featuredList.length - 1 : prev - 1));
+                // Swiped Right -> Previous slide
+                setIsTransitioning(true);
+                setCurrentIndex((prev) => prev - 1);
             }
         }
     };
 
-    if (news.length === 0) {
+    if (count === 0) {
         return (
             <div className="w-full bg-white rounded-[16px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 animate-pulse">
                 <div className="w-full aspect-[16/9] sm:aspect-[21/9] bg-gray-200"></div>
@@ -64,6 +87,11 @@ export default function FeaturedNews({ news = [] }) {
         );
     }
 
+    // Active indicator dot index (0 to count - 1)
+    const activeDotIndex = count > 1 
+        ? (currentIndex === 0 ? count - 1 : currentIndex > count ? 0 : currentIndex - 1)
+        : 0;
+
     return (
         <div 
             className="w-full relative bg-white rounded-[16px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group select-none"
@@ -72,10 +100,11 @@ export default function FeaturedNews({ news = [] }) {
             onTouchEnd={handleTouchEnd}
         >
             <div 
-                className="flex transition-transform duration-500 ease-in-out"
+                className={`flex ${isTransitioning ? 'transition-transform duration-600 ease-out' : ''}`}
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                onTransitionEnd={handleTransitionEnd}
             >
-                {featuredList.map((featured, index) => {
+                {extendedList.map((featured, index) => {
                     let displayCategory = '';
                     if (Array.isArray(featured.category)) {
                         const filtered = featured.category.filter(c => c.toLowerCase() !== 'superfast' && c.toLowerCase() !== 'featured');
@@ -96,7 +125,7 @@ export default function FeaturedNews({ news = [] }) {
                     }
 
                     return (
-                        <div key={featured._id || index} className="w-full flex-shrink-0">
+                        <div key={`${featured._id || index}-${index}`} className="w-full flex-shrink-0">
                             <Link href={`/news/${featured.slug || featured._id}`} title={featured.title || "Featured News"} className="block w-full cursor-pointer">
                                 <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
                                     <Image 
@@ -104,7 +133,7 @@ export default function FeaturedNews({ news = [] }) {
                                         alt={featured.title || "Featured News"} 
                                         title={featured.title || "Featured News"}
                                         fill
-                                        priority={index === 0}
+                                        priority={index <= 2}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                                         className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
                                     />
@@ -123,20 +152,6 @@ export default function FeaturedNews({ news = [] }) {
                     );
                 })}
             </div>
-
-            {/* Pagination Dots */}
-            {featuredList.length > 1 && (
-                <div className="absolute bottom-2 right-4 flex items-center gap-1.5 z-10">
-                    {featuredList.map((_, idx) => (
-                        <button
-                            key={idx}
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex(idx); }}
-                            aria-label={`Slide ${idx + 1}`}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-5 bg-[#da0000]' : 'w-1.5 bg-gray-300 hover:bg-gray-400'}`}
-                        />
-                    ))}
-                </div>
-            )}
         </div>
     );
 }
