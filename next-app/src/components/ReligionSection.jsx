@@ -86,7 +86,7 @@ export default function ReligionSection({ news = [] }) {
     const activeData = zodiacsWithDynamicData[activeIndex];
 
     return (
-        <section className="w-full bg-white pb-10 pt-4 font-sans border-b-2 border-gray-100">
+        <section className="w-full bg-white pb-10 pt-4 font-sans">
             <div className="w-full max-w-[1270px] mx-auto px-4">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-5">

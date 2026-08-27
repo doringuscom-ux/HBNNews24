@@ -152,9 +152,13 @@ export default function SingleArticle({ initialArticle }) {
                     newsRetries--;
                 }
                 
-                const newsData = newsRes && newsRes.ok ? await newsRes.json() : [];
+                const rawNewsData = newsRes && newsRes.ok ? await newsRes.json() : [];
+                const currentArticleId = article?._id || initialArticle?._id || id;
+                const filteredLatest = (Array.isArray(rawNewsData) ? rawNewsData : []).filter(
+                    item => String(item._id) !== String(currentArticleId) && String(item.slug) !== String(id)
+                );
 
-                setLatestNews(newsData);
+                setLatestNews(filteredLatest);
                 setLoading(false);
 
                 // Fetch likes/comments based on loaded article

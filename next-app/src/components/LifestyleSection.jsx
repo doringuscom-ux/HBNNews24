@@ -3,13 +3,10 @@ import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function LifestyleSection({ news = [] }) {
-    const safeNews = (index, width = 300) => {
-        if (news[index]) return { image: optimizeImage(news[index].image, width), title: news[index].title, _id: news[index].slug || news[index]._id };
-        return { image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E", title: "Lifestyle News", _id: "loading" };
-    };
+    if (!news || news.length === 0) return null;
 
-    const mainNews = safeNews(0, 600);
-    const sideNews = [safeNews(1), safeNews(2), safeNews(3), safeNews(4)];
+    const mainNews = news[0];
+    const sideNews = news.slice(1, 5);
 
     return (
         <section className="w-full bg-white pb-8 font-sans">
@@ -30,25 +27,27 @@ export default function LifestyleSection({ news = [] }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
                         {/* Left Column (Main News) */}
-                        <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} title={mainNews.title || "Lifestyle News"} className="group cursor-pointer flex flex-col gap-3 block">
-                            <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title || "Lifestyle News"} title={mainNews.title || "Lifestyle News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                            </div>
-                            <h3 className="text-[#000] text-[22px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pr-4">
-                                {mainNews.title}
-                            </h3>
-                        </Link>
+                        {mainNews && (
+                            <Link href={`/news/${mainNews.slug || mainNews._id}`} title={mainNews.title} className="group cursor-pointer flex flex-col gap-3 block">
+                                <div className="w-full aspect-[16/9] overflow-hidden">
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} title={mainNews.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                </div>
+                                <h3 className="text-[#000] text-[22px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pr-4">
+                                    {mainNews.title}
+                                </h3>
+                            </Link>
+                        )}
 
                         {/* Right Column (List) */}
-                        <div className="flex flex-col justify-between">
-                            {sideNews.map((news, index) => (
-                                <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} title={news.title || "Lifestyle News"} key={index} className={`flex gap-4 pb-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e0e0e0] mb-4' : ''} group cursor-pointer block`}>
+                        <div className="flex flex-col justify-between gap-4">
+                            {sideNews.map((item, index) => (
+                                <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex gap-4 pb-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e0e0e0]' : ''} group cursor-pointer block`}>
                                     <div className="w-[155px] flex-shrink-0 overflow-hidden">
-                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title || "Lifestyle News"} title={news.title || "Lifestyle News"} className="w-full h-[85px] object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-[85px] object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-[#000] text-[18px] leading-[1.3] font-medium group-hover:text-[#d91f26] transition-colors mt-0.5">
-                                            {news.title}
+                                            {item.title}
                                         </h3>
                                     </div>
                                 </Link>

@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function FeaturedNews({ news = [] }) {
-    const featuredList = news.slice(0, 10);
+    const featuredList = news.slice(0, 3);
     const count = featuredList.length;
 
     // Extended list with clones for seamless infinite looping
@@ -104,7 +104,7 @@ export default function FeaturedNews({ news = [] }) {
     if (count === 0) {
         return (
             <div className="w-full bg-white rounded-[16px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 animate-pulse">
-                <div className="w-full aspect-[16/9] sm:aspect-[21/9] bg-gray-200"></div>
+                <div className="w-full aspect-[16/9] bg-gray-200"></div>
                 <div className="p-6 bg-gradient-to-b from-white to-gray-50/50">
                     <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
                     <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -153,7 +153,7 @@ export default function FeaturedNews({ news = [] }) {
                     return (
                         <div key={`${featured._id || index}-${index}`} className="w-full flex-shrink-0">
                             <Link href={`/news/${featured.slug || featured._id}`} title={featured.title || "Featured News"} className="block w-full cursor-pointer">
-                                <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9] sm:aspect-[21/9]">
+                                <div className="relative overflow-hidden w-full bg-gray-100 flex items-center justify-center aspect-[16/9]">
                                     <Image 
                                         src={featured.image} 
                                         alt={featured.title || "Featured News"} 
@@ -161,7 +161,7 @@ export default function FeaturedNews({ news = [] }) {
                                         fill
                                         priority={index <= 2}
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
-                                        className="object-contain group-hover:scale-95 transition-transform duration-700 ease-out rounded-[12px] group-hover:rounded-[16px]"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                     />
                                 </div>
                                 <div className="p-4 sm:p-5 bg-gradient-to-b from-white to-gray-50/50">

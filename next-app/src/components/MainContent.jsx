@@ -6,13 +6,20 @@ import PollWidget from './PollWidget';
 import EntertainmentSection from './EntertainmentSection';
 
 export default function MainContent({ mixNews = [], entertainmentNews = [], videos = [], shorts = [], superfastNews = [], featuredNews = [] }) {
+    // 1. Featured News: top 3 items only
+    const effectiveFeatured = (featuredNews && featuredNews.length > 0 ? featuredNews : mixNews).slice(0, 3);
+    const featuredIds = new Set(effectiveFeatured.map(item => String(item._id || item.slug || item.title)));
+
+    // 2. Aaj Ki Taza News: latest news following the featured news (excluding featured items)
+    const effectiveMixNews = (mixNews || []).filter(item => !featuredIds.has(String(item._id || item.slug || item.title)));
+
     return (
         <div className="w-full max-w-[1280px] mx-auto px-4 mt-8 mb-12 flex flex-col gap-8">
             {/* Upper Section: Featured + NewsGrid on left, Sidebar on right */}
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left Column (70%) */}
                 <div className="w-full lg:w-[70%] flex flex-col gap-6">
-                    <FeaturedNews news={featuredNews} />
+                    <FeaturedNews news={effectiveFeatured} />
 
                     {/* Header: Aaj Ki Taza News (Below Featured News) */}
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-2 border-b-2 border-gray-100 mt-1 gap-1 sm:gap-3">
@@ -27,7 +34,7 @@ export default function MainContent({ mixNews = [], entertainmentNews = [], vide
                         </p>
                     </div>
 
-                    <NewsGrid news={mixNews} />
+                    <NewsGrid news={effectiveMixNews} />
                 </div>
 
                 {/* Right Column (30%) - SidebarNews */}
