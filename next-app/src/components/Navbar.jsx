@@ -22,12 +22,23 @@ export default function AajTakNavbar() {
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [latestNews, setLatestNews] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
-    const [dismissedNotifs, setDismissedNotifs] = useState(() => {
-        try { return JSON.parse(localStorage.getItem('dismissedNotifs') || '[]'); } catch { return []; }
-    });
+    const [dismissedNotifs, setDismissedNotifs] = useState([]);
+    const [currentLang, setCurrentLang] = useState('hi');
     const notifRef = useRef(null);
 
     useEffect(() => {
+        // Read stored notifications and lang after hydration
+        try {
+            const stored = localStorage.getItem('dismissedNotifs');
+            if (stored) setDismissedNotifs(JSON.parse(stored));
+        } catch {}
+
+        try {
+            if (document.cookie.includes('googtrans=/hi/en')) setCurrentLang('en');
+            else if (document.cookie.includes('googtrans=/hi/pa')) setCurrentLang('pa');
+            else setCurrentLang('hi');
+        } catch {}
+
         // Handle click outside to close notifications
         const handleClickOutside = (event) => {
             if (notifRef.current && !notifRef.current.contains(event.target)) {
@@ -35,17 +46,20 @@ export default function AajTakNavbar() {
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
+
         // Only inject if it doesn't exist (Delayed for performance)
         if (!document.getElementById('google-translate-script')) {
             window.googleTranslateElementInit = () => {
-                new window.google.translate.TranslateElement(
-                    {
-                        pageLanguage: 'hi',
-                        includedLanguages: 'hi,en,pa',
-                        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-                    },
-                    'google_translate_element'
-                );
+                try {
+                    new window.google.translate.TranslateElement(
+                        {
+                            pageLanguage: 'hi',
+                            includedLanguages: 'hi,en,pa',
+                            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+                        },
+                        'google_translate_element'
+                    );
+                } catch (e) {}
             };
 
             setTimeout(() => {
@@ -314,7 +328,7 @@ export default function AajTakNavbar() {
                 {/* Desktop Navigation */}
                 <div className="hidden xl:flex items-center h-full flex-1">
                     {navLinks.map((link) => {
-                        const isActive = location.pathname === link.path;
+                        const isActive = location === link.path;
                         return (
                             <div key={link.name} className="relative group h-full flex items-center">
                                 <Link
@@ -351,13 +365,13 @@ export default function AajTakNavbar() {
                 <div className="flex items-center gap-2 sm:gap-4 xl:gap-6 text-white ml-auto">
                     
                     {/* Hidden Original Google Translate Widget */}
-                    <div id="google_translate_element" className="hidden"></div>
+                    <div id="google_translate_element" className="hidden" suppressHydrationWarning={true}></div>
 
                     {/* Custom Language Selector */}
                     <select 
+                        value={currentLang}
                         onChange={changeLanguage} 
                         className="bg-white/10 text-white font-bold py-1 px-1.5 sm:py-1.5 sm:px-3 rounded border border-white/20 focus:outline-none focus:border-[#ff3b22] text-[11px] sm:text-sm cursor-pointer hover:bg-white/20 transition-all appearance-none"
-                        defaultValue={typeof document !== 'undefined' ? (document.cookie.includes('googtrans=/hi/en') ? 'en' : document.cookie.includes('googtrans=/hi/pa') ? 'pa' : 'hi') : 'hi'}
                         aria-label="Language Selector"
                     >
                         <option value="hi" className="text-black">Hindi</option>
@@ -521,7 +535,7 @@ export default function AajTakNavbar() {
                                     href={item.path}
                                     title={item.name}
                                     onClick={() => setOpen(false)}
-                                    className={`flex justify-between items-center px-6 py-4 font-bold border-b border-gray-100/50 hover:bg-gray-50 hover:text-[#ff3b22] hover:pl-8 transition-all duration-300 ${location.pathname === item.path ? 'text-[#ff3b22]' : 'text-gray-800'}`}
+                                    className={`flex justify-between items-center px-6 py-4 font-bold border-b border-gray-100/50 hover:bg-gray-50 hover:text-[#ff3b22] hover:pl-8 transition-all duration-300 ${location === item.path ? 'text-[#ff3b22]' : 'text-gray-800'}`}
                                 >
                                     {item.name}
                                 </Link>
