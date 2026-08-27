@@ -15,7 +15,7 @@ import logo from "../assets/HBN Thumbnail.webp";
 
 export default function AajTakNavbar() {
     const location = usePathname();
-    const navigate = useRouter();
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -124,7 +124,7 @@ export default function AajTakNavbar() {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
             setSearchOpen(false);
             setSearchQuery("");
         }
