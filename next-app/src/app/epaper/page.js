@@ -22,6 +22,8 @@ export async function generateMetadata() {
 }
 
 
+export const revalidate = 60;
+
 export default async function Page() {
   let initialNews = [];
   let initialSuvichar = null;
@@ -51,8 +53,8 @@ export default async function Page() {
     }
 
     // Fetch News for E-paper
-    // 1. Get all epaper news
-    const epaperNews = await News.find({ isEpaper: true }).sort({ createdAt: -1 }).lean();
+    // 1. Get all epaper news (published only)
+    const epaperNews = await News.find({ isEpaper: true, status: { $ne: 'draft' } }).sort({ createdAt: -1 }).lean();
     
     // 2. Filter for last 4 days
     const fourDaysAgo = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);

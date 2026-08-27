@@ -6,14 +6,16 @@ import NodeCache from 'node-cache';
 import jwt from 'jsonwebtoken';
 import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
+const cache = global.newsCategoryCache || new NodeCache({ stdTTL: 120 });
+if (!global.newsCategoryCache) global.newsCategoryCache = cache;
+
 import { revalidatePath } from 'next/cache';
 
 const clearAllNewsCache = () => {
     try {
         if (global.newsCache) global.newsCache.flushAll();
         if (global.newsCategoryCache) global.newsCategoryCache.flushAll();
-        revalidatePath('/', 'page');
-        revalidatePath('/breaking-news', 'page');
+        revalidatePath('/', 'layout');
     } catch (e) {
         console.error('Error clearing news cache:', e);
     }

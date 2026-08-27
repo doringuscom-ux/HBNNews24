@@ -182,8 +182,6 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
     const itemsPerPage = 11; // 11 stories per page to allow the last one to be wide
 
     useEffect(() => {
-        if (initialNews && initialNews.length > 0) return; // Skip fetch if SSR data exists
-
         const fetchSuvichar = async () => {
             try {
                 const res = await fetch('/api/suvichar');
@@ -198,7 +196,7 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                 console.error('Error fetching suvichar:', error);
             }
         };
-        fetchSuvichar();
+        if (!initialSuvichar) fetchSuvichar();
 
         const fetchPanchang = async () => {
             try {
@@ -222,7 +220,7 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                 console.error('Error fetching panchang:', error);
             }
         };
-        fetchPanchang();
+        if (!initialPanchang) fetchPanchang();
 
         const fetchEpaperNews = async () => {
             try {
@@ -230,9 +228,9 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                 if (res.ok) {
                     const data = await res.json();
 
-                    // Get all e-paper news sorted by newest
+                    // Get all published e-paper news sorted by newest
                     const allEpaperNews = data
-                        .filter(item => item.isEpaper)
+                        .filter(item => item.isEpaper && item.status !== 'draft')
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                     // Calculate timestamp for 4 days ago
@@ -258,7 +256,7 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
 
                         // If still less than 88, pad with any other older news
                         if (displayNews.length < 88) {
-                            const allSortedNews = [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                            const allSortedNews = [...data].filter(item => item.status !== 'draft').sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                             for (const item of allSortedNews) {
                                 if (displayNews.length >= 88) break;
                                 if (!usedIds.has(item._id)) {
@@ -269,7 +267,9 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                         }
                     }
 
-                    setNews(displayNews);
+                    if (displayNews.length > 0) {
+                        setNews(displayNews);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching news:', error);

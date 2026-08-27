@@ -22,6 +22,8 @@ export async function generateMetadata() {
 }
 
 
+export const revalidate = 60;
+
 export default async function Page() {
   let initialNewsData = [];
   let initialLatestNewsData = [];
@@ -29,11 +31,14 @@ export default async function Page() {
   try {
     await connectToDatabase();
     
-    // Fetch category specific news (limit to top 15 for safety)
-    const catNews = await News.find({ category: 'national' }).sort({ createdAt: -1 }).limit(15).lean();
+    // Fetch category specific news (limit to top 20 for safety)
+    const catNews = await News.find({ 
+      category: { $regex: new RegExp('^national$', 'i') }, 
+      status: { $ne: 'draft' } 
+    }).sort({ createdAt: -1 }).limit(20).lean();
     
     // Fetch latest news for sidebar
-    const latestNews = await News.find().sort({ createdAt: -1 }).limit(10).lean();
+    const latestNews = await News.find({ status: { $ne: 'draft' } }).sort({ createdAt: -1 }).limit(10).lean();
 
     const serializeNews = (items) => items.map(item => ({
         ...item,

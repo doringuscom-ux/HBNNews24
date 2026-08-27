@@ -351,7 +351,7 @@ export default function AdminDashboard() {
         slug: '',
         image: '',
         imageAlt: '',
-        category: 'entertainment',
+        category: ['entertainment'],
         content: '',
         metaTitle: '',
         metaDescription: '',
@@ -1221,7 +1221,9 @@ export default function AdminDashboard() {
 
     const handleCategoryCheckbox = (catId) => {
         setFormData(prev => {
-            const currentCats = prev.category || [];
+            const currentCats = Array.isArray(prev.category)
+                ? prev.category
+                : (typeof prev.category === 'string' && prev.category.trim() !== '' ? [prev.category.trim()] : []);
             if (currentCats.includes(catId)) {
                 return { ...prev, category: currentCats.filter(id => id !== catId) };
             } else {
