@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import BreakingNews from '@/models/BreakingNews';
 import { getAuthUser } from '@/utils/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function PUT(request, { params }) {
     await dbConnect();
@@ -30,6 +31,11 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ message: 'Breaking news not found' }, { status: 404 });
         }
 
+        try {
+            revalidatePath('/', 'page');
+            revalidatePath('/breaking-news', 'page');
+        } catch (e) {}
+
         return NextResponse.json(updated);
     } catch (err) {
         console.error('Error updating breaking news:', err);
@@ -52,6 +58,11 @@ export async function DELETE(request, { params }) {
         if (!deleted) {
             return NextResponse.json({ message: 'Breaking news not found' }, { status: 404 });
         }
+
+        try {
+            revalidatePath('/', 'page');
+            revalidatePath('/breaking-news', 'page');
+        } catch (e) {}
 
         return NextResponse.json({ message: 'Breaking news deleted' });
     } catch (err) {

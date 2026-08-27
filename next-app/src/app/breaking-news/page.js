@@ -23,12 +23,14 @@ export async function generateMetadata() {
   };
 }
 
+export const revalidate = 0;
+
 export default async function Page() {
   let initialNews = [];
 
   try {
     await connectToDatabase();
-    const docs = await BreakingNews.find().sort({ createdAt: -1 }).limit(50).lean();
+    const docs = await BreakingNews.find({ isActive: { $ne: false } }).sort({ createdAt: -1 }).limit(50).lean();
     initialNews = docs.map(doc => ({
       ...doc,
       _id: doc._id.toString(),

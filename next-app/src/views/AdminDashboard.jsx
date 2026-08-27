@@ -1509,6 +1509,7 @@ export default function AdminDashboard() {
 
     const categories = [
         { id: 'all', label: 'All' },
+        { id: 'breaking', label: 'ब्रेकिंग न्यूज़ (Breaking News)' },
         { id: 'superfast', label: 'सुपरफ़ास्ट' },
         { id: 'featured', label: 'मुख्य ख़बरें (Featured)' },
         { id: 'entertainment', label: 'मनोरंजन' },

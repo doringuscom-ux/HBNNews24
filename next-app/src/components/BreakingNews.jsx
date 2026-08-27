@@ -8,17 +8,34 @@ export default function BreakingNews({ news = [] }) {
     const [customNews, setCustomNews] = useState([]);
 
     useEffect(() => {
-        fetch('' + '/api/breaking-news')
+        fetch('/api/breaking-news')
             .then(res => res.json())
             .then(data => {
-                if (data && data.length > 0) {
-                    setCustomNews(data);
+                if (data && Array.isArray(data)) {
+                    setCustomNews(data.filter(item => item.isActive !== false));
                 }
             })
             .catch(err => console.error('Error fetching breaking news:', err));
     }, []);
 
-    const breakingNewsItems = customNews.length > 0 ? customNews : news.slice(0, 5);
+    // Combine active custom breaking news first, followed by the latest news articles
+    const rawNewsList = Array.isArray(news) ? news : [];
+    
+    // Sort latest news: if any has 'breaking' category, prioritize them
+    const breakingTaggedNews = rawNewsList.filter(item => 
+        Array.isArray(item.category) ? item.category.includes('breaking') : item.category === 'breaking'
+    );
+    const otherLatestNews = rawNewsList.filter(item => 
+        !(Array.isArray(item.category) ? item.category.includes('breaking') : item.category === 'breaking')
+    );
+
+    const orderedRegularNews = [...breakingTaggedNews, ...otherLatestNews];
+
+    // Merge: Custom breaking headlines at top, followed by latest posted articles (up to 12 total items)
+    const breakingNewsItems = [
+        ...customNews,
+        ...orderedRegularNews
+    ].slice(0, 12);
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -26,7 +43,7 @@ export default function BreakingNews({ news = [] }) {
         if (breakingNewsItems.length <= 1) return;
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % breakingNewsItems.length);
-        }, 3000);
+        }, 3500);
         return () => clearInterval(interval);
     }, [breakingNewsItems.length]);
 
