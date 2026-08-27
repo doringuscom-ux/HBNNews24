@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ThumbsUp, MessageCircle, Share2, Bookmark, Pencil, Trash2 } from 'lucide-react';
 import { optimizeImage } from '@/utils/imageOptimizer';
+import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
 export default function SingleArticle({ initialArticle }) {
     const { id } = useParams();
@@ -33,17 +34,14 @@ export default function SingleArticle({ initialArticle }) {
     // And to intercept clicks on injected related news links for SPA navigation
     useEffect(() => {
         if (articleContentRef.current) {
-            let child = articleContentRef.current.lastElementChild;
-            while (child) {
-                const textContent = child.textContent || '';
-                const hasMedia = child.querySelector('img, iframe, video, audio');
-                if (textContent.trim() === '' && !hasMedia) {
-                    const prev = child.previousElementSibling;
-                    child.remove();
-                    child = prev;
-                } else {
-                    break;
-                }
+            // Remove foreign font-family inline styles so uniform clean font applies
+            try {
+                const allElements = articleContentRef.current.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (el.style.fontFamily) el.style.fontFamily = '';
+                });
+            } catch (err) {
+                console.error("Error sanitizing article DOM:", err);
             }
 
             const handleLinkClick = (e) => {
@@ -351,11 +349,32 @@ export default function SingleArticle({ initialArticle }) {
         return <div className="text-center py-20 text-xl font-bold text-red-600">Article not found (URL me shayad error hai)</div>;
     }
 
-    // Sanitize any foreign font-family and legacy font tags
-    let cleanContent = (article.content || '')
-        .replace(/font-family\s*:\s*[^;"]+;?/gi, '')
-        .replace(/<font[^>]*>/gi, '')
-        .replace(/<\/font>/gi, '');
+    // Clean all dirty Word styles, foreign fonts, inline font-sizes and legacy tags
+    let cleanContent = cleanHtmlFormatting(article.content || '');
+
+    // Auto-fix: If an editor accidentally formatted an entire long paragraph as <h2>/<h3>, convert it back to <p>
+    cleanContent = cleanContent.replace(/<(h[1-6])([^>]*)>([\s\S]*?)<\/\1>/gi, (match, tag, attrs, inner) => {
+        // If the heading tag contains a <br> separating a short heading title and body paragraph:
+        if (inner.includes('<br>') || inner.includes('<br/>') || inner.includes('<br />')) {
+            const parts = inner.split(/<br\s*\/?>/i);
+            return parts.map(part => {
+                const textOnly = part.replace(/<[^>]+>/g, '').trim();
+                if (textOnly.length > 70) {
+                    return `<p>${part}</p>`;
+                } else if (textOnly.length > 0) {
+                    return `<h3><strong>${part}</strong></h3>`;
+                }
+                return '';
+            }).join('');
+        }
+
+        const textOnly = inner.replace(/<[^>]+>/g, '').trim();
+        // If the heading text is longer than 70 characters (clearly a body paragraph, not a heading)
+        if (textOnly.length > 70) {
+            return `<p>${inner}</p>`;
+        }
+        return match;
+    });
 
     // Auto-linkify raw URLs that aren't already part of an HTML tag
     cleanContent = cleanContent.replace(/<[^>]+>|(\b(https?:\/\/[^\s<]+))/g, (match, url) => {
@@ -519,6 +538,47 @@ export default function SingleArticle({ initialArticle }) {
                 {/* Article Body */}
                 {hasContent && (
                     <div className="relative">
+                        <style>{`
+                            .force-article-font {
+                                font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+                                font-size: 18px !important;
+                                line-height: 1.85 !important;
+                                font-weight: 400 !important;
+                                color: #222222 !important;
+                            }
+                            .force-article-font p,
+                            .force-article-font span,
+                            .force-article-font div,
+                            .force-article-font li {
+                                font-family: inherit !important;
+                                font-weight: 400 !important;
+                            }
+                            .force-article-font b,
+                            .force-article-font strong,
+                            .force-article-font b *,
+                            .force-article-font strong *,
+                            .force-article-font b span,
+                            .force-article-font strong span {
+                                font-family: inherit !important;
+                                font-weight: 800 !important;
+                                color: #000000 !important;
+                            }
+                            .force-article-font h1,
+                            .force-article-font h2,
+                            .force-article-font h3,
+                            .force-article-font h4,
+                            .force-article-font h5,
+                            .force-article-font h6 {
+                                font-family: inherit !important;
+                                font-weight: 800 !important;
+                                color: #111827 !important;
+                                margin-top: 24px !important;
+                                margin-bottom: 12px !important;
+                            }
+                            .force-article-font p {
+                                margin-bottom: 20px !important;
+                            }
+                        `}</style>
                         <div
                             ref={articleContentRef}
                             className={`force-article-font overflow-hidden transition-all duration-500 ease-in-out [&_img]:mx-auto [&_img]:block [&_img]:max-w-full [&_img]:h-auto [&_img]:my-4 ${isExpanded ? 'max-h-none' : 'max-h-[300px]'}`}

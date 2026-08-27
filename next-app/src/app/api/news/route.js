@@ -3,6 +3,7 @@ import News from '@/models/News';
 import { NextResponse } from 'next/server';
 import NodeCache from 'node-cache';
 import jwt from 'jsonwebtoken';
+import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
 // Initialize cache globally so it persists across requests 
 const cache = global.newsCache || new NodeCache({ stdTTL: 120 });
@@ -87,6 +88,7 @@ export async function POST(req) {
 
     const newArticle = new News({
       ...body,
+      content: cleanHtmlFormatting(body.content || ''),
       category: categoryArr,
       author: authorName
     });

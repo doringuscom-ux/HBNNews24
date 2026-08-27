@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import NodeCache from 'node-cache';
 import jwt from 'jsonwebtoken';
+import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
 import { revalidatePath } from 'next/cache';
 
@@ -115,6 +116,10 @@ export async function PUT(req, { params }) {
             ...body,
             category: categoryArr
         };
+
+        if (body.content) {
+            updateData.content = cleanHtmlFormatting(body.content);
+        }
 
         if (body.author && body.author.trim() !== '') {
             updateData.author = body.author.trim();

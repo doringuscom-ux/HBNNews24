@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import JoditEditor from 'jodit-react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
 const ImageCropModal = ({ isOpen, onClose, imageSrc, onUpload, isUploading, aspectRatio = 16 / 9, title = "Crop Image" }) => {
     const [crop, setCrop] = useState({ unit: '%', x: 0, y: 0, width: 100, height: 100 / aspectRatio, aspect: aspectRatio });
@@ -1237,6 +1238,7 @@ export default function AdminDashboard() {
         
         const payload = { 
             ...formData, 
+            content: cleanHtmlFormatting(formData.content || ''),
             author: (formData.author && formData.author.trim() !== '') ? formData.author.trim() : (currentUsername || 'एडमिन'),
             status: submitStatusRef.current 
         };

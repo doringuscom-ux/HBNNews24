@@ -3,6 +3,9 @@ import connectToDatabase from '@/lib/mongodb';
 import News from '@/models/News';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
   try {

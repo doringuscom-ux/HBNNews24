@@ -277,10 +277,10 @@ body {
 /* Force article content styles to override Rich Text Editor inline styles */
 .force-article-font {
     font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    font-size: 21px !important;
-    line-height: 1.8 !important;
-    font-weight: 500 !important;
-    color: #2c2c2c !important;
+    font-size: 18px !important;
+    line-height: 1.85 !important;
+    font-weight: 400 !important;
+    color: #222222 !important;
 }
 
 .force-article-font,
@@ -300,11 +300,23 @@ body {
     font-family: var(--font-noto-devanagari), 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
+.force-article-font p,
+.force-article-font span,
+.force-article-font div,
+.force-article-font li {
+    font-weight: 400 !important;
+}
+
 .force-article-font b,
 .force-article-font strong,
+.force-article-font b *,
+.force-article-font strong *,
+.force-article-font b span,
+.force-article-font strong span,
 .jodit-wysiwyg b,
 .jodit-wysiwyg strong {
-    font-weight: 700 !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
 }
 
 .force-article-font i,
@@ -328,7 +340,12 @@ body {
     text-decoration: line-through !important;
 }
 
-.force-article-font h1, .force-article-font h2, .force-article-font h3, .force-article-font h4 {
+.force-article-font h1, 
+.force-article-font h2, 
+.force-article-font h3, 
+.force-article-font h4,
+.force-article-font h5,
+.force-article-font h6 {
     font-weight: 800 !important;
     margin-top: 24px !important;
     margin-bottom: 14px !important;
