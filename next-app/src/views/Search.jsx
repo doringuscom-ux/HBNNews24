@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Search as SearchIcon } from 'lucide-react';
 
 export default function Search() {
     const searchParams = useSearchParams();
