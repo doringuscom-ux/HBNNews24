@@ -74,11 +74,13 @@ export default async function Page({ params }) {
         initialArticle._id = initialArticle._id.toString();
         if (initialArticle.createdAt) initialArticle.createdAt = initialArticle.createdAt.toString();
         if (initialArticle.updatedAt) initialArticle.updatedAt = initialArticle.updatedAt.toString();
-    } else {
-        notFound();
     }
   } catch (error) {
     console.error('Error fetching initial article:', error);
+  }
+
+  if (!initialArticle) {
+      notFound();
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';

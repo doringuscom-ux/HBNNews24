@@ -20,6 +20,7 @@ const Footer = () => {
         { name: 'Fact Check Policy', path: '/fact-check-policy' },
         { name: 'Authors', path: '/authors' },
         { name: 'Corrections Policy', path: '/corrections-policy' },
+        { name: 'Archive', path: '/archive' },
     ];
 
     return (
