@@ -1046,8 +1046,8 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                             </p>
                         </div>
                         <div className="hidden md:flex w-full md:w-[220px] justify-center md:justify-end shrink-0 mb-auto pt-2 md:pt-4">
-                            <div className="flex flex-col items-end text-right border-r-[3px] border-[#a61c1c] pr-4 opacity-95">
-                                <div className="flex items-center gap-2 mb-1.5 text-[#a61c1c]">
+                            <div className="flex flex-col items-center text-center border-l-[3px] border-[#a61c1c] pl-4 opacity-95">
+                                <div className="flex items-center justify-center gap-2 mb-1.5 text-[#a61c1c]">
                                     <span className="text-[22px] md:text-[26px] font-black" style={{ fontFamily: "'Yatra One', cursive" }}>ॐ</span>
                                     <span className="text-[14px] md:text-[16px] font-bold tracking-widest uppercase border-b-2 border-[#a61c1c]/30 pb-0.5">आज का पंचांग</span>
                                 </div>

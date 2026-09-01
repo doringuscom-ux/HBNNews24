@@ -2,14 +2,13 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Panchang from '@/models/Panchang';
 import { getAuthUser } from '@/utils/auth';
+import { getTodayPanchang } from '@/utils/panchang';
 
 export async function GET(request) {
-    await dbConnect();
     try {
-        const { searchParams } = new URL(request.url);
-        const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : 100;
-        const items = await Panchang.find().sort({ createdAt: -1 }).limit(limit);
-        return NextResponse.json(items);
+        const panchang = getTodayPanchang();
+        // Return as an array to match the previous structure
+        return NextResponse.json([panchang]);
     } catch (err) {
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }

@@ -5,6 +5,7 @@ import PageSeo from '@/models/PageSeo';
 import News from '@/models/News';
 import Suvichar from '@/models/Suvichar';
 import Panchang from '@/models/Panchang';
+import { getTodayPanchang } from '@/utils/panchang';
 export async function generateMetadata() {
   try {
     await connectToDatabase();
@@ -38,18 +39,10 @@ export default async function Page() {
         initialSuvichar = suvicharData.text;
     }
 
-    // Fetch Panchang
-    const panchangData = await Panchang.findOne().sort({ createdAt: -1 }).lean();
-    if (panchangData && panchangData.tithi) {
-        const daysInHindi = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
-        const todayHindi = daysInHindi[new Date().getDay()];
-        let samvatText = panchangData.samvat || '';
-        if (samvatText.includes('•')) {
-            samvatText = samvatText.split('•')[0].trim() + ' • ' + todayHindi;
-        } else {
-            samvatText = samvatText + ' • ' + todayHindi;
-        }
-        initialPanchang = { tithi: panchangData.tithi, samvat: samvatText };
+    // Auto-generate Panchang offline (instantly)
+    const panchangData = getTodayPanchang();
+    if (panchangData) {
+        initialPanchang = panchangData;
     }
 
     // Fetch News for E-paper
