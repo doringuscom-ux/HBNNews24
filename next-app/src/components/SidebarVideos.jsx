@@ -5,7 +5,8 @@ import { optimizeImage } from '../utils/imageOptimizer';
 
 export default function SidebarVideos({ videos = [], title = "ट्रेंडिंग शॉर्ट्स" }) {
     const displayVideos = useMemo(() => {
-        return [...videos].slice(0, 7);
+        const emojiRegex = /[\p{Extended_Pictographic}]/gu;
+        return videos.filter(video => !video.title || !emojiRegex.test(video.title));
     }, [videos]);
 
     const [playingIndex, setPlayingIndex] = useState(null); // Do not auto-play first video
@@ -91,7 +92,7 @@ export default function SidebarVideos({ videos = [], title = "ट्रेंड
 
             <div
                 ref={containerRef}
-                className="relative flex flex-col gap-6 max-h-[calc(100vh-350px)] min-h-[400px] overflow-y-auto snap-y snap-mandatory pb-6 insta-scroll rounded-xl"
+                className="relative flex flex-col gap-6 aspect-[9/16] md:aspect-auto md:h-[650px] lg:h-[calc(100vh-250px)] overflow-y-auto snap-y snap-mandatory insta-scroll rounded-xl"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 <style>{`
@@ -114,7 +115,7 @@ export default function SidebarVideos({ videos = [], title = "ट्रेंड
                                         id={`yt-player-${index}`}
                                         width="100%"
                                         height="100%"
-                                        src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${isMuted ? 1 : 0}&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1`}
+                                        src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=${isMuted ? 1 : 0}&rel=0&modestbranding=1&iv_load_policy=3&fs=1&enablejsapi=1&controls=1`}
                                         title={item.title}
                                         frameBorder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -127,7 +128,7 @@ export default function SidebarVideos({ videos = [], title = "ट्रेंड
                                     {isMuted && (
                                         <button
                                             onClick={(e) => { e.stopPropagation(); setIsMuted(false); }}
-                                            className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-[#da0000] text-white px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-sm transition-colors cursor-pointer"
+                                            className="absolute top-[70px] right-4 z-10 bg-black/60 hover:bg-[#da0000] text-white px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-sm transition-colors cursor-pointer"
                                         >
                                             <VolumeX size={16} />
                                             <span className="text-[11px] font-bold tracking-wide uppercase">Tap to Unmute</span>

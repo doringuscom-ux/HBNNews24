@@ -21,6 +21,7 @@ export default function NewsGrid({ news = [] }) {
                             title={item.title || "News"}
                             width={140}
                             height={90}
+                            priority={index <= 1}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                         {/* Icons */}

@@ -495,7 +495,7 @@ export default function SingleArticle({ initialArticle }) {
 
                 <div className="w-full flex flex-col group cursor-pointer">
                     <div className="w-full bg-gray-100 overflow-hidden">
-                        <img src={optimizeImage(article.image, 800)} alt={article.imageAlt || article.title} className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
+                        <img src={optimizeImage(article.image, 800)} alt={article.imageAlt || article.title} loading="eager" fetchPriority="high" className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
                     </div>
                     <p className="text-sm text-gray-500 py-2 px-1 border-b border-gray-200">
                         {article.imageAlt || `${article.title} (Photo)`}

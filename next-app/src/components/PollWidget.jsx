@@ -2,6 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart2, CheckCircle2 } from 'lucide-react';
 
+const getActiveClasses = (text) => {
+    if (text === 'हाँ') return { text: 'text-green-600', border: 'border-green-600' };
+    if (text === 'नहीं') return { text: 'text-red-600', border: 'border-red-600' };
+    if (text === 'NOTA') return { text: 'text-orange-500', border: 'border-orange-500' };
+    return { text: 'text-[#da0000]', border: 'border-[#da0000]' };
+};
+
 export default function PollWidget() {
     const [pollData, setPollData] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
@@ -84,38 +91,41 @@ export default function PollWidget() {
             </div>
             
             <div className="grid grid-cols-2 gap-x-3 gap-y-2 relative z-10">
-                {pollData.options.map((option) => (
-                    <div key={option.id} className="relative w-full col-span-1">
-                        {!showResults ? (
-                            <button
-                                onClick={() => handleVote(option.id)}
-                                className="w-full min-h-[48px] flex items-center justify-between px-4 py-2 border border-gray-200 rounded-lg hover:border-[#da0000]/50 hover:bg-red-50/30 transition-all duration-300 font-bold bg-white"
-                            >
-                                <div className="flex items-center gap-2 text-left">
-                                    <span className="text-[14px] md:text-[15px] leading-tight text-[#4b5563]">{option.text}</span>
-                                    <span className="text-[16px] md:text-[18px] flex-shrink-0">{option.emoji}</span>
-                                </div>
-                            </button>
-                        ) : (
-                            <div className={`w-full bg-white border ${selectedOption === option.id ? 'border-[#da0000]' : 'border-gray-200'} rounded-lg min-h-[48px] relative overflow-hidden flex items-center`}>
-                                <div 
-                                    className="absolute top-0 left-0 h-full transition-all duration-1000 ease-out bg-gray-100" 
-                                    style={{ width: `${option.percentage}%`, opacity: selectedOption === option.id ? 0.3 : 1 }}
-                                ></div>
-                                <div className="relative z-10 flex items-center justify-between w-full px-3 py-2 font-bold">
-                                    <div className="flex items-center gap-1.5 max-w-[65%]">
-                                        <span className={`text-[14px] md:text-[15px] leading-tight text-left ${selectedOption === option.id ? 'text-[#da0000]' : 'text-[#4b5563]'}`}>{option.text}</span>
+                {pollData.options.map((option) => {
+                    const activeClasses = getActiveClasses(option.text);
+                    return (
+                        <div key={option.id} className="relative w-full col-span-1">
+                            {!showResults ? (
+                                <button
+                                    onClick={() => handleVote(option.id)}
+                                    className="w-full min-h-[48px] flex items-center justify-between px-4 py-2 border border-gray-200 rounded-lg hover:border-[#da0000]/50 hover:bg-red-50/30 transition-all duration-300 font-bold bg-white"
+                                >
+                                    <div className="flex items-center gap-2 text-left">
+                                        <span className="text-[14px] md:text-[15px] leading-tight text-[#4b5563]">{option.text}</span>
                                         <span className="text-[16px] md:text-[18px] flex-shrink-0">{option.emoji}</span>
                                     </div>
-                                    <div className="flex items-center gap-1 flex-shrink-0">
-                                        <span className={`text-[14px] md:text-[16px] ${selectedOption === option.id ? 'text-[#da0000]' : 'text-[#6b7280]'}`}>{option.percentage}%</span>
-                                        {selectedOption === option.id && <CheckCircle2 size={16} className="text-[#da0000] ml-0.5" />}
+                                </button>
+                            ) : (
+                                <div className={`w-full bg-white border ${selectedOption === option.id ? activeClasses.border : 'border-gray-200'} rounded-lg min-h-[48px] relative overflow-hidden flex items-center`}>
+                                    <div 
+                                        className="absolute top-0 left-0 h-full transition-all duration-1000 ease-out bg-gray-100" 
+                                        style={{ width: `${option.percentage}%`, opacity: selectedOption === option.id ? 0.3 : 1 }}
+                                    ></div>
+                                    <div className="relative z-10 flex items-center justify-between w-full px-3 py-2 font-bold">
+                                        <div className="flex items-center gap-1.5 max-w-[65%]">
+                                            <span className={`text-[14px] md:text-[15px] leading-tight text-left ${selectedOption === option.id ? activeClasses.text : 'text-[#4b5563]'}`}>{option.text}</span>
+                                            <span className="text-[16px] md:text-[18px] flex-shrink-0">{option.emoji}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1 flex-shrink-0">
+                                            <span className={`text-[14px] md:text-[16px] ${selectedOption === option.id ? activeClasses.text : 'text-[#6b7280]'}`}>{option.percentage}%</span>
+                                            {selectedOption === option.id && <CheckCircle2 size={16} className={`${activeClasses.text} ml-0.5`} />}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
+                            )}
+                        </div>
+                    );
+                })}
                 
                 {/* Stats / Thank you message placed next to NOTA */}
                 <div className="col-span-1 flex flex-col justify-center items-start pl-1 md:pl-3 overflow-hidden mt-3">
