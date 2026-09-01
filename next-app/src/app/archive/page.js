@@ -75,7 +75,12 @@ export default async function ArchivePage({ searchParams }) {
                         <CalendarDays className="w-8 h-8" />
                         News Archive
                     </h1>
-                    <p className="text-gray-600 font-medium">{displayTitle}</p>
+                    <p className="text-gray-600 font-medium flex items-center gap-2">
+                        {displayTitle}
+                        <span className="px-2.5 py-0.5 bg-gray-100 text-gray-600 text-sm rounded-full font-bold">
+                            {news.length} न्यूज़
+                        </span>
+                    </p>
                 </div>
                 
                 <div className="w-full md:w-auto">
