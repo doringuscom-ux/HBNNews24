@@ -2,6 +2,7 @@ import SingleArticle from '@/views/SingleArticle';
 import connectToDatabase from '@/lib/mongodb';
 import News from '@/models/News';
 import mongoose from 'mongoose';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -73,6 +74,8 @@ export default async function Page({ params }) {
         initialArticle._id = initialArticle._id.toString();
         if (initialArticle.createdAt) initialArticle.createdAt = initialArticle.createdAt.toString();
         if (initialArticle.updatedAt) initialArticle.updatedAt = initialArticle.updatedAt.toString();
+    } else {
+        notFound();
     }
   } catch (error) {
     console.error('Error fetching initial article:', error);
