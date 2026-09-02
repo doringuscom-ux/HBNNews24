@@ -102,7 +102,7 @@ export default async function Page({ params }) {
       },
       headline: initialArticle.title,
       description: initialArticle.metaDescription || initialArticle.description || (initialArticle.content ? initialArticle.content.replace(/<[^>]*>/g, '').substring(0, 160) : ''),
-      image: initialArticle.image ? [initialArticle.image] : [`${siteUrl}/favicon.png`],
+      image: initialArticle.image ? [initialArticle.image.startsWith('http') ? initialArticle.image : `${siteUrl}${initialArticle.image.startsWith('/') ? '' : '/'}${initialArticle.image}`] : [`${siteUrl}/favicon.png`],
       datePublished: initialArticle.createdAt ? new Date(initialArticle.createdAt).toISOString() : new Date().toISOString(),
       dateModified: initialArticle.updatedAt ? new Date(initialArticle.updatedAt).toISOString() : (initialArticle.createdAt ? new Date(initialArticle.createdAt).toISOString() : new Date().toISOString()),
       author: {
