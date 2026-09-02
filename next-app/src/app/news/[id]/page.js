@@ -38,13 +38,13 @@ export async function generateMetadata({ params }) {
           type: 'article',
           publishedTime: data.createdAt ? new Date(data.createdAt).toISOString() : undefined,
           modifiedTime: data.updatedAt ? new Date(data.updatedAt).toISOString() : undefined,
-          images: data.image ? [data.image] : [],
+          images: data.image ? [data.image.startsWith('http') ? data.image : `${siteUrl}${data.image.startsWith('/') ? '' : '/'}${data.image}`] : [`${siteUrl}/icon-192.png`],
         },
         twitter: {
           card: 'summary_large_image',
           title: data.metaTitle || data.title,
           description: data.metaDescription || data.description,
-          images: data.image ? [data.image] : [],
+          images: data.image ? [data.image.startsWith('http') ? data.image : `${siteUrl}${data.image.startsWith('/') ? '' : '/'}${data.image}`] : [`${siteUrl}/icon-192.png`],
         }
       };
     }
