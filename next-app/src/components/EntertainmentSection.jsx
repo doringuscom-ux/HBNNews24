@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
- from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
