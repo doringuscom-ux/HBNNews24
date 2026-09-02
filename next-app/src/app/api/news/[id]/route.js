@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import NodeCache from 'node-cache';
 import jwt from 'jsonwebtoken';
 import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
+import { notifyGoogleIndexing } from '@/utils/googleIndexing';
 
 const cache = global.newsCategoryCache || new NodeCache({ stdTTL: 120 });
 if (!global.newsCategoryCache) global.newsCategoryCache = cache;
@@ -134,6 +135,11 @@ export async function PUT(req, { params }) {
 
         clearAllNewsCache();
 
+        // Trigger Google Indexing API
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+        const articleUrl = `${siteUrl}/news/${updatedNews.slug || updatedNews._id}`;
+        notifyGoogleIndexing(articleUrl, 'URL_UPDATED').catch(console.error);
+
         return NextResponse.json(updatedNews);
     } catch (error) {
         console.error('Error updating news article:', error);
@@ -161,6 +167,11 @@ export async function DELETE(req, { params }) {
         }
 
         clearAllNewsCache();
+
+        // Trigger Google Indexing API
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+        const articleUrl = `${siteUrl}/news/${deletedNews.slug || deletedNews._id}`;
+        notifyGoogleIndexing(articleUrl, 'URL_DELETED').catch(console.error);
 
         return NextResponse.json({ message: 'Article deleted successfully' });
     } catch (error) {

@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import NodeCache from 'node-cache';
 import jwt from 'jsonwebtoken';
 import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
+import { notifyGoogleIndexing } from '@/utils/googleIndexing';
 
 // Initialize cache globally so it persists across requests 
 const cache = global.newsCache || new NodeCache({ stdTTL: 120 });
@@ -94,6 +95,11 @@ export async function POST(req) {
 
     const savedArticle = await newArticle.save();
     clearAllNewsCache();
+
+    // Trigger Google Indexing API
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+    const articleUrl = `${siteUrl}/news/${savedArticle.slug || savedArticle._id}`;
+    notifyGoogleIndexing(articleUrl, 'URL_UPDATED').catch(console.error);
 
     return NextResponse.json(savedArticle, { status: 201 });
   } catch (error) {
