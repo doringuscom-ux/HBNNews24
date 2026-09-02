@@ -4,22 +4,52 @@ import PageSeo from '@/models/PageSeo';
 import BreakingNews from '@/models/BreakingNews';
 
 export async function generateMetadata() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+  const defaultImage = `${siteUrl}/icon-192.png`;
+
+  let title = 'Live Breaking News & Flash Headlines | HBN News 24';
+  let description = 'Get real-time breaking news, flash alerts, and urgent live headlines in Hindi from India and around the world at HBN News 24.';
+  let keywords = '';
+  let robots = 'index, follow';
+
   try {
     await connectToDatabase();
     const seo = await PageSeo.findOne({ pageUrl: '/breaking-news' });
     if (seo && seo.metaTitle) {
-      return {
-        title: seo.metaTitle,
-        description: seo.metaDescription || '',
-        keywords: seo.metaKeywords || '',
-        robots: seo.robots || 'index, follow',
-      };
+      title = seo.metaTitle;
+      description = seo.metaDescription || description;
+      keywords = seo.metaKeywords || keywords;
+      robots = seo.robots || robots;
     }
   } catch (e) {}
 
   return {
-    title: 'Live Breaking News & Flash Headlines | HBN News 24',
-    description: 'Get real-time breaking news, flash alerts, and urgent live headlines in Hindi from India and around the world at HBN News 24.',
+    title,
+    description,
+    keywords,
+    robots,
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/breaking-news`,
+      siteName: 'HBN24 News',
+      images: [
+        {
+          url: defaultImage,
+          width: 192,
+          height: 192,
+          alt: title,
+        },
+      ],
+      locale: 'hi_IN',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [defaultImage],
+    },
   };
 }
 
