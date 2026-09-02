@@ -2,6 +2,7 @@ import { Noto_Sans_Devanagari, Yatra_One } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import { getGlobalSeo } from "@/lib/getGlobalSeo";
+import Script from "next/script";
 
 const notoDevanagari = Noto_Sans_Devanagari({
   weight: ['400', '500', '600', '700', '900'],
@@ -130,6 +131,19 @@ export default async function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
+        <Script async src="https://news.google.com/swg/js/v1/swg-basic.js" strategy="afterInteractive" />
+        <Script id="swg-basic-init" strategy="afterInteractive">
+          {`
+            (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
+              basicSubscriptions.init({
+                type: "NewsArticle",
+                isPartOfType: ["Product"],
+                isPartOfProductId: "CAowj_fGDA:openaccess",
+                clientOptions: { theme: "light", lang: "en-GB" },
+              });
+            });
+          `}
+        </Script>
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-white">
         <ClientLayout googleAnalyticsId={googleAnalyticsId}>
