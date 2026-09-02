@@ -1,6 +1,5 @@
  'use client';
 import React, { useState } from "react";
-import Image from 'next/image';
 import { optimizeImage } from '../utils/imageOptimizer';
 
 const getYouTubeId = (url) => {
@@ -90,7 +89,7 @@ export default function VideoSection({ videos = [] }) {
                                     frameBorder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowFullScreen
-                                    className="relative absolute inset-0 w-full h-full"
+                                    className="absolute inset-0 w-full h-full"
                                 ></iframe>
                             ) : (
                                 <a 
@@ -99,7 +98,7 @@ export default function VideoSection({ videos = [] }) {
                                     onClick={(e) => handleVideoClick(e, mainVideo.originalIndex)}
                                     className="block w-full h-full cursor-pointer group"
                                 >
-                                    <Image src={optimizeImage(mainVideo.image, 600) || "https://hbnnews24.com/favicon.png"} alt={mainVideo.title || "Video"} title={mainVideo.title || "Video"} fill sizes="(max-width: 768px) 100vw, 400px" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(mainVideo.image, 600)} alt={mainVideo.title || "Video"} title={mainVideo.title || "Video"} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                     <div className="main-gradient absolute inset-0 pointer-events-none"></div>
                                     <div className="main-caption absolute bottom-0 left-0 w-full p-4 pointer-events-none z-10">
                                         <h3 className="text-white text-xl font-bold">{mainVideo.title}</h3>
@@ -152,7 +151,7 @@ function VideoCard({ video, onClick, isPlaying }) {
             className="video-card block cursor-pointer group mb-4 md:mb-0"
         >
             <div className="video-thumb overflow-hidden relative">
-                <Image src={optimizeImage(video.image, 300) || "https://hbnnews24.com/favicon.png"} alt={video.title || "Video"} title={video.title || "Video"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img loading="lazy" width="400" height="250" src={optimizeImage(video.image, 300)} alt={video.title || "Video"} title={video.title || "Video"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="duration">
                     <span className="small-play">▶</span>
                     {video.duration}

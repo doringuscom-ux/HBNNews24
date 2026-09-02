@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -30,8 +29,8 @@ export default function LifestyleSection({ news = [] }) {
                         {/* Left Column (Main News) */}
                         {mainNews && (
                             <Link href={`/news/${mainNews.slug || mainNews._id}`} title={mainNews.title} className="group cursor-pointer flex flex-col gap-3 block">
-                                <div className="relative w-full aspect-[16/9] overflow-hidden">
-                                    <Image src={optimizeImage(mainNews.image, 400) || "https://hbnnews24.com/favicon.png"} alt={mainNews.title} title={mainNews.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <div className="w-full aspect-[16/9] overflow-hidden">
+                                    <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} title={mainNews.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <h3 className="text-[#000] text-[22px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pr-4">
                                     {mainNews.title}
@@ -44,7 +43,7 @@ export default function LifestyleSection({ news = [] }) {
                             {sideNews.map((item, index) => (
                                 <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex gap-4 pb-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e0e0e0]' : ''} group cursor-pointer block`}>
                                     <div className="w-[155px] flex-shrink-0 overflow-hidden">
-                                        <Image src={optimizeImage(item.image, 300) || "https://hbnnews24.com/favicon.png"} alt={item.title} title={item.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-[85px] object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-[85px] object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-[#000] text-[18px] leading-[1.3] font-medium group-hover:text-[#d91f26] transition-colors mt-0.5">

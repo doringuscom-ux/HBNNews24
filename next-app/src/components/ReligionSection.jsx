@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 import { GiRam, GiBullHorns, GiGemini, GiCrab, GiLion, GiFemale, GiScales, GiScorpion, GiBowArrow, GiGoat, GiJug, GiDoubleFish } from 'react-icons/gi';
@@ -107,7 +106,7 @@ export default function ReligionSection({ news = [] }) {
                         {/* Top Main News */}
                         <Link href={mainNews._id !== 'loading' ? `/news/${mainNews._id}` : '#'} title={mainNews.title} className="flex flex-col sm:flex-row gap-4 group cursor-pointer mb-6">
                             <div className="w-full sm:w-[260px] aspect-[16/9] overflow-hidden flex-shrink-0 border border-gray-200 p-[2px]">
-                                <Image src={optimizeImage(mainNews.image, 400) || "https://hbnnews24.com/favicon.png"} alt={mainNews.title || "Dharmik News"} title={mainNews.title || "Dharmik News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title || "Dharmik News"} title={mainNews.title || "Dharmik News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-[#000] text-[26px] font-bold leading-[1.3] group-hover:text-[#d84315] transition-colors pt-1">
@@ -121,7 +120,7 @@ export default function ReligionSection({ news = [] }) {
                             {sideNews.map((news, index) => (
                                 <Link href={news._id !== 'loading' ? `/news/${news._id}` : '#'} title={news.title} key={index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer pt-4 ${index !== sideNews.length - 1 ? 'border-b border-[#e5e5e5] pb-4' : ''} ${index === 0 ? 'border-t-2 border-[#f57c00]/20' : ''}`}>
                                     <div className="w-full sm:w-[140px] aspect-[16/9] overflow-hidden flex-shrink-0 rounded-[4px]">
-                                        <Image src={optimizeImage(news.image, 300) || "https://hbnnews24.com/favicon.png"} alt={news.title || "Dharmik News"} title={news.title || "Dharmik News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img loading="lazy" width="400" height="250" src={optimizeImage(news.image, 300)} alt={news.title || "Dharmik News"} title={news.title || "Dharmik News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-1">
                                         <h3 className="text-[#000] text-[17px] font-medium leading-[1.3] group-hover:text-[#d84315] transition-colors mt-0.5">
