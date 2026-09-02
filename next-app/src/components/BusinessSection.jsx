@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+ from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -31,7 +33,7 @@ export default function BusinessSection({ news = [] }) {
                             <div className="flex flex-col md:pr-6 border-b md:border-b-0 md:border-r border-[#e0e0e0] pb-6 md:pb-0">
                                 <Link href={`/news/${mainNews.slug || mainNews._id}`} title={mainNews.title} className="group cursor-pointer flex flex-col gap-3 h-full block">
                                     <div className="w-full overflow-hidden">
-                                        <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} title={mainNews.title} className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <Image src={optimizeImage(mainNews.image, 400) || "https://hbnnews24.com/favicon.png"} alt={mainNews.title} title={mainNews.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <h3 className="text-[#000] text-[24px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pr-2">
                                         {mainNews.title}
@@ -45,7 +47,7 @@ export default function BusinessSection({ news = [] }) {
                             {middleNewsList.map((item, index) => (
                                 <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer ${index !== middleNewsList.length - 1 ? 'border-b border-[#e0e0e0] pb-4' : ''}`}>
                                     <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                        <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <Image src={optimizeImage(item.image, 300) || "https://hbnnews24.com/favicon.png"} alt={item.title} title={item.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-0.5">
                                         <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors">
@@ -61,7 +63,7 @@ export default function BusinessSection({ news = [] }) {
                             {rightNewsList.map((item, index) => (
                                 <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex flex-col sm:flex-row gap-4 group cursor-pointer ${index !== rightNewsList.length - 1 ? 'border-b border-[#e0e0e0] pb-4' : ''}`}>
                                     <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                        <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <Image src={optimizeImage(item.image, 300) || "https://hbnnews24.com/favicon.png"} alt={item.title} title={item.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                     <div className="flex-1 flex pt-0.5">
                                         <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors">

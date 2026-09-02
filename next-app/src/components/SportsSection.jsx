@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+ from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -45,8 +47,8 @@ export default function SportsSection({ news = [] }) {
 
                         {/* Middle Column (Image + Text) */}
                         <Link href={imageNews[0].id !== 'loading' && typeof imageNews[0].id === 'string' ? `/news/${imageNews[0].id}` : '#'} title={imageNews[0].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
-                            <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[0].image, 400)} alt={imageNews[0].title || "Sports News"} title={imageNews[0].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <div className="relative w-full aspect-[16/9] overflow-hidden">
+                                <Image src={optimizeImage(imageNews[0].image, 400) || "https://hbnnews24.com/favicon.png"} alt={imageNews[0].title || "Sports News"} title={imageNews[0].title || "Sports News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[0].title}
@@ -55,8 +57,8 @@ export default function SportsSection({ news = [] }) {
 
                         {/* Right Column (Image + Text) */}
                         <Link href={imageNews[1].id !== 'loading' && typeof imageNews[1].id === 'string' ? `/news/${imageNews[1].id}` : '#'} title={imageNews[1].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
-                            <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[1].image, 300)} alt={imageNews[1].title || "Sports News"} title={imageNews[1].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <div className="relative w-full aspect-[16/9] overflow-hidden">
+                                <Image src={optimizeImage(imageNews[1].image, 300) || "https://hbnnews24.com/favicon.png"} alt={imageNews[1].title || "Sports News"} title={imageNews[1].title || "Sports News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[1].title}
@@ -65,8 +67,8 @@ export default function SportsSection({ news = [] }) {
 
                         {/* 4th Column (Image + Text) */}
                         <Link href={imageNews[2].id !== 'loading' && typeof imageNews[2].id === 'string' ? `/news/${imageNews[2].id}` : '#'} title={imageNews[2].title || "Sports News"} className="group cursor-pointer flex flex-col gap-2.5 block">
-                            <div className="w-full aspect-[16/9] overflow-hidden">
-                                <img loading="lazy" width="400" height="250" src={optimizeImage(imageNews[2].image, 300)} alt={imageNews[2].title || "Sports News"} title={imageNews[2].title || "Sports News"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <div className="relative w-full aspect-[16/9] overflow-hidden">
+                                <Image src={optimizeImage(imageNews[2].image, 300) || "https://hbnnews24.com/favicon.png"} alt={imageNews[2].title || "Sports News"} title={imageNews[2].title || "Sports News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                             <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors line-clamp-3">
                                 {imageNews[2].title}

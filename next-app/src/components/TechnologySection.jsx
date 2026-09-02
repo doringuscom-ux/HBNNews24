@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+ from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -34,7 +36,7 @@ export default function TechnologySection({ news = [] }) {
                         {mainNews && (
                             <Link href={`/news/${mainNews.slug || mainNews._id}`} title={mainNews.title} className="flex flex-col sm:flex-row gap-4 group cursor-pointer mb-5">
                                 <div className="w-full sm:w-[230px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={optimizeImage(mainNews.image, 400)} alt={mainNews.title} title={mainNews.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <Image src={optimizeImage(mainNews.image, 400) || "https://hbnnews24.com/favicon.png"} alt={mainNews.title} title={mainNews.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-[#000] text-[20px] font-bold leading-[1.3] group-hover:text-[#d91f26] transition-colors pt-1">
@@ -48,7 +50,7 @@ export default function TechnologySection({ news = [] }) {
                         {bottomNewsLeft && (
                             <Link href={`/news/${bottomNewsLeft.slug || bottomNewsLeft._id}`} title={bottomNewsLeft.title} className="border-t border-[#e5e5e5] pt-4 group cursor-pointer flex flex-col sm:flex-row gap-4">
                                 <div className="w-full sm:w-[130px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={optimizeImage(bottomNewsLeft.image, 300)} alt={bottomNewsLeft.title} title={bottomNewsLeft.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <Image src={optimizeImage(bottomNewsLeft.image, 300) || "https://hbnnews24.com/favicon.png"} alt={bottomNewsLeft.title} title={bottomNewsLeft.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1 flex items-center">
                                     <h3 className="text-[#000] text-[17px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">
@@ -65,7 +67,7 @@ export default function TechnologySection({ news = [] }) {
                         {middleNewsList.map((item, index) => (
                             <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex flex-col sm:flex-row gap-3 group cursor-pointer ${index !== middleNewsList.length - 1 ? 'border-b border-[#e5e5e5] pb-4' : ''}`}>
                                 <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <Image src={optimizeImage(item.image, 300) || "https://hbnnews24.com/favicon.png"} alt={item.title} title={item.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1 flex pt-1">
                                     <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">
@@ -81,7 +83,7 @@ export default function TechnologySection({ news = [] }) {
                         {rightNewsList.map((item, index) => (
                             <Link href={`/news/${item.slug || item._id}`} title={item.title} key={item._id || index} className={`flex flex-col sm:flex-row gap-3 group cursor-pointer ${index !== rightNewsList.length - 1 ? 'border-b border-[#e5e5e5] pb-4' : ''}`}>
                                 <div className="w-full sm:w-[110px] aspect-[16/9] overflow-hidden flex-shrink-0 bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" src={optimizeImage(item.image, 300)} alt={item.title} title={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <Image src={optimizeImage(item.image, 300) || "https://hbnnews24.com/favicon.png"} alt={item.title} title={item.title} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="flex-1 flex pt-1">
                                     <h3 className="text-[#000] text-[16px] font-medium leading-[1.3] group-hover:text-[#d91f26] transition-colors mt-0.5">

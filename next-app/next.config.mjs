@@ -8,6 +8,7 @@ const nextConfig = {
             { protocol: 'https', hostname: 'res.cloudinary.com' },
             { protocol: 'https', hostname: 'hbnnews24.com' },
             { protocol: 'https', hostname: 'i.ytimg.com' },
+            { protocol: 'https', hostname: 'ui-avatars.com' },
         ],
     },
 };

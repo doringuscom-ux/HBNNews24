@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { toJpeg } from 'html-to-image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ThumbsUp, MessageCircle, Share2, Bookmark, Pencil, Trash2 } from 'lucide-react';
 import { optimizeImage } from '@/utils/imageOptimizer';
 import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
@@ -494,8 +495,8 @@ export default function SingleArticle({ initialArticle }) {
 
 
                 <div className="w-full flex flex-col group cursor-pointer">
-                    <div className="w-full bg-gray-100 overflow-hidden">
-                        <img src={optimizeImage(article.image, 800)} alt={article.imageAlt || article.title} loading="eager" fetchPriority="high" className="w-full h-auto max-h-[500px] object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
+                    <div className="relative w-full bg-gray-100 overflow-hidden h-[300px] sm:h-[400px] md:h-[500px]">
+                        <Image src={optimizeImage(article.image, 800)} alt={article.imageAlt || article.title} fill priority sizes="(max-width: 1280px) 100vw, 1280px" className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:origin-center" />
                     </div>
                     <p className="text-sm text-gray-500 py-2 px-1 border-b border-gray-200">
                         {article.imageAlt || `${article.title} (Photo)`}
@@ -505,8 +506,8 @@ export default function SingleArticle({ initialArticle }) {
                 {/* Author & Share Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-4 gap-4">
                     <div className="flex items-center gap-3">
-                        <Link href={`/reporter/${(article.author || 'Admin').toLowerCase().replace(/\s+/g, '-')}`} className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden hover:scale-105 transition-transform block">
-                            <img src={authorProfileImage || `https://ui-avatars.com/api/?name=${article.author || 'Admin'}&background=da0000&color=fff`} alt="Author" className="w-full h-full object-cover" />
+                        <Link href={`/reporter/${(article.author || 'Admin').toLowerCase().replace(/\s+/g, '-')}`} className="relative w-10 h-10 rounded-full bg-gray-300 overflow-hidden hover:scale-105 transition-transform block">
+                            <Image src={authorProfileImage || `https://ui-avatars.com/api/?name=${article.author || 'Admin'}&background=da0000&color=fff`} alt="Author" fill sizes="40px" className="object-cover" />
                         </Link>
                         <div className="flex flex-col">
                             <Link href={`/reporter/${(article.author || 'Admin').toLowerCase().replace(/\s+/g, '-')}`} className="font-bold text-[15px] text-gray-900 hover:text-[#da0000] transition-colors">{article.author || 'एडमिन'}</Link>
@@ -599,8 +600,8 @@ export default function SingleArticle({ initialArticle }) {
                 {/* Author Bio Box for Google News */}
                 {hasContent && (
                     <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-5 flex flex-col sm:flex-row items-center sm:items-start gap-4 shadow-sm">
-                        <Link href={`/reporter/${(article.author || 'Admin').toLowerCase().replace(/\s+/g, '-')}`} className="w-16 h-16 rounded-full bg-gray-300 flex-shrink-0 overflow-hidden border-2 border-white shadow-sm hover:scale-105 transition-transform block">
-                            <img src={authorProfileImage || `https://ui-avatars.com/api/?name=${article.author || 'Admin'}&background=da0000&color=fff&size=128`} alt={article.author || 'Author'} className="w-full h-full object-cover" />
+                        <Link href={`/reporter/${(article.author || 'Admin').toLowerCase().replace(/\s+/g, '-')}`} className="relative w-16 h-16 rounded-full bg-gray-300 flex-shrink-0 overflow-hidden border-2 border-white shadow-sm hover:scale-105 transition-transform block">
+                            <Image src={authorProfileImage || `https://ui-avatars.com/api/?name=${article.author || 'Admin'}&background=da0000&color=fff&size=128`} alt={article.author || 'Author'} fill sizes="64px" className="object-cover" />
                         </Link>
                         <div className="flex flex-col text-center sm:text-left">
                             <h4 className="font-bold text-lg text-gray-900 mb-1">
@@ -735,11 +736,13 @@ export default function SingleArticle({ initialArticle }) {
                     <div className="flex flex-col gap-6">
                         {latestNews.filter(n => n._id !== (article?._id || initialArticle?._id)).slice(0, 8).map((news) => (
                             <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-4 group cursor-pointer border-b border-gray-100 pb-4 last:border-0">
-                                <div className="relative w-[110px] h-[75px] flex-shrink-0 overflow-hidden rounded-[4px]">
-                                    <img
-                                        src={optimizeImage(news.image, 300) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
-                                        alt={news.title}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                <div className="relative w-[110px] h-[75px] flex-shrink-0 overflow-hidden rounded-[4px] bg-gray-100">
+                                    <Image
+                                        src={optimizeImage(news.image, 300) || "https://hbnnews24.com/favicon.png"}
+                                        alt={news.title || "News"}
+                                        fill
+                                        sizes="110px"
+                                        className="object-cover group-hover:scale-110 transition-transform duration-300"
                                     />
                                 </div>
                                 <div className="flex-1">

@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+ from 'react';
 import Link from 'next/link';
 import { optimizeImage } from '../utils/imageOptimizer';
 
@@ -37,12 +39,7 @@ export default function EntertainmentSection({ news = [] }) {
                     {/* Main Feature */}
                     <Link href={main.id !== 'loading' && typeof main.id === 'string' ? `/news/${main.id}` : '#'} title={main.title} className="relative group cursor-pointer block">
                         <div className="overflow-hidden bg-black rounded-[4px]">
-                            <img loading="lazy" width="400" height="250" 
-                                src={main.image} 
-                                alt={main.title || "Entertainment News"}
-                                title={main.title || "Entertainment News"}
-                                className="w-full h-[272px] object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                            />
+                            <Image src={main.image || "https://hbnnews24.com/favicon.png"} alt={main.title || "Entertainment News"} title={main.title || "Entertainment News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-[272px] object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent rounded-b-[4px]">
                             <h3 className="text-white text-xl font-bold leading-snug group-hover:underline">
@@ -54,12 +51,7 @@ export default function EntertainmentSection({ news = [] }) {
                     {/* Secondary Left Feature */}
                     <Link href={subMain.id !== 'loading' && typeof subMain.id === 'string' ? `/news/${subMain.id}` : '#'} title={subMain.title} className="flex gap-4 group cursor-pointer border-t border-gray-200 pt-4 block">
                         <div className="w-1/2 overflow-hidden bg-gray-50 rounded">
-                            <img loading="lazy" width="400" height="250" 
-                                src={subMain.image} 
-                                alt={subMain.title || "Entertainment News"}
-                                title={subMain.title || "Entertainment News"}
-                                className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
-                            />
+                            <Image src={subMain.image || "https://hbnnews24.com/favicon.png"} alt={subMain.title || "Entertainment News"} title={subMain.title || "Entertainment News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300" />
                         </div>
                         <div className="w-1/2 flex items-center">
                             <h3 className="text-[17px] font-bold leading-tight group-hover:text-[#da0000]">
@@ -75,12 +67,7 @@ export default function EntertainmentSection({ news = [] }) {
                         <React.Fragment key={item.id}>
                             <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} title={item.title} className="flex gap-4 group cursor-pointer block">
                                 <div className="w-1/2 overflow-hidden relative bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" 
-                                        src={item.image} 
-                                        alt={item.title || "Entertainment News"}
-                                        title={item.title || "Entertainment News"}
-                                        className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
-                                    />
+                                    <Image src={item.image || "https://hbnnews24.com/favicon.png"} alt={item.title || "Entertainment News"} title={item.title || "Entertainment News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="w-1/2 flex items-center">
                                     <h3 className="text-[17px] font-bold leading-tight group-hover:text-[#da0000]">
@@ -101,12 +88,7 @@ export default function EntertainmentSection({ news = [] }) {
                         <React.Fragment key={item.id}>
                             <Link href={item.id !== 'loading' && typeof item.id === 'string' ? `/news/${item.id}` : '#'} title={item.title} className="flex gap-4 group cursor-pointer block">
                                 <div className="w-1/2 overflow-hidden relative bg-gray-50 rounded">
-                                    <img loading="lazy" width="400" height="250" 
-                                        src={item.image} 
-                                        alt={item.title || "Entertainment News"}
-                                        title={item.title || "Entertainment News"}
-                                        className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
-                                    />
+                                    <Image src={item.image || "https://hbnnews24.com/favicon.png"} alt={item.title || "Entertainment News"} title={item.title || "Entertainment News"} fill sizes="(max-width: 768px) 100vw, 400px" className="w-full h-[120px] object-contain group-hover:scale-105 transition-transform duration-300" />
                                 </div>
                                 <div className="w-1/2 flex items-center">
                                     <h3 className="text-[17px] font-bold leading-tight group-hover:text-[#da0000]">
