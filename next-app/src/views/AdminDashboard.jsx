@@ -220,6 +220,7 @@ export default function AdminDashboard() {
     const [newBreakingNews, setNewBreakingNews] = useState('');
     const [editingBreakingNewsId, setEditingBreakingNewsId] = useState(null);
     const [isFetchingBreakingNews, setIsFetchingBreakingNews] = useState(false);
+    const [selectedBreakingNews, setSelectedBreakingNews] = useState([]);
 
     const fetchBreakingNews = async () => {
         setIsFetchingBreakingNews(true);
@@ -308,6 +309,38 @@ export default function AdminDashboard() {
             if (res.ok) {
                 fetchBreakingNews();
             }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const handleSelectAllBreakingNews = (e) => {
+        if (e.target.checked) {
+            setSelectedBreakingNews(breakingNewsList.map(item => item._id));
+        } else {
+            setSelectedBreakingNews([]);
+        }
+    };
+
+    const handleSelectBreakingNews = (id) => {
+        setSelectedBreakingNews(prev => 
+            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+        );
+    };
+
+    const handleDeleteMultipleBreakingNews = async () => {
+        if (!selectedBreakingNews.length) return;
+        if (!window.confirm(`Are you sure you want to delete ${selectedBreakingNews.length} selected items?`)) return;
+        try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+            await Promise.all(selectedBreakingNews.map(id => 
+                fetch('/api/breaking-news/' + id, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+            ));
+            setSelectedBreakingNews([]);
+            fetchBreakingNews();
         } catch (e) {
             console.error(e);
         }
@@ -1837,6 +1870,16 @@ export default function AdminDashboard() {
                                     <h2 className="text-xl font-bold text-gray-900">Breaking News Items</h2>
                                     <p className="text-sm text-gray-500">Add headlines that will scroll on the website banner.</p>
                                 </div>
+                                <div className="flex items-center gap-4">
+                                    {selectedBreakingNews.length > 0 && (
+                                        <button
+                                            onClick={handleDeleteMultipleBreakingNews}
+                                            className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                                        >
+                                            <Trash2 size={16} /> Delete Selected ({selectedBreakingNews.length})
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                             <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
                                 <form onSubmit={handleAddBreakingNews} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
@@ -1860,7 +1903,15 @@ export default function AdminDashboard() {
                                     </div>
                                 </form>
                                 <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col">
-                                    <div className="bg-gray-50 p-4 border-b border-gray-200 font-bold text-gray-700 grid grid-cols-[1fr_100px_120px] gap-4">
+                                    <div className="bg-gray-50 p-4 border-b border-gray-200 font-bold text-gray-700 grid grid-cols-[40px_1fr_100px_120px] gap-4 items-center">
+                                        <div className="flex justify-center">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={breakingNewsList.length > 0 && selectedBreakingNews.length === breakingNewsList.length}
+                                                onChange={handleSelectAllBreakingNews}
+                                                className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                                            />
+                                        </div>
                                         <div>Headline Text</div>
                                         <div className="text-center">Status</div>
                                         <div className="text-right">Actions</div>
@@ -1872,7 +1923,15 @@ export default function AdminDashboard() {
                                             <div className="p-8 text-center text-gray-500">No breaking news added yet.</div>
                                         ) : (
                                             breakingNewsList.map((item) => (
-                                                <div key={item._id} className="p-4 border-b border-gray-100 flex items-center grid grid-cols-[1fr_100px_120px] gap-4 hover:bg-gray-50">
+                                                <div key={item._id} className="p-4 border-b border-gray-100 flex items-center grid grid-cols-[40px_1fr_100px_120px] gap-4 hover:bg-gray-50">
+                                                    <div className="flex justify-center">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            checked={selectedBreakingNews.includes(item._id)}
+                                                            onChange={() => handleSelectBreakingNews(item._id)}
+                                                            className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                                                        />
+                                                    </div>
                                                     <div className="text-gray-800 font-medium truncate" title={item.text}>{item.text}</div>
                                                     <div className="text-center">
                                                         <button

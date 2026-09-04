@@ -5,7 +5,7 @@ import BreakingNews from '@/models/BreakingNews';
 
 export async function generateMetadata() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
-  const defaultImage = `${siteUrl}/icon-192.png`;
+  const defaultImage = 'https://res.cloudinary.com/dsd6oj52y/image/upload/v1787380341/hbn24_news/pdhg8ghjjd5fy7bdzkgc.jpg';
 
   let title = 'Live Breaking News & Flash Headlines | HBN News 24';
   let description = 'Get real-time breaking news, flash alerts, and urgent live headlines in Hindi from India and around the world at HBN News 24.';

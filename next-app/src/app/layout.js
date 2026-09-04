@@ -43,6 +43,13 @@ export async function generateMetadata() {
           siteName: seo.siteTitle || 'HBN24 News',
           locale: 'hi_IN',
           type: 'website',
+          images: [`${siteUrl}/logo.webp`],
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: seo.siteTitle || 'HBN24 News',
+          description: seo.metaDescription || '',
+          images: [`${siteUrl}/logo.webp`],
         },
       };
     }
@@ -58,6 +65,19 @@ export async function generateMetadata() {
     title: {
       template: `%s | HBN24 News`,
       default: 'HBN24 News',
+    },
+    openGraph: {
+      title: 'HBN24 News',
+      url: siteUrl,
+      siteName: 'HBN24 News',
+      locale: 'hi_IN',
+      type: 'website',
+      images: [`${siteUrl}/logo.webp`],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'HBN24 News',
+      images: [`${siteUrl}/logo.webp`],
     },
   };
 }
