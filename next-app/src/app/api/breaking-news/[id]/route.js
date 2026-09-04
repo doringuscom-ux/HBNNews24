@@ -15,11 +15,12 @@ export async function PUT(request, { params }) {
         const resolvedParams = await params;
         const id = resolvedParams?.id;
         const body = await request.json();
-        const { isActive, text } = body;
+        const { isActive, text, link } = body;
 
         const updateData = {};
         if (isActive !== undefined) updateData.isActive = isActive;
         if (text !== undefined) updateData.text = text.trim();
+        if (link !== undefined) updateData.link = link.trim();
 
         const updated = await BreakingNews.findByIdAndUpdate(
             id,

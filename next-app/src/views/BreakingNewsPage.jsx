@@ -106,6 +106,12 @@ export default function BreakingNewsPage({ initialNews = [] }) {
                                     {item.text}
                                 </h2>
 
+                                {item.link && (
+                                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block mb-4 px-4 py-2 bg-red-50 text-red-700 font-semibold rounded-lg hover:bg-red-100 transition-colors text-sm border border-red-100">
+                                        Read More / पूरा पढ़ें
+                                    </a>
+                                )}
+
                                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                                     <div className="flex items-center gap-2">
                                         {/* WhatsApp */}

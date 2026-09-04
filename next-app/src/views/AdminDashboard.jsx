@@ -218,6 +218,7 @@ export default function AdminDashboard() {
     const [currentView, setCurrentView] = useState('all');
     const [breakingNewsList, setBreakingNewsList] = useState([]);
     const [newBreakingNews, setNewBreakingNews] = useState('');
+    const [newBreakingNewsLink, setNewBreakingNewsLink] = useState('');
     const [editingBreakingNewsId, setEditingBreakingNewsId] = useState(null);
     const [isFetchingBreakingNews, setIsFetchingBreakingNews] = useState(false);
     const [selectedBreakingNews, setSelectedBreakingNews] = useState([]);
@@ -249,10 +250,11 @@ export default function AdminDashboard() {
                 const res = await fetch('/api/breaking-news/' + editingBreakingNewsId, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ text: newBreakingNews })
+                    body: JSON.stringify({ text: newBreakingNews, link: newBreakingNewsLink })
                 });
                 if (res.ok) {
                     setNewBreakingNews('');
+                    setNewBreakingNewsLink('');
                     setEditingBreakingNewsId(null);
                     fetchBreakingNews();
                 }
@@ -260,10 +262,11 @@ export default function AdminDashboard() {
                 const res = await fetch('/api/breaking-news', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ text: newBreakingNews })
+                    body: JSON.stringify({ text: newBreakingNews, link: newBreakingNewsLink })
                 });
                 if (res.ok) {
                     setNewBreakingNews('');
+                    setNewBreakingNewsLink('');
                     fetchBreakingNews();
                 }
             }
@@ -275,11 +278,13 @@ export default function AdminDashboard() {
     const handleEditBreakingNews = (item) => {
         setEditingBreakingNewsId(item._id);
         setNewBreakingNews(item.text);
+        setNewBreakingNewsLink(item.link || '');
     };
 
     const handleCancelEditBreakingNews = () => {
         setEditingBreakingNewsId(null);
         setNewBreakingNews('');
+        setNewBreakingNewsLink('');
     };
 
     const handleToggleBreakingNews = async (id, currentStatus) => {
@@ -1884,22 +1889,31 @@ export default function AdminDashboard() {
                             <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
                                 <form onSubmit={handleAddBreakingNews} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
                                     <h3 className="font-bold text-gray-800">{editingBreakingNewsId ? 'Edit Headline' : 'Add New Headline'}</h3>
-                                    <div className="flex gap-4">
+                                    <div className="flex flex-col gap-4">
                                         <input
                                             type="text"
                                             value={newBreakingNews}
                                             onChange={(e) => setNewBreakingNews(e.target.value)}
                                             placeholder="Enter breaking news text..."
-                                            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"
                                         />
-                                        <button type="submit" className="px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-colors whitespace-nowrap">
-                                            {editingBreakingNewsId ? 'Update Headline' : 'Add Headline'}
-                                        </button>
-                                        {editingBreakingNewsId && (
-                                            <button type="button" onClick={handleCancelEditBreakingNews} className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-colors whitespace-nowrap">
-                                                Cancel
+                                        <input
+                                            type="text"
+                                            value={newBreakingNewsLink}
+                                            onChange={(e) => setNewBreakingNewsLink(e.target.value)}
+                                            placeholder="Optional: Enter link to redirect to..."
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white transition-all"
+                                        />
+                                        <div className="flex gap-4">
+                                            <button type="submit" className="px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-colors whitespace-nowrap">
+                                                {editingBreakingNewsId ? 'Update Headline' : 'Add Headline'}
                                             </button>
-                                        )}
+                                            {editingBreakingNewsId && (
+                                                <button type="button" onClick={handleCancelEditBreakingNews} className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-colors whitespace-nowrap">
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </form>
                                 <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col">
