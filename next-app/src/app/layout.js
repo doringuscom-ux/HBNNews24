@@ -35,6 +35,9 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        verification: {
+          yandex: '0eb83d10134bd980',
+        },
 
         openGraph: {
           title: seo.siteTitle || 'HBN24 News',
@@ -65,6 +68,9 @@ export async function generateMetadata() {
     title: {
       template: `%s | HBN24 News`,
       default: 'HBN24 News',
+    },
+    verification: {
+      yandex: '0eb83d10134bd980',
     },
     openGraph: {
       title: 'HBN24 News',
