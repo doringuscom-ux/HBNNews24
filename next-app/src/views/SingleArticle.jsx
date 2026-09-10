@@ -100,6 +100,28 @@ export default function SingleArticle({ initialArticle }) {
                 };
             }
 
+            // Load and execute Twitter (X) widgets if any embedded tweets exist
+            const twitterEmbeds = articleContentRef.current.querySelectorAll('.twitter-tweet');
+            if (twitterEmbeds.length > 0) {
+                const renderTwitterWidgets = () => {
+                    if (window.twttr && window.twttr.widgets) {
+                        window.twttr.widgets.load(articleContentRef.current);
+                    }
+                };
+
+                if (!window.twttr) {
+                    const script = document.createElement('script');
+                    script.id = 'twitter-wjs';
+                    script.src = 'https://platform.twitter.com/widgets.js';
+                    script.async = true;
+                    script.charset = 'utf-8';
+                    script.onload = renderTwitterWidgets;
+                    document.body.appendChild(script);
+                } else {
+                    renderTwitterWidgets();
+                }
+            }
+
             return () => {
                 if (articleContentRef.current) {
                     articleContentRef.current.removeEventListener('click', handleLinkClick);
@@ -586,6 +608,9 @@ export default function SingleArticle({ initialArticle }) {
                             }
                             .force-article-font p {
                                 margin-bottom: 20px !important;
+                            }
+                            .force-article-font .twitter-tweet {
+                                margin: 24px auto !important;
                             }
                         `}</style>
                         <div
