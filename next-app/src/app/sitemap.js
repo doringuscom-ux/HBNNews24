@@ -9,8 +9,8 @@ export default async function sitemap() {
   try {
     await connectToDatabase();
 
-    // Fetch the latest 2000 articles to avoid Vercel memory limits
-    const newsList = await News.find()
+    // Fetch the latest 2000 published articles to avoid Vercel memory limits
+    const newsList = await News.find({ status: { $ne: 'draft' } })
       .sort({ createdAt: -1 })
       .limit(2000)
       .select('slug _id updatedAt createdAt')

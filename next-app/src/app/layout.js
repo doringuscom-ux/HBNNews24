@@ -149,6 +149,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="hi" suppressHydrationWarning className={`${notoDevanagari.variable} ${yatraOne.variable}`}>
       <head>
+        <link rel="alternate" type="application/rss+xml" title="HBN News 24 RSS Feed" href={`${siteUrl}/rss.xml`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
