@@ -53,7 +53,7 @@ export async function generateMetadata() {
   };
 }
 
-export const revalidate = 0;
+export const revalidate = 300; // 5 minutes cache, revalidated automatically on new entry
 
 export default async function Page() {
   let initialNews = [];

@@ -4,8 +4,7 @@ import News from '@/models/News';
 import mongoose from 'mongoose';
 import { notFound } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600; // Cache news details, revalidate hourly or on-demand
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

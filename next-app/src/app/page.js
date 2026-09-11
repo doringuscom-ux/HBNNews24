@@ -51,7 +51,7 @@ export async function generateMetadata() {
 import { getHomeNewsData } from '@/lib/getHomeNews';
 import { getHomeVideosData } from '@/lib/getHomeVideos';
 
-export const revalidate = 60;
+export const revalidate = 900; // 15 minutes cache, revalidates on new articles automatically
 
 export default async function Page() {
   const [initialNews, initialVideos] = await Promise.all([

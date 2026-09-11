@@ -3,7 +3,7 @@ import connectToDatabase from '@/lib/mongodb';
 import Admin from '@/models/Admin';
 import News from '@/models/News';
 
-export const revalidate = 60;
+export const revalidate = 900;
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
