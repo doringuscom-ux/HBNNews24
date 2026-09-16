@@ -170,6 +170,7 @@ export default function AdminDashboard() {
     const navigate = useRouter();
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isArticleLoading, setIsArticleLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
@@ -535,15 +536,8 @@ export default function AdminDashboard() {
                     setCurrentUsername(data.username);
                 }
 
-                if (data.role === 'admin') {
-                    fetchUsers();
-                    fetchActivityLogs();
-                }
                 if (data.role !== 'user') {
                     fetchNews();
-                    fetchRashifal();
-                    fetchSuvichar();
-                    fetchSeo();
                 }
                 fetchMyProfile(data.username || (typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null));
             } catch (error) {
@@ -1223,7 +1217,7 @@ export default function AdminDashboard() {
 
     const fetchNews = async () => {
         try {
-            const res = await fetch(API_URL);
+            const res = await fetch(`${API_URL}?fields=lean`);
             let data; try { data = await res.json(); } catch(e) { console.error('Failed to parse JSON for', res.url); return; }
             const sortedData = data.sort((a, b) => (a._id < b._id ? 1 : -1));
             setNews(sortedData);
@@ -1259,9 +1253,9 @@ export default function AdminDashboard() {
         setFormData(prev => {
             const currentCats = Array.isArray(prev.category)
                 ? prev.category
-                : (typeof prev.category === 'string' && prev.category.trim() !== '' ? [prev.category.trim()] : []);
+                : (prev.category ? [prev.category] : []);
             if (currentCats.includes(catId)) {
-                return { ...prev, category: currentCats.filter(id => id !== catId) };
+                return { ...prev, category: currentCats.filter(c => c !== catId) };
             } else {
                 return { ...prev, category: [...currentCats, catId] };
             }
@@ -1271,12 +1265,17 @@ export default function AdminDashboard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
+
+        if (!formData.title?.trim()) {
+            alert('Title is required!');
+            return;
+        }
+
         setIsSubmitting(true);
         const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
         
         const payload = { 
             ...formData, 
-            content: cleanHtmlFormatting(formData.content || ''),
             author: (formData.author && formData.author.trim() !== '') ? formData.author.trim() : (currentUsername || 'एडमिन'),
             status: submitStatusRef.current 
         };
@@ -1401,7 +1400,7 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleEdit = (item) => {
+    const handleEdit = async (item) => {
         setFormData({
             title: item.title || '',
             slug: item.slug || '',
@@ -1420,6 +1419,29 @@ export default function AdminDashboard() {
         });
         setEditingId(item._id);
         setIsModalOpen(true);
+
+        // If content is missing (because of lean listing optimization), fetch complete article in background
+        if (item.content === undefined || item.content === null) {
+            setIsArticleLoading(true);
+            try {
+                const res = await fetch(`/api/news/article/${item._id}`);
+                if (res.ok) {
+                    const fullArticle = await res.json();
+                    if (fullArticle && fullArticle.content !== undefined) {
+                        setFormData(prev => ({
+                            ...prev,
+                            content: fullArticle.content || ''
+                        }));
+                        // Also update in-memory item so subsequent edits are instantaneous
+                        item.content = fullArticle.content || '';
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching full article content:', err);
+            } finally {
+                setIsArticleLoading(false);
+            }
+        }
     };
 
     const handleDelete = async (id) => {
@@ -1661,13 +1683,13 @@ export default function AdminDashboard() {
                         <FileText size={20} className={currentView === 'epaper' ? 'text-red-500' : ''} /> E-Paper News
                     </button>
                     <button
-                        onClick={() => setCurrentView('rashifal')}
+                        onClick={() => { setCurrentView('rashifal'); fetchRashifal(); }}
                         className={`px-6 py-3 border-l-4 flex items-center gap-3 font-medium transition-colors text-left ${currentView === 'rashifal' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
                     >
                         <Settings size={20} className={currentView === 'rashifal' ? 'text-red-500' : ''} /> Rashifal
                     </button>
                     <button
-                        onClick={() => setCurrentView('suvichar')}
+                        onClick={() => { setCurrentView('suvichar'); fetchSuvichar(); }}
                         className={`px-6 py-3 border-l-4 flex items-center gap-3 font-medium transition-colors text-left ${currentView === 'suvichar' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
                     >
                         <FileText size={20} className={currentView === 'suvichar' ? 'text-red-500' : ''} /> Suvichar
@@ -1685,7 +1707,7 @@ export default function AdminDashboard() {
                         <AlertTriangle size={20} className={currentView === 'breaking_news' ? 'text-red-500' : ''} /> Breaking News
                     </button>
                     <button
-                        onClick={() => setCurrentView('seo')}
+                        onClick={() => { setCurrentView('seo'); fetchSeo(); }}
                         className={`px-6 py-3 border-l-4 flex items-center gap-3 font-medium transition-colors text-left ${currentView === 'seo' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
                     >
                         <Globe size={20} className={currentView === 'seo' ? 'text-red-500' : ''} /> Global SEO
@@ -1699,7 +1721,7 @@ export default function AdminDashboard() {
                     {userRole === 'admin' && (
                         <>
                             <button
-                                onClick={() => setCurrentView('users')}
+                                onClick={() => { setCurrentView('users'); fetchUsers(); }}
                                 className={`px-6 py-3 border-l-4 flex items-center gap-3 font-medium transition-colors text-left ${currentView === 'users' ? 'bg-red-600/10 border-red-500 text-white' : 'border-transparent text-gray-400 hover:text-white hover:bg-gray-800'}`}
                             >
                                 <Users size={20} className={currentView === 'users' ? 'text-red-500' : ''} /> Manage Users
@@ -2914,6 +2936,14 @@ export default function AdminDashboard() {
                                             Discard (ਹਟਾਓ)
                                         </button>
                                     </div>
+                                </div>
+                            )}
+
+                            {/* Article Loading Indicator */}
+                            {isArticleLoading && (
+                                <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2.5 rounded-lg flex items-center gap-2 text-xs font-semibold animate-pulse">
+                                    <div className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                    Loading article content...
                                 </div>
                             )}
 

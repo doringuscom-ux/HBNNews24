@@ -45,11 +45,25 @@ const verifyAuthToken = async (req) => {
     }
 };
 
-export async function GET() {
+export async function GET(req) {
   try {
     await connectToDatabase();
-    const cacheKey = 'all_news';
 
+    const { searchParams } = new URL(req.url);
+    const fields = searchParams.get('fields');
+
+    // If lean admin view requested, exclude heavy HTML content
+    if (fields === 'lean') {
+      const cacheKey = 'all_news_lean';
+      if (cache.has(cacheKey)) {
+        return NextResponse.json(cache.get(cacheKey));
+      }
+      const newsList = await News.find({}, { content: 0 }).sort({ createdAt: -1 }).lean();
+      cache.set(cacheKey, newsList, 60);
+      return NextResponse.json(newsList);
+    }
+
+    const cacheKey = 'all_news';
     if (cache.has(cacheKey)) {
       return NextResponse.json(cache.get(cacheKey));
     }
