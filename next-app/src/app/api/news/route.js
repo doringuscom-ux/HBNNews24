@@ -51,6 +51,16 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const fields = searchParams.get('fields');
+    const limit = parseInt(searchParams.get('limit') || '0', 10);
+
+    // If limit requested (e.g. sidebar), fetch lightweight lean list fast
+    if (limit > 0) {
+      const newsList = await News.find({ status: { $ne: 'draft' } }, { content: 0 })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .lean();
+      return NextResponse.json(newsList);
+    }
 
     // If lean admin view requested, exclude heavy HTML content
     if (fields === 'lean') {

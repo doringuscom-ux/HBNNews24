@@ -58,24 +58,48 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { id } = await params;
   let initialArticle = null;
+  let initialLatestNews = [];
   
   try {
     await connectToDatabase();
-    if (mongoose.Types.ObjectId.isValid(id)) {
-        initialArticle = await News.findById(id).lean();
-    }
-    if (!initialArticle) {
-        initialArticle = await News.findOne({ slug: id }).lean();
-    }
     
-    if (initialArticle) {
-        // Convert MongoDB ObjectId and Dates to strings to pass safely to Client Component
-        initialArticle._id = initialArticle._id.toString();
-        if (initialArticle.createdAt) initialArticle.createdAt = initialArticle.createdAt.toString();
-        if (initialArticle.updatedAt) initialArticle.updatedAt = initialArticle.updatedAt.toString();
+    // Fetch article and latest news in parallel directly from DB (fast, 0 client delay)
+    const [articleDoc, latestDocs] = await Promise.all([
+      (async () => {
+        if (mongoose.Types.ObjectId.isValid(id)) {
+          const found = await News.findById(id).lean();
+          if (found) return found;
+        }
+        return await News.findOne({ slug: id }).lean();
+      })(),
+      News.find(
+        { status: { $ne: 'draft' } },
+        { title: 1, slug: 1, image: 1, createdAt: 1, category: 1 }
+      )
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean()
+    ]);
+
+    if (articleDoc) {
+      initialArticle = {
+        ...articleDoc,
+        _id: articleDoc._id.toString(),
+        createdAt: articleDoc.createdAt ? articleDoc.createdAt.toString() : '',
+        updatedAt: articleDoc.updatedAt ? articleDoc.updatedAt.toString() : ''
+      };
+    }
+
+    if (Array.isArray(latestDocs)) {
+      initialLatestNews = latestDocs.map(item => ({
+        ...item,
+        _id: item._id.toString(),
+        createdAt: item.createdAt ? item.createdAt.toString() : '',
+        updatedAt: item.updatedAt ? item.updatedAt.toString() : ''
+      }));
     }
   } catch (error) {
-    console.error('Error fetching initial article:', error);
+    console.error('Error fetching initial article and latest news:', error);
   }
 
   if (!initialArticle) {
@@ -164,7 +188,7 @@ export default async function Page({ params }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
-      <SingleArticle initialArticle={initialArticle} />
+      <SingleArticle initialArticle={initialArticle} initialLatestNews={initialLatestNews} />
     </>
   );
 }

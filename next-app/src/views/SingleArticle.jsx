@@ -8,12 +8,12 @@ import { ThumbsUp, MessageCircle, Share2, Bookmark, Pencil, Trash2 } from 'lucid
 import { optimizeImage } from '@/utils/imageOptimizer';
 import { cleanHtmlFormatting } from '@/utils/cleanHtmlFormatting';
 
-export default function SingleArticle({ initialArticle }) {
+export default function SingleArticle({ initialArticle, initialLatestNews = [] }) {
     const { id } = useParams();
     const router = useRouter();
     const [article, setArticle] = useState(initialArticle || null);
     const [authorProfileImage, setAuthorProfileImage] = useState('');
-    const [latestNews, setLatestNews] = useState([]);
+    const [latestNews, setLatestNews] = useState(initialLatestNews || []);
     const [loading, setLoading] = useState(!initialArticle);
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -166,27 +166,22 @@ export default function SingleArticle({ initialArticle }) {
                     setArticle(articleData);
                 }
 
-                // Fetch latest news for sidebar (also with retry)
-                let newsRes;
-                let newsRetries = 2;
-                while (newsRetries >= 0) {
+                // Fetch latest news for sidebar only if not already provided by server
+                if (!initialLatestNews || initialLatestNews.length === 0) {
                     try {
-                        newsRes = await fetch(`/api/news`);
-                        if (newsRes.ok) break;
+                        const newsRes = await fetch(`/api/news?fields=lean&limit=10`);
+                        if (newsRes && newsRes.ok) {
+                            const rawNewsData = await newsRes.json();
+                            const currentArticleId = article?._id || initialArticle?._id || id;
+                            const filteredLatest = (Array.isArray(rawNewsData) ? rawNewsData : []).filter(
+                                item => String(item._id) !== String(currentArticleId) && String(item.slug) !== String(id)
+                            );
+                            setLatestNews(filteredLatest);
+                        }
                     } catch (e) {
-                        if (newsRetries === 0) throw e;
+                        console.error("Error fetching latest sidebar news:", e);
                     }
-                    if (newsRetries > 0) await new Promise(r => setTimeout(r, 1000));
-                    newsRetries--;
                 }
-                
-                const rawNewsData = newsRes && newsRes.ok ? await newsRes.json() : [];
-                const currentArticleId = article?._id || initialArticle?._id || id;
-                const filteredLatest = (Array.isArray(rawNewsData) ? rawNewsData : []).filter(
-                    item => String(item._id) !== String(currentArticleId) && String(item.slug) !== String(id)
-                );
-
-                setLatestNews(filteredLatest);
                 setLoading(false);
 
                 // Fetch likes/comments based on loaded article
