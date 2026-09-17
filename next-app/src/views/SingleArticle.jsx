@@ -496,7 +496,7 @@ export default function SingleArticle({ initialArticle, initialLatestNews = [], 
             <div className="flex flex-col md:flex-row gap-8">
 
             {/* Left Column - Main Article */}
-            <div className="w-full md:w-3/4 flex flex-col gap-5">
+            <div className="flex-1 min-w-0 flex flex-col gap-5">
                 {/* Breadcrumbs */}
                 <nav className="flex items-center text-sm font-medium text-gray-500 overflow-hidden whitespace-nowrap text-ellipsis">
                     <Link href="/" className="hover:text-[#da0000] transition-colors">Home</Link>
@@ -753,29 +753,29 @@ export default function SingleArticle({ initialArticle, initialLatestNews = [], 
             </div>
 
             {/* Right Column - Sidebar */}
-            <div className="w-full md:w-1/4">
-                <div className="sticky top-6 flex flex-col bg-white border border-gray-100 rounded-lg p-4 shadow-sm">
-                    <div className="flex items-center gap-2 border-b-[2px] border-gray-200 pb-2 mb-4">
+            <div className="w-full lg:w-[350px] flex-shrink-0">
+                <div className="bg-white border border-gray-100 rounded-lg p-5 shadow-sm">
+                    <div className="flex items-center gap-2 border-b-[2px] border-gray-200 pb-3 mb-5">
                         <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-[#da0000] border-b-[6px] border-b-transparent transform rotate-45"></div>
                         <h2 className="text-xl font-bold text-gray-900">लेटेस्ट</h2>
                     </div>
 
-                    {/* Dedicated scrollable sidebar list: Strictly Maximum 8 items */}
-                    <div className="flex flex-col gap-4 max-h-[750px] overflow-y-auto pr-1">
+                    {/* Clean list extending fully down without scrollbar or cutoff */}
+                    <div className="flex flex-col divide-y divide-gray-100">
                         {latestNews.filter(n => n._id !== (article?._id || initialArticle?._id)).slice(0, 8).map((news) => (
-                            <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-3 group cursor-pointer border-b border-gray-100 pb-3.5 last:border-0 hover:bg-gray-50/70 p-1 rounded transition-colors">
-                                <div className="relative w-[100px] h-[70px] flex-shrink-0 overflow-hidden rounded-[6px]">
+                            <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-3.5 group cursor-pointer py-3.5 first:pt-0 last:pb-0 hover:bg-gray-50/70 p-1.5 rounded transition-colors">
+                                <div className="relative w-[115px] h-[78px] flex-shrink-0 overflow-hidden rounded-[6px] bg-gray-100">
                                     <img
                                         src={optimizeImage(news.image, 300) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e5e7eb'/%3E%3C/svg%3E"}
                                         alt={news.title}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
                                 </div>
-                                <div className="flex-1 flex flex-col justify-between">
+                                <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
                                     <h3 className="text-[14px] font-bold text-[#222] leading-[1.35] group-hover:text-[#da0000] transition-colors line-clamp-3">
                                         {news.title}
                                     </h3>
-                                    <span className="text-[11px] text-gray-400 mt-1">
+                                    <span className="text-[11px] text-gray-400 mt-1 block">
                                         {news.createdAt ? new Date(news.createdAt).toLocaleDateString('hi-IN', { day: 'numeric', month: 'short' }) : ''}
                                     </span>
                                 </div>
