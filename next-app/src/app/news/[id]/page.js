@@ -64,7 +64,7 @@ export default async function Page({ params }) {
   try {
     await connectToDatabase();
     
-    // Fetch article and latest news in parallel directly from DB (fast, 0 client delay)
+    // Fetch article and latest sidebar news in parallel directly from DB (fast, 0 client delay)
     const [articleDoc, latestDocs] = await Promise.all([
       (async () => {
         if (mongoose.Types.ObjectId.isValid(id)) {
@@ -74,11 +74,14 @@ export default async function Page({ params }) {
         return await News.findOne({ slug: id }).lean();
       })(),
       News.find(
-        { status: { $ne: 'draft' } },
+        { 
+          status: { $ne: 'draft' },
+          ...(mongoose.Types.ObjectId.isValid(id) ? { _id: { $ne: id } } : { slug: { $ne: id } })
+        },
         { title: 1, slug: 1, image: 1, createdAt: 1, category: 1 }
       )
       .sort({ createdAt: -1 })
-      .limit(10)
+      .limit(8)
       .lean()
     ]);
 
@@ -90,30 +93,35 @@ export default async function Page({ params }) {
         updatedAt: articleDoc.updatedAt ? articleDoc.updatedAt.toString() : ''
       };
 
-      // Fetch related articles by category
-      const cat = Array.isArray(articleDoc.category) ? articleDoc.category[0] : articleDoc.category;
+      // Collect IDs to exclude from Related News so Sidebar and Bottom NEVER have the same news
+      const excludeIds = [articleDoc._id, ...(latestDocs || []).map(d => d._id)];
+
+      // Determine real category (excluding generic 'breaking' / 'superfast' if another category exists)
+      const catList = Array.isArray(articleDoc.category) ? articleDoc.category : (articleDoc.category ? [articleDoc.category] : []);
+      const specificCategory = catList.find(c => c && !['breaking', 'superfast'].includes(c.toLowerCase())) || catList[0];
+
       const relatedFilter = {
         status: { $ne: 'draft' },
-        _id: { $ne: articleDoc._id }
+        _id: { $nin: excludeIds }
       };
-      if (cat) {
-        relatedFilter.category = { $regex: new RegExp(`^${cat}$`, 'i') };
+      if (specificCategory && !['breaking', 'superfast'].includes(specificCategory.toLowerCase())) {
+        relatedFilter.category = { $regex: new RegExp(`^${specificCategory}$`, 'i') };
       }
 
       let relatedDocs = await News.find(
         relatedFilter,
-        { title: 1, slug: 1, image: 1, createdAt: 1, category: 1, description: 1 }
+        { title: 1, slug: 1, image: 1, createdAt: 1, category: 1 }
       )
       .sort({ createdAt: -1 })
       .limit(8)
       .lean();
 
-      // If fewer than 4 related articles found in category, fill with recent articles
+      // If not enough in same category, fill with other recent articles (strictly excluding sidebar news)
       if (!relatedDocs || relatedDocs.length < 4) {
-        const existingIds = [articleDoc._id, ...(relatedDocs || []).map(r => r._id)];
+        const alreadyUsedIds = [...excludeIds, ...(relatedDocs || []).map(r => r._id)];
         const fallbackDocs = await News.find(
-          { status: { $ne: 'draft' }, _id: { $nin: existingIds } },
-          { title: 1, slug: 1, image: 1, createdAt: 1, category: 1, description: 1 }
+          { status: { $ne: 'draft' }, _id: { $nin: alreadyUsedIds } },
+          { title: 1, slug: 1, image: 1, createdAt: 1, category: 1 }
         )
         .sort({ createdAt: -1 })
         .limit(8 - (relatedDocs ? relatedDocs.length : 0))
