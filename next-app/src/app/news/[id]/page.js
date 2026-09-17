@@ -59,6 +59,7 @@ export default async function Page({ params }) {
   const { id } = await params;
   let initialArticle = null;
   let initialLatestNews = [];
+  let initialRelatedNews = [];
   
   try {
     await connectToDatabase();
@@ -88,6 +89,47 @@ export default async function Page({ params }) {
         createdAt: articleDoc.createdAt ? articleDoc.createdAt.toString() : '',
         updatedAt: articleDoc.updatedAt ? articleDoc.updatedAt.toString() : ''
       };
+
+      // Fetch related articles by category
+      const cat = Array.isArray(articleDoc.category) ? articleDoc.category[0] : articleDoc.category;
+      const relatedFilter = {
+        status: { $ne: 'draft' },
+        _id: { $ne: articleDoc._id }
+      };
+      if (cat) {
+        relatedFilter.category = { $regex: new RegExp(`^${cat}$`, 'i') };
+      }
+
+      let relatedDocs = await News.find(
+        relatedFilter,
+        { title: 1, slug: 1, image: 1, createdAt: 1, category: 1, description: 1 }
+      )
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .lean();
+
+      // If fewer than 4 related articles found in category, fill with recent articles
+      if (!relatedDocs || relatedDocs.length < 4) {
+        const existingIds = [articleDoc._id, ...(relatedDocs || []).map(r => r._id)];
+        const fallbackDocs = await News.find(
+          { status: { $ne: 'draft' }, _id: { $nin: existingIds } },
+          { title: 1, slug: 1, image: 1, createdAt: 1, category: 1, description: 1 }
+        )
+        .sort({ createdAt: -1 })
+        .limit(8 - (relatedDocs ? relatedDocs.length : 0))
+        .lean();
+
+        relatedDocs = [...(relatedDocs || []), ...(fallbackDocs || [])];
+      }
+
+      if (Array.isArray(relatedDocs)) {
+        initialRelatedNews = relatedDocs.map(item => ({
+          ...item,
+          _id: item._id.toString(),
+          createdAt: item.createdAt ? item.createdAt.toString() : '',
+          updatedAt: item.updatedAt ? item.updatedAt.toString() : ''
+        }));
+      }
     }
 
     if (Array.isArray(latestDocs)) {
@@ -188,7 +230,11 @@ export default async function Page({ params }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
-      <SingleArticle initialArticle={initialArticle} initialLatestNews={initialLatestNews} />
+      <SingleArticle 
+        initialArticle={initialArticle} 
+        initialLatestNews={initialLatestNews} 
+        initialRelatedNews={initialRelatedNews} 
+      />
     </>
   );
 }
