@@ -753,15 +753,15 @@ export default function SingleArticle({ initialArticle, initialLatestNews = [], 
             </div>
 
             {/* Right Column - Sidebar */}
-            <div className="w-full lg:w-[350px] flex-shrink-0">
-                <div className="bg-white border border-gray-100 rounded-lg p-5 shadow-sm">
-                    <div className="flex items-center gap-2 border-b-[2px] border-gray-200 pb-3 mb-5">
+            <div className="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0">
+                <div className="sticky top-20 bg-white border border-gray-100 rounded-lg p-5 shadow-sm">
+                    <div className="flex items-center gap-2 border-b-[2px] border-gray-200 pb-3 mb-4">
                         <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-[#da0000] border-b-[6px] border-b-transparent transform rotate-45"></div>
                         <h2 className="text-xl font-bold text-gray-900">लेटेस्ट</h2>
                     </div>
 
-                    {/* Clean list extending fully down without scrollbar or cutoff */}
-                    <div className="flex flex-col divide-y divide-gray-100">
+                    {/* Scrollable list with hidden scrollbar */}
+                    <div className="flex flex-col divide-y divide-gray-100 max-h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
                         {latestNews.filter(n => n._id !== (article?._id || initialArticle?._id)).slice(0, 8).map((news) => (
                             <Link href={`/news/${news.slug || news._id}`} key={news._id} className="flex gap-3.5 group cursor-pointer py-3.5 first:pt-0 last:pb-0 hover:bg-gray-50/70 p-1.5 rounded transition-colors">
                                 <div className="relative w-[115px] h-[78px] flex-shrink-0 overflow-hidden rounded-[6px] bg-gray-100">
