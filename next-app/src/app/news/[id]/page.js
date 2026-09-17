@@ -4,7 +4,7 @@ import News from '@/models/News';
 import mongoose from 'mongoose';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 3600; // Cache news details, revalidate hourly or on-demand
+export const dynamic = 'force-dynamic'; // Render on-demand via SSR - 0 ISR writes
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
