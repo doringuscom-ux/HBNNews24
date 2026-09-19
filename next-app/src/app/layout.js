@@ -36,6 +36,7 @@ export async function generateMetadata() {
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
         verification: {
+          google: 'google7c3f11cf9536e658',
           yandex: '0eb83d10134bd980',
         },
 
