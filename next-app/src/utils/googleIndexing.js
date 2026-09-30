@@ -44,25 +44,41 @@ if (process.env.GOOGLE_INDEXING_CLIENT_EMAIL && process.env.GOOGLE_INDEXING_PRIV
  * @param {string} type - 'URL_UPDATED' or 'URL_DELETED'
  */
 export async function notifyGoogleIndexing(url, type = 'URL_UPDATED') {
-    if (!jwtClient) {
-        console.warn('Google Indexing API not initialized. Skipping notification for:', url);
-        return;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';
+    
+    // 1. Google Indexing API
+    if (jwtClient) {
+        try {
+            await jwtClient.authorize();
+            const indexing = google.indexing({ version: 'v3', auth: jwtClient });
+            
+            const response = await indexing.urlNotifications.publish({
+                requestBody: {
+                    url: url,
+                    type: type
+                }
+            });
+            console.log(`Google Indexing API Success [${type}]:`, url);
+        } catch (error) {
+            console.error(`Google Indexing API Error for ${url}:`, error.message || error);
+        }
+    } else {
+        console.warn('Google Indexing API not initialized. Skipping API notification for:', url);
     }
 
+    // 2. Ping Google Sitemaps (WordPress-style instant notification)
     try {
-        await jwtClient.authorize();
-        const indexing = google.indexing({ version: 'v3', auth: jwtClient });
+        const sitemapUrl = encodeURIComponent(`${siteUrl}/sitemap.xml`);
+        const newsSitemapUrl = encodeURIComponent(`${siteUrl}/news-sitemap.xml`);
         
-        const response = await indexing.urlNotifications.publish({
-            requestBody: {
-                url: url,
-                type: type
-            }
-        });
-        
-        console.log(`Google Indexing API Success [${type}]:`, url);
-        return response.data;
-    } catch (error) {
-        console.error(`Google Indexing API Error for ${url}:`, error.message || error);
+        await Promise.allSettled([
+            fetch(`https://www.google.com/ping?sitemap=${newsSitemapUrl}`),
+            fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`),
+            fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`)
+        ]);
+        console.log('Search engines pinged for sitemap updates successfully.');
+    } catch (pingErr) {
+        console.error('Error pinging search engine sitemaps:', pingErr.message);
     }
 }
+

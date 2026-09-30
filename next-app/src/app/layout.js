@@ -25,9 +25,6 @@ export async function generateMetadata() {
     if (seo) {
       return {
         metadataBase: new URL(siteUrl),
-        alternates: {
-          canonical: './',
-        },
         title: {
           template: `%s | ${seo.siteTitle || 'HBN24 News'}`,
           default: seo.siteTitle || 'HBN24 News',
@@ -36,7 +33,6 @@ export async function generateMetadata() {
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
         verification: {
-          google: 'google7c3f11cf9536e658',
           yandex: '0eb83d10134bd980',
         },
 
@@ -63,9 +59,6 @@ export async function generateMetadata() {
   
   return {
     metadataBase: new URL(siteUrl),
-    alternates: {
-      canonical: './',
-    },
     title: {
       template: `%s | HBN24 News`,
       default: 'HBN24 News',

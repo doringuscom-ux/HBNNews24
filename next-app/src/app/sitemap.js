@@ -1,7 +1,8 @@
 import connectToDatabase from '@/lib/mongodb';
 import News from '@/models/News';
 
-export const revalidate = 3600; // Revalidate every 1 hour
+export const revalidate = 0; // Real-time sitemap for instant Google discovery
+export const dynamic = 'force-dynamic';
 
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';

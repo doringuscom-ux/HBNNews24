@@ -1,7 +1,8 @@
 import connectToDatabase from '@/lib/mongodb';
 import News from '@/models/News';
 
-export const revalidate = 600; // Revalidate every 10 minutes
+export const revalidate = 0; // Instant real-time updates for Google News & RSS Readers
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hbnnews24.com';

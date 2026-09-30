@@ -25,8 +25,20 @@ export async function generateMetadata({ params }) {
       return {
         title: data.metaTitle || data.title || 'HBN24 News',
         description: data.metaDescription || (data.description ? data.description.substring(0, 160) : ''),
-        keywords: data.metaKeywords || '',
-        robots: data.robots || 'index, follow',
+        robots: {
+          index: true,
+          follow: true,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+          'max-video-preview': -1,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+          },
+        },
         alternates: {
           canonical: articleUrl,
         },
