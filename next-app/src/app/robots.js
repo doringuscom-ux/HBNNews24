@@ -6,7 +6,11 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/'],
+        disallow: ['/admin/', '/adminlogin/', '/api/'],
+      },
+      {
+        userAgent: 'Googlebot',
+        allow: '/',
       },
       {
         userAgent: 'Googlebot-News',

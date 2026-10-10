@@ -31,7 +31,23 @@ export async function generateMetadata() {
         },
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
-        robots: seo.robots || 'index, follow',
+        robots: {
+          index: true,
+          follow: true,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+          'max-video-preview': -1,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+          },
+        },
+        alternates: {
+          canonical: siteUrl,
+        },
         verification: {
           yandex: '0eb83d10134bd980',
         },
@@ -62,6 +78,23 @@ export async function generateMetadata() {
     title: {
       template: `%s | HBN24 News`,
       default: 'HBN24 News',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
+    alternates: {
+      canonical: siteUrl,
     },
     verification: {
       yandex: '0eb83d10134bd980',

@@ -10,10 +10,10 @@ export default async function sitemap() {
   try {
     await connectToDatabase();
 
-    // Fetch the latest 2000 published articles to avoid Vercel memory limits
+    // Fetch the latest 5000 published articles for Google indexing
     const newsList = await News.find({ status: { $ne: 'draft' } })
       .sort({ createdAt: -1 })
-      .limit(2000)
+      .limit(5000)
       .select('slug _id updatedAt createdAt')
       .lean();
 
@@ -26,11 +26,10 @@ export default async function sitemap() {
 
     const staticRoutes = [
       '',
-      '/about',
-      '/contactus',
-      '/privacy-policy',
-      '/termsconditions',
-      '/disclaimer',
+      '/punjab',
+      '/haryana',
+      '/delhi',
+      '/breaking-news',
       '/national',
       '/international',
       '/sports',
@@ -41,12 +40,20 @@ export default async function sitemap() {
       '/religion',
       '/education',
       '/epaper',
-      '/authors'
+      '/authors',
+      '/about',
+      '/contactus',
+      '/privacy-policy',
+      '/termsconditions',
+      '/disclaimer',
+      '/editorial-policy',
+      '/fact-check-policy',
+      '/corrections-policy'
     ].map((route) => ({
       url: `${baseUrl}${route}`,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: route === '' ? 1.0 : 0.7,
+      priority: route === '' ? 1.0 : (['/punjab', '/haryana', '/delhi', '/breaking-news', '/epaper'].includes(route) ? 0.9 : 0.7),
     }));
 
     return [...staticRoutes, ...newsUrls];
