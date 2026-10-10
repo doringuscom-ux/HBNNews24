@@ -1301,10 +1301,10 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                                 }}
                                 className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors text-left"
                             >
-                                <div className="text-2xl">📱</div>
+                                <div className="text-2xl">📰</div>
                                 <div>
-                                    <div className="font-bold text-gray-800">सिंगल कॉलम (Single Column)</div>
-                                    <div className="text-xs text-gray-500">वेबसाइट जैसा डिफ़ॉल्ट डिज़ाइन (Full Article)</div>
+                                    <div className="font-bold text-gray-800">फ्रंट पेज न्यूज़ (News On Front Page)</div>
+                                    <div className="text-xs text-gray-500">अखबार के पहले पन्ने जैसी पूरी न्यूज़ कटिंग</div>
                                 </div>
                             </button>
 
@@ -1315,10 +1315,10 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                                 }}
                                 className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-200 transition-colors text-left"
                             >
-                                <div className="text-2xl">📰</div>
+                                <div className="text-2xl">🖋️</div>
                                 <div>
-                                    <div className="font-bold text-gray-800">क्लासिक (Classic Newspaper)</div>
-                                    <div className="text-xs text-gray-500">कॉलम वाला पारंपरिक डिज़ाइन (सारांश)</div>
+                                    <div className="font-bold text-gray-800">संपादकीय पेज (News On Editorial Page)</div>
+                                    <div className="text-xs text-gray-500">3-कॉलम विचार एवं संपादकीय स्टाइल लेआउट</div>
                                 </div>
                             </button>
 
@@ -1329,10 +1329,10 @@ export default function Epaper({ initialNews, initialSuvichar, initialPanchang }
                                 }}
                                 className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 transition-colors text-left"
                             >
-                                <div className="text-2xl">📜</div>
+                                <div className="text-2xl">🖼️</div>
                                 <div>
-                                    <div className="font-bold text-gray-800">क्लासिक - पूरा लेख (Classic Full)</div>
-                                    <div className="text-xs text-gray-500">पारंपरिक डिज़ाइन लेकिन पूरे पैराग्राफ के साथ</div>
+                                    <div className="font-bold text-gray-800">इनर पेज - बड़ी तस्वीर (News in Inner Page With Big Image)</div>
+                                    <div className="text-xs text-gray-500">बड़ी तस्वीर और विस्तृत कॉलम लेआउट के साथ</div>
                                 </div>
                             </button>
                         </div>
