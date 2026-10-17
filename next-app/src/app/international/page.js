@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/international' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'विदेश समाचार – International News in Hindi',
+    description: 'दुनिया भर की ताज़ा अंतरराष्ट्रीय खबरें और विदेश की ब्रेकिंग न्यूज़ हिंदी में पढ़ें।',
+    alternates: { canonical: '/international' },
+  };
 }
 
 

@@ -13,10 +13,12 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/authors' },
       };
     }
   } catch (e) {}
   return {
+    alternates: { canonical: '/authors' },
     title: 'Our Authors & Journalists | HBN News 24',
     description: 'Meet the dedicated journalists, field reporters, editors, and columnists delivering accurate, verified news daily at HBN News 24.',
   };

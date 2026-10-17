@@ -28,6 +28,7 @@ export async function generateMetadata() {
     description,
     keywords,
     robots,
+    alternates: { canonical: '/breaking-news' },
     openGraph: {
       title,
       description,

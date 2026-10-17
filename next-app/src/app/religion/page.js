@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/religion' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'धर्म समाचार – Religion News in Hindi',
+    description: 'धर्म, आस्था, त्योहार, व्रत और राशिफल से जुड़ी ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/religion' },
+  };
 }
 
 

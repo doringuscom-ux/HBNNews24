@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/national' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'देश समाचार – National News in Hindi',
+    description: 'भारत की ताज़ा राष्ट्रीय खबरें, राजनीति, सरकार और देशभर की ब्रेकिंग न्यूज़ हिंदी में पढ़ें।',
+    alternates: { canonical: '/national' },
+  };
 }
 
 

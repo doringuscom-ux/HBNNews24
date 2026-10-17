@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/haryana' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'हरियाणा समाचार – Haryana News in Hindi',
+    description: 'हरियाणा की ताज़ा खबरें, ब्रेकिंग न्यूज़, राजनीति, अपराध और ज़िलों की हर बड़ी खबर हिंदी में पढ़ें HBN News 24 पर।',
+    alternates: { canonical: '/haryana' },
+  };
 }
 
 

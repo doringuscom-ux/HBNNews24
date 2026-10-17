@@ -45,9 +45,6 @@ export async function generateMetadata() {
             'max-video-preview': -1,
           },
         },
-        alternates: {
-          canonical: siteUrl,
-        },
         verification: {
           yandex: '0eb83d10134bd980',
         },
@@ -92,9 +89,6 @@ export async function generateMetadata() {
         'max-snippet': -1,
         'max-video-preview': -1,
       },
-    },
-    alternates: {
-      canonical: siteUrl,
     },
     verification: {
       yandex: '0eb83d10134bd980',

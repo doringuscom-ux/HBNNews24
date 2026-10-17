@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/lifestyle' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'लाइफस्टाइल – Lifestyle News in Hindi',
+    description: 'सेहत, फैशन, खान-पान, रिश्ते और लाइफस्टाइल से जुड़ी ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/lifestyle' },
+  };
 }
 
 

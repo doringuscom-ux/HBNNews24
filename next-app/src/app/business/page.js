@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/business' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'बिज़नेस समाचार – Business News in Hindi',
+    description: 'शेयर बाज़ार, अर्थव्यवस्था, सोना-चांदी के भाव और कारोबार जगत की ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/business' },
+  };
 }
 
 

@@ -4,7 +4,14 @@ import News from '@/models/News';
 import mongoose from 'mongoose';
 import { notFound } from 'next/navigation';
 
-export const dynamic = 'force-dynamic'; // Render on-demand via SSR - 0 ISR writes
+// Cache each article for 5 min (ISR) so Googlebot and readers get a fast cached page.
+// Admin edit/delete clears it instantly via revalidatePath in /api/news.
+export const revalidate = 300;
+
+// Empty list = no articles built at deploy time; each one is cached on its first visit.
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

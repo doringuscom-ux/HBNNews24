@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/delhi' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'दिल्ली समाचार – Delhi News in Hindi',
+    description: 'दिल्ली-NCR की ताज़ा खबरें, ब्रेकिंग न्यूज़, राजनीति, ट्रैफिक और अपराध से जुड़ी हर खबर हिंदी में।',
+    alternates: { canonical: '/delhi' },
+  };
 }
 
 

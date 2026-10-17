@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/sports' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'खेल समाचार – Sports News in Hindi',
+    description: 'क्रिकेट, फुटबॉल, कबड्डी और सभी खेलों की ताज़ा खबरें, स्कोर और अपडेट हिंदी में।',
+    alternates: { canonical: '/sports' },
+  };
 }
 
 

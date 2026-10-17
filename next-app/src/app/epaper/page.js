@@ -16,10 +16,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/epaper' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'ई-पेपर – HBN News 24 E-Paper',
+    description: 'HBN News 24 का आज का ई-पेपर ऑनलाइन पढ़ें।',
+    alternates: { canonical: '/epaper' },
+  };
 }
 
 

@@ -14,10 +14,14 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/disclaimer' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'अस्वीकरण – Disclaimer',
+    alternates: { canonical: '/disclaimer' },
+  };
 }
 
 

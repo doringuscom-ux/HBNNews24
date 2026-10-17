@@ -17,6 +17,7 @@ const clearAllNewsCache = () => {
         if (global.newsCache) global.newsCache.flushAll();
         if (global.newsCategoryCache) global.newsCategoryCache.flushAll();
         revalidatePath('/', 'page');
+        revalidatePath('/news/[id]', 'page');
     } catch (e) {
         console.error('Error clearing news cache:', e);
     }

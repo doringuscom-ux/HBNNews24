@@ -14,11 +14,11 @@ export async function generateMetadata() {
         title: seo.metaTitle,
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
-        robots: seo.robots || 'index, follow',
+        robots: 'noindex, follow',
       };
     }
   } catch (e) {}
-  return {};
+  return { robots: 'noindex, follow' };
 }
 
 

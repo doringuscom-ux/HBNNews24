@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/jobs' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'नौकरी समाचार – Jobs & Sarkari Naukri',
+    description: 'सरकारी नौकरी, भर्ती, वैकेंसी और रोज़गार से जुड़ी ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/jobs' },
+  };
 }
 
 

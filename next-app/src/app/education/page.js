@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/education' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'शिक्षा समाचार – Education News in Hindi',
+    description: 'परीक्षा, रिज़ल्ट, एडमिशन, बोर्ड और शिक्षा जगत की ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/education' },
+  };
 }
 
 

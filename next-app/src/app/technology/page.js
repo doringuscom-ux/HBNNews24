@@ -15,10 +15,15 @@ export async function generateMetadata() {
         description: seo.metaDescription || '',
         keywords: seo.metaKeywords || '',
         robots: seo.robots || 'index, follow',
+        alternates: { canonical: '/technology' },
       };
     }
   } catch (e) {}
-  return {};
+  return {
+    title: 'टेक समाचार – Technology News in Hindi',
+    description: 'मोबाइल, गैजेट्स, AI, इंटरनेट और टेक्नोलॉजी की ताज़ा खबरें हिंदी में।',
+    alternates: { canonical: '/technology' },
+  };
 }
 
 
