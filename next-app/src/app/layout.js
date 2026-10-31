@@ -46,6 +46,7 @@ export async function generateMetadata() {
           },
         },
         verification: {
+          google: 'yPrFjY4E7_hvgLsvm4yCdBs1-1DoA_NSd853YW-f4ig',
           yandex: '0eb83d10134bd980',
         },
 
@@ -91,6 +92,7 @@ export async function generateMetadata() {
       },
     },
     verification: {
+      google: 'yPrFjY4E7_hvgLsvm4yCdBs1-1DoA_NSd853YW-f4ig',
       yandex: '0eb83d10134bd980',
     },
     openGraph: {
